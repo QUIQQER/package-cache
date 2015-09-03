@@ -20,7 +20,7 @@
     "require": {
         "php" : ">=5.3",
         "quiqqer/quiqqer" : "*@dev",
-        "mrclay/minify " : "2.2.1"
+        "mrclay/minify" : "2.2.1"
     },
 
     "autoload": {
