@@ -1,6 +1,6 @@
 {
     "name" : "quiqqer/cache",
-    "type" : "quiqqer-module",
+    "type" : "quiqqer-plugin",
     "description" : "",
     "version" : "dev-dev",
     "license" : "",
@@ -20,8 +20,7 @@
     "require": {
         "php" : ">=5.3",
         "quiqqer/quiqqer" : "*@dev",
-        "mrclay/minify" : "2.2.1",
-        "dotsunited/bundlefu" : "1.0.2"
+        "mrclay/minify" : "2.2.1"
     },
 
     "autoload": {
