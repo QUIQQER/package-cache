@@ -58,7 +58,6 @@ class Handler
         $dir       = $this->getCacheDir();
         $cachefile = $dir . md5($uri);
 
-
         if (file_exists($cachefile)) {
             return file_get_contents($cachefile);
         }
@@ -83,11 +82,60 @@ class Handler
         }
 
         $dir       = $this->getCacheDir();
+        $minDir    = $dir . 'min/';
         $cachefile = $dir . md5($uri);
 
         QUI\Utils\System\File::mkdir($dir);
+        QUI\Utils\System\File::mkdir($minDir);
 
         file_put_contents($cachefile, $content);
+
+        // minifier execute
+        $Minify = new \Minify();
+        $Minify->setCache($minDir);
+        $Minify->setDocRoot(CMS_DIR);
+
+        $sources = array(
+            new \Minify_Source(array(
+                'id'            => $cachefile,
+                'content'       => $content,
+                'contentType'   => 'text/html',
+                'minifyOptions' => array(
+                    'cssMinifier' => array('Minify_CSS', 'minify'),
+                    'jsMinifier'  => array('JSMin', 'minify')
+                )
+            ))
+        );
+
+        $result = $Minify->combine($sources, array(
+            'content'   => $content,
+            'id'        => $cachefile,
+            'minifyAll' => true
+        ));
+
+        file_put_contents($cachefile, $result);
+
+//
+//        // find css files
+//        $cssfiles = array();
+//
+//        preg_match_all('/<link[^>]*href=["\']([^"\']+)["\'][^>]*>/i', $content, $matches);
+//
+//        if (isset($matches[0])) {
+//            foreach ($matches as $entry) {
+//
+//                if (strpos($entry, '.css') === false) {
+//                    continue;
+//                }
+//
+//                $cssfiles[] = $entry;
+//            }
+//        }
+//
+//
+//        var_dump($cssfiles);
+//        exit;
+
     }
 
     /**
