@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<events>
+    <event on="onRequest" fire="\QUI\Cache\EventCoordinator::onRequest"/>
+    <event on="onRequestOutput" fire="\QUI\Cache\EventCoordinator::onRequestOutput"/>
+
+    <!-- clear cache -->
+    <event on="onSiteSave" fire="\QUI\Cache\EventCoordinator::clearCache"/>
+    <event on="onSiteDelete" fire="\QUI\Cache\EventCoordinator::clearCache"/>
+    <event on="onSiteActivate" fire="\QUI\Cache\EventCoordinator::clearCache"/>
+    <event on="onSiteDeactivate" fire="\QUI\Cache\EventCoordinator::clearCache"/>
+
+    <event on="onMediaActivate" fire="\QUI\Cache\EventCoordinator::clearCache"/>
+    <event on="onMediaDeactivate" fire="\QUI\Cache\EventCoordinator::clearCache"/>
+    <event on="onMediaSave" fire="\QUI\Cache\EventCoordinator::clearCache"/>
+    <event on="onMediaDelete" fire="\QUI\Cache\EventCoordinator::clearCache"/>
+
+    <event on="onProjectConfigSave" fire="\QUI\Cache\EventCoordinator::clearCache"/>
+    <event on="onPackageSetup" fire="\QUI\Cache\EventCoordinator::clearCache"/>
+    <event on="onPackageInstall" fire="\QUI\Cache\EventCoordinator::clearCache"/>
+    <event on="onPackageUninstall" fire="\QUI\Cache\EventCoordinator::clearCache"/>
+
+</events>
