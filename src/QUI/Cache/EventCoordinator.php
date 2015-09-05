@@ -48,6 +48,19 @@ class EventCoordinator
     }
 
     /**
+     * event : on template get header
+     * Extend the header with the require js php bundler
+     *
+     * @param QUI\Template $Template
+     */
+    static function onTemplateGetHeader(QUI\Template $Template)
+    {
+        $Template->extendHeaderWithJavaScriptFile(
+            URL_OPT_DIR .'quiqqer/cache/bin/requireBundler.js'
+        );
+    }
+
+    /**
      * Clear the cache -> onSiteSave ...
      * look at <!-- clear cache --> in events.xml
      */

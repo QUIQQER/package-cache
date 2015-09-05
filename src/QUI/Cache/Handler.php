@@ -31,7 +31,7 @@ class Handler
      */
     public function getCacheDir()
     {
-        return VAR_DIR . 'cache/plugins/cache/';
+        return VAR_DIR . 'cache/packages/cache/';
     }
 
     /**
@@ -41,7 +41,7 @@ class Handler
      */
     public function getURLCacheDir()
     {
-        return URL_VAR_DIR . 'cache/plugins/cache/';
+        return URL_VAR_DIR . 'cache/packages/cache/';
     }
 
     /**
@@ -83,6 +83,8 @@ class Handler
      */
     public function generatCacheFromRequest($content)
     {
+        return;
+
         $Request = QUI::getRequest();
         $uri     = $Request->getUri();
         $query   = $Request->getQueryString();
@@ -237,7 +239,7 @@ class Handler
         // insert css cache file to the head
         $content = str_replace(
             '<!-- quiqqer css -->',
-            '<link href="' . $cacheURLCSSFile . '" rel="stylesheet" type="text/css" /></head>',
+            '<link href="' . $cacheURLCSSFile . '" rel="stylesheet" type="text/css" />',
             $content
         );
 
@@ -246,6 +248,8 @@ class Handler
         /**
          * HTML optimize
          */
+        return;
+
         $sources = array(
             new \Minify_Source(array(
                 'id'            => $cacheId,

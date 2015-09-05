@@ -2,6 +2,7 @@
 <events>
     <event on="onRequest" fire="\QUI\Cache\EventCoordinator::onRequest"/>
     <event on="onRequestOutput" fire="\QUI\Cache\EventCoordinator::onRequestOutput"/>
+    <event on="onTemplateGetHeader" fire="\QUI\Cache\EventCoordinator::onTemplateGetHeader"/>
 
     <!-- clear cache -->
     <event on="onSiteSave" fire="\QUI\Cache\EventCoordinator::clearCache"/>
