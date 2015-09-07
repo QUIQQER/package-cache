@@ -144,235 +144,266 @@ class AMDOptimizer
         throw new QUI\Exception('Could not create build');
     }
 
-
     /**
-     * @param null|QUI\System\Console\Tool $Output
+     * Optimize css from amd modules
+     *
+     * @param string $cssfile - css file
+     * @return string
      * @throws QUI\Exception
      */
-    static function ___optimize($Output = null)
+    static function optimizeCSS($cssfile)
     {
-        $CacheHandler = QUI\Cache\Handler::init();
+        $cssfilePath = CMS_DIR . $cssfile;
 
-        $command     = 'nodejs';
-        $nodejsCheck = shell_exec("which nodejs");
+        if (!file_exists($cssfilePath)) {
 
-        if (empty($nodejsCheck)) {
-            $command     = 'node';
-            $nodejsCheck = shell_exec("which node");
-        }
+            $parse       = parse_url($cssfilePath);
+            $cssfilePath = $parse['path'];
 
-        if (empty($nodejsCheck)) {
-            throw new QUI\Exception('nodejs is not installed or is not callable');
-        }
-
-        // create amd bin folder
-        $amdDir     = $CacheHandler->getCacheDir() . 'amd/';
-        $amdBinDir  = $amdDir . 'bin/';
-        $amdCopyDir = $amdDir . 'copy/';
-        $rJsFile    = OPT_DIR . 'quiqqer/cache/amd/r.js';
-
-        QUI::getTemp()->moveToTemp($amdDir);
-
-
-        // build main require js build config
-        if ($Output) {
-            $Output->writeLn('Build require config');
-        }
-
-        if ($Output) {
-            $Output->writeLn('Create ' . $amdDir);
-        }
-
-        QUI\Utils\System\File::mkdir($amdDir);
-        QUI\Utils\System\File::mkdir($amdCopyDir);
-
-
-        $buildRequireFile = $amdDir . 'build-config.js';
-
-        file_put_contents($buildRequireFile, '
-            requirejs.config({
-                baseUrl: "/",
-                path : {
-                    "package" : ".",
-                    "qui"     : "quiqqer/qui/qui"
-                },
-                map: {
-                    "*": {
-                        "css"  : "quiqqer/qui/qui/lib/css.js",
-                        "image": "quiqqer/qui/qui/lib/image.js",
-                        "text" : "quiqqer/qui/qui/lib/text.js"
-                    }
-                }
-            });'
-        );
-
-
-        // search packages for amd modules
-        if ($Output) {
-            $Output->writeLn('Search AMD modules');
-        }
-
-        $packages = QUI::getPackageManager()->getInstalled();
-
-        foreach ($packages as $package) {
-
-            $name       = $package['name'];
-            $packageDir = OPT_DIR . $name;
-
-            // find modules in bin dir
-            if ($name == 'quiqqer/qui') {
-                $jsFiles   = QUI\Utils\System\File::find($packageDir . '/qui', '*.js');
-                $cssFiles  = QUI\Utils\System\File::find($packageDir . '/qui', '*.css');
-                $htmlFiles = QUI\Utils\System\File::find($packageDir . '/qui', '*.html');
-
-            } else {
-                $jsFiles   = QUI\Utils\System\File::find($packageDir . '/bin', '*.js');
-                $cssFiles  = QUI\Utils\System\File::find($packageDir . '/bin', '*.css');
-                $htmlFiles = QUI\Utils\System\File::find($packageDir . '/bin', '*.html');
-            }
-
-            $buildDir   = $amdDir . 'bin/' . $name;
-            $amdModules = array();
-
-            // js copy
-            foreach ($jsFiles as $jsFile) {
-
-                $amdName = 'package/' . str_replace(array(OPT_DIR, '.js'), '', $jsFile);
-
-                $amdModules[] = array(
-                    'name' => $amdName
-                );
-
-                // copy file
-                $copyFile = str_replace(OPT_DIR, $amdCopyDir, $jsFile);
-
-                QUI\Utils\System\File::mkfile($copyFile);
-
-                file_put_contents(
-                    $copyFile,
-                    file_get_contents($jsFile)
-                );
-            }
-
-            // css copy
-            foreach ($cssFiles as $cssFile) {
-                $copyFile = str_replace(OPT_DIR, $amdCopyDir, $cssFile);
-
-                QUI\Utils\System\File::mkfile($copyFile);
-
-                file_put_contents(
-                    $copyFile,
-                    file_get_contents($cssFile)
-                );
-            }
-
-            foreach ($htmlFiles as $htmlFile) {
-                $copyFile = str_replace(OPT_DIR, $amdCopyDir, $htmlFile);
-
-                QUI\Utils\System\File::mkfile($copyFile);
-
-                file_put_contents(
-                    $copyFile,
-                    file_get_contents($htmlFile)
-                );
+            if (!file_exists($cssfilePath)) {
+                throw new QUI\Exception('File not found', 404);
             }
         }
 
-        if ($Output) {
-            $Output->writeLn('Starting AMD building');
-        }
+        $CSSMinify  = new \Minify_CSS();
+        $cssContent = file_get_contents($cssfilePath);
 
+        $minified = $CSSMinify->minify($cssContent, array(
+            'docRoot'    => CMS_DIR,
+            'currentDir' => dirname($cssfilePath) . '/'
+        ));
 
-        // build
-        chdir($amdDir);
-
-        // optimize each js file
-        $jsFiles = QUI\Utils\System\File::find($amdCopyDir, '*.js');
-
-        foreach ($jsFiles as $jsFile) {
-
-            $_jsFile = str_replace($amdCopyDir, '', $jsFile);
-
-            file_put_contents(
-                'build-file.js',
-
-                '({
-                    baseUrl: ".",
-                    paths: {
-                        jquery: "some/other/jquery"
-                    },
-                    name: "main",
-                    out: "main-built.js",
-                    mainConfigFile: "build-config.js"
-                })'
-            );
-
-            echo "\n\n" . $_jsFile . "\n";
-            exit;
-        }
-
-
-        return;
-
-
-        file_put_contents(
-            'build-amd.js',
-            '(' . json_encode(self::_getbuildParams(), \JSON_PRETTY_PRINT) . ')'
-        );
-
-        $cmd = "nodejs '{$rJsFile}' -o build-amd.js";
-
-        if (!$Output) {
-            shell_exec($cmd);
-
-        } else {
-
-            $descriptorspec = array(
-                0 => array("pipe", "r"),
-                1 => array("pipe", "w"),
-                2 => array("pipe", "w")
-            );
-
-            flush();
-
-            $process = proc_open($cmd, $descriptorspec, $pipes, realpath('./'), array());
-
-            if (is_resource($process)) {
-                while ($s = fgets($pipes[1])) {
-                    $Output->write($s);
-                    flush();
-                }
-            }
-        }
-
-        // clearing
-        chdir($amdDir);
-
-        unlink('build-amd.js');
-        unlink('build-config.js');
-        unlink('bin/build.txt');
-        unlink('bin/build-amd.js');
-        unlink('bin/build-config.js');
-
-        QUI::getTemp()->moveToTemp('copy/');
-
-        $dirs = QUI\Utils\System\File::readDir($amdBinDir . 'copy/');
-
-        foreach ($dirs as $dir) {
-            QUI\Utils\System\File::move(
-                $amdBinDir . 'copy/' . $dir,
-                $amdBinDir . $dir
-            );
-        }
-
-        QUI::getTemp()->moveToTemp($amdBinDir . 'copy/');
-
-
-        if ($Output) {
-            $Output->write('Done');
-            $Output->writeLn('');
-        }
+        return $minified;
     }
+//
+//    /**
+//     * @param null|QUI\System\Console\Tool $Output
+//     * @throws QUI\Exception
+//     */
+//    static function ___optimize($Output = null)
+//    {
+//        $CacheHandler = QUI\Cache\Handler::init();
+//
+//        $command     = 'nodejs';
+//        $nodejsCheck = shell_exec("which nodejs");
+//
+//        if (empty($nodejsCheck)) {
+//            $command     = 'node';
+//            $nodejsCheck = shell_exec("which node");
+//        }
+//
+//        if (empty($nodejsCheck)) {
+//            throw new QUI\Exception('nodejs is not installed or is not callable');
+//        }
+//
+//        // create amd bin folder
+//        $amdDir     = $CacheHandler->getCacheDir() . 'amd/';
+//        $amdBinDir  = $amdDir . 'bin/';
+//        $amdCopyDir = $amdDir . 'copy/';
+//        $rJsFile    = OPT_DIR . 'quiqqer/cache/amd/r.js';
+//
+//        QUI::getTemp()->moveToTemp($amdDir);
+//
+//
+//        // build main require js build config
+//        if ($Output) {
+//            $Output->writeLn('Build require config');
+//        }
+//
+//        if ($Output) {
+//            $Output->writeLn('Create ' . $amdDir);
+//        }
+//
+//        QUI\Utils\System\File::mkdir($amdDir);
+//        QUI\Utils\System\File::mkdir($amdCopyDir);
+//
+//
+//        $buildRequireFile = $amdDir . 'build-config.js';
+//
+//        file_put_contents($buildRequireFile, '
+//            requirejs.config({
+//                baseUrl: "/",
+//                path : {
+//                    "package" : ".",
+//                    "qui"     : "quiqqer/qui/qui"
+//                },
+//                map: {
+//                    "*": {
+//                        "css"  : "quiqqer/qui/qui/lib/css.js",
+//                        "image": "quiqqer/qui/qui/lib/image.js",
+//                        "text" : "quiqqer/qui/qui/lib/text.js"
+//                    }
+//                }
+//            });'
+//        );
+//
+//
+//        // search packages for amd modules
+//        if ($Output) {
+//            $Output->writeLn('Search AMD modules');
+//        }
+//
+//        $packages = QUI::getPackageManager()->getInstalled();
+//
+//        foreach ($packages as $package) {
+//
+//            $name       = $package['name'];
+//            $packageDir = OPT_DIR . $name;
+//
+//            // find modules in bin dir
+//            if ($name == 'quiqqer/qui') {
+//                $jsFiles   = QUI\Utils\System\File::find($packageDir . '/qui', '*.js');
+//                $cssFiles  = QUI\Utils\System\File::find($packageDir . '/qui', '*.css');
+//                $htmlFiles = QUI\Utils\System\File::find($packageDir . '/qui', '*.html');
+//
+//            } else {
+//                $jsFiles   = QUI\Utils\System\File::find($packageDir . '/bin', '*.js');
+//                $cssFiles  = QUI\Utils\System\File::find($packageDir . '/bin', '*.css');
+//                $htmlFiles = QUI\Utils\System\File::find($packageDir . '/bin', '*.html');
+//            }
+//
+//            $buildDir   = $amdDir . 'bin/' . $name;
+//            $amdModules = array();
+//
+//            // js copy
+//            foreach ($jsFiles as $jsFile) {
+//
+//                $amdName = 'package/' . str_replace(array(OPT_DIR, '.js'), '', $jsFile);
+//
+//                $amdModules[] = array(
+//                    'name' => $amdName
+//                );
+//
+//                // copy file
+//                $copyFile = str_replace(OPT_DIR, $amdCopyDir, $jsFile);
+//
+//                QUI\Utils\System\File::mkfile($copyFile);
+//
+//                file_put_contents(
+//                    $copyFile,
+//                    file_get_contents($jsFile)
+//                );
+//            }
+//
+//            // css copy
+//            foreach ($cssFiles as $cssFile) {
+//                $copyFile = str_replace(OPT_DIR, $amdCopyDir, $cssFile);
+//
+//                QUI\Utils\System\File::mkfile($copyFile);
+//
+//                file_put_contents(
+//                    $copyFile,
+//                    file_get_contents($cssFile)
+//                );
+//            }
+//
+//            foreach ($htmlFiles as $htmlFile) {
+//                $copyFile = str_replace(OPT_DIR, $amdCopyDir, $htmlFile);
+//
+//                QUI\Utils\System\File::mkfile($copyFile);
+//
+//                file_put_contents(
+//                    $copyFile,
+//                    file_get_contents($htmlFile)
+//                );
+//            }
+//        }
+//
+//        if ($Output) {
+//            $Output->writeLn('Starting AMD building');
+//        }
+//
+//
+//        // build
+//        chdir($amdDir);
+//
+//        // optimize each js file
+//        $jsFiles = QUI\Utils\System\File::find($amdCopyDir, '*.js');
+//
+//        foreach ($jsFiles as $jsFile) {
+//
+//            $_jsFile = str_replace($amdCopyDir, '', $jsFile);
+//
+//            file_put_contents(
+//                'build-file.js',
+//
+//                '({
+//                    baseUrl: ".",
+//                    paths: {
+//                        jquery: "some/other/jquery"
+//                    },
+//                    name: "main",
+//                    out: "main-built.js",
+//                    mainConfigFile: "build-config.js"
+//                })'
+//            );
+//
+//            echo "\n\n" . $_jsFile . "\n";
+//            exit;
+//        }
+//
+//
+//        return;
+//
+//
+//        file_put_contents(
+//            'build-amd.js',
+//            '(' . json_encode(self::_getbuildParams(), \JSON_PRETTY_PRINT) . ')'
+//        );
+//
+//        $cmd = "nodejs '{$rJsFile}' -o build-amd.js";
+//
+//        if (!$Output) {
+//            shell_exec($cmd);
+//
+//        } else {
+//
+//            $descriptorspec = array(
+//                0 => array("pipe", "r"),
+//                1 => array("pipe", "w"),
+//                2 => array("pipe", "w")
+//            );
+//
+//            flush();
+//
+//            $process = proc_open($cmd, $descriptorspec, $pipes, realpath('./'), array());
+//
+//            if (is_resource($process)) {
+//                while ($s = fgets($pipes[1])) {
+//                    $Output->write($s);
+//                    flush();
+//                }
+//            }
+//        }
+//
+//        // clearing
+//        chdir($amdDir);
+//
+//        unlink('build-amd.js');
+//        unlink('build-config.js');
+//        unlink('bin/build.txt');
+//        unlink('bin/build-amd.js');
+//        unlink('bin/build-config.js');
+//
+//        QUI::getTemp()->moveToTemp('copy/');
+//
+//        $dirs = QUI\Utils\System\File::readDir($amdBinDir . 'copy/');
+//
+//        foreach ($dirs as $dir) {
+//            QUI\Utils\System\File::move(
+//                $amdBinDir . 'copy/' . $dir,
+//                $amdBinDir . $dir
+//            );
+//        }
+//
+//        QUI::getTemp()->moveToTemp($amdBinDir . 'copy/');
+//
+//
+//        if ($Output) {
+//            $Output->write('Done');
+//            $Output->writeLn('');
+//        }
+//    }
 
     /**
      * Return config build params

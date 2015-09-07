@@ -23,6 +23,14 @@ class EventCoordinator
      */
     static function onRequest($Rewrite, $url)
     {
+        $Request = QUI::getRequest();
+        $query   = $Request->getQueryString();
+
+        // query strings have no cache
+        if (!is_null($query)) {
+            return;
+        }
+
         try {
 
             echo QUI\Cache\Handler::init()->getCacheFromRequest();
@@ -40,6 +48,21 @@ class EventCoordinator
      */
     static function onRequestOutput($output)
     {
+        $Request = QUI::getRequest();
+        $query   = $Request->getQueryString();
+
+        // query strings have no cache
+        if (!is_null($query)) {
+            return;
+        }
+
+        $Package      = QUI::getPackage('quiqqer/cache');
+        $cacheSetting = $Package->getConfig()->get('settings', 'cache');
+
+        if (!$cacheSetting) {
+            return;
+        }
+
         try {
             QUI\Cache\Handler::init()->generatCacheFromRequest($output);
         } catch (QUI\Exception $Exception) {
@@ -55,8 +78,17 @@ class EventCoordinator
      */
     static function onTemplateGetHeader(QUI\Template $Template)
     {
+        $Package          = QUI::getPackage('quiqqer/cache');
+        $cacheSetting     = $Package->getConfig()->get('settings', 'cache');
+
+        $Template->extendHeader(
+            "<script>
+                var QUIQQER_CACHE_CACHESETTING = {$cacheSetting}
+            </script>"
+        );
+
         $Template->extendHeaderWithJavaScriptFile(
-            URL_OPT_DIR .'quiqqer/cache/bin/requireBundler.js'
+            URL_OPT_DIR . 'quiqqer/cache/bin/requireBundler.js'
         );
     }
 

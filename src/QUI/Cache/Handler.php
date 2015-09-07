@@ -83,7 +83,20 @@ class Handler
      */
     public function generatCacheFromRequest($content)
     {
-        return;
+        // loged in users shouldn'tgenerate any cache
+        if (QUI::getUsers()->isAuth(QUI::getUserBySession())) {
+            return;
+        }
+
+        $Package          = QUI::getPackage('quiqqer/cache');
+        $cacheSetting     = $Package->getConfig()->get('settings', 'cache');
+        $jsCacheSetting   = $Package->getConfig()->get('settings', 'jscache');
+        $htmlCacheSetting = $Package->getConfig()->get('settings', 'htmlcache');
+        $cssCacheSetting  = $Package->getConfig()->get('settings', 'csscache');
+
+        if (!$cacheSetting) {
+            return;
+        }
 
         $Request = QUI::getRequest();
         $uri     = $Request->getUri();
@@ -109,7 +122,6 @@ class Handler
         /**
          * HTML
          */
-
         $cacheHtmlFile = $dir . $cacheId . '.html';
         file_put_contents($cacheHtmlFile, $content);
 
@@ -117,158 +129,166 @@ class Handler
         /**
          * Bundle JavaScript
          */
-        preg_match_all(
-            '/<script[^>]*>(.*)<\/script>/Uis',
-            $content,
-            $matches,
-            PREG_SET_ORDER
-        );
 
-        $jsContent = '';
-        $jsId      = md5(serialize($matches));
+        if ($jsCacheSetting) {
 
-        $cacheJSFile    = $binDir . $jsId . '.cache.js';
-        $cacheURLJSFile = $urlBinDir . $jsId . '.cache.js';
-
-        foreach ($matches as $entry) {
-
-            if (strpos($entry[0], 'src=') === false) {
-
-                $content = str_replace($entry, '', $content);
-                $jsContent .= $entry[1];
-
-                continue;
-            }
-
-            preg_match(
-                '/<script\s+?src="([^"]*)"[^>]*>(.*)<\/script>/Uis',
-                $entry[0],
-                $matches
+            preg_match_all(
+                '/<script[^>]*>(.*)<\/script>/Uis',
+                $content,
+                $matches,
+                PREG_SET_ORDER
             );
 
-            $file = CMS_DIR . ltrim($matches[1], '/');
+            $jsContent = '';
+            $jsId      = md5(serialize($matches));
 
-            if (!file_exists($file)) {
-                $parse = parse_url($file);
-                $file  = $parse['path'];
+            $cacheJSFile    = $binDir . $jsId . '.cache.js';
+            $cacheURLJSFile = $urlBinDir . $jsId . '.cache.js';
+
+            foreach ($matches as $entry) {
+
+                if (strpos($entry[0], 'src=') === false) {
+
+                    $content = str_replace($entry, '', $content);
+                    $jsContent .= $entry[1];
+
+                    continue;
+                }
+
+                preg_match(
+                    '/<script\s+?src="([^"]*)"[^>]*>(.*)<\/script>/Uis',
+                    $entry[0],
+                    $matches
+                );
+
+                $file = CMS_DIR . ltrim($matches[1], '/');
+
+                if (!file_exists($file)) {
+                    $parse = parse_url($file);
+                    $file  = $parse['path'];
+                }
+
+                if (!file_exists($file)) {
+                    continue;
+                }
+
+                $jsContent .= file_get_contents($file) . ';';
+
+                $content = str_replace($entry[0], '', $content);
             }
 
-            if (!file_exists($file)) {
-                continue;
-            }
+            // create javascript cache file
+            file_put_contents($cacheJSFile, $jsContent);
 
-            $jsContent .= file_get_contents($file) . ';';
 
-            $content = str_replace($entry[0], '', $content);
+            // insert quiqqer.cache.js
+            $content = str_replace(
+                '</body>',
+                '<script src="' . $cacheURLJSFile . '" type="text/javascript"></script></body>',
+                $content
+            );
+
+            file_put_contents($cacheHtmlFile, $content);
         }
-
-        // create javascript cache file
-        file_put_contents($cacheJSFile, $jsContent);
-
-
-        // insert quiqqer.cache.js
-        $content = str_replace(
-            '</body>',
-            '<script src="' . $cacheURLJSFile . '" type="text/javascript"></script></body>',
-            $content
-        );
-
-        file_put_contents($cacheHtmlFile, $content);
 
 
         /**
          * Bundle CSS
          */
-        $CSSMinify = new \Minify_CSS();
+        if ($cssCacheSetting) {
 
-        preg_match_all(
-            '/<link\s+?href="([^"]*)"[^>]*>/Uis',
-            $content,
-            $matches,
-            PREG_SET_ORDER
-        );
+            $CSSMinify = new \Minify_CSS();
 
-        $cssId = md5(serialize($matches));
+            preg_match_all(
+                '/<link\s+?href="([^"]*)"[^>]*>/Uis',
+                $content,
+                $matches,
+                PREG_SET_ORDER
+            );
 
-        $cacheCSSFile    = $binDir . $cssId . '.cache.css';
-        $cacheURLCSSFile = $urlBinDir . $cssId . '.cache.css';
+            $cssId = md5(serialize($matches));
 
-        $cssContent = '';
+            $cacheCSSFile    = $binDir . $cssId . '.cache.css';
+            $cacheURLCSSFile = $urlBinDir . $cssId . '.cache.css';
 
-        foreach ($matches as $match) {
-            if (strpos($match[0], 'alternate') !== false) {
-                continue;
+            $cssContent = '';
+
+            foreach ($matches as $match) {
+                if (strpos($match[0], 'alternate') !== false) {
+                    continue;
+                }
+
+                if (strpos($match[0], 'next') !== false) {
+                    continue;
+                }
+
+                if (strpos($match[0], 'prev') !== false) {
+                    continue;
+                }
+
+
+                $file = CMS_DIR . $match[1];
+
+                if (!file_exists($file)) {
+                    $parse = parse_url($file);
+                    $file  = $parse['path'];
+                }
+
+                if (!file_exists($file)) {
+                    continue;
+                }
+
+                $comment  = "\n/* File: {$match[1]} */\n";
+                $minified = $CSSMinify->minify(file_get_contents($file), array(
+                    'docRoot'    => CMS_DIR,
+                    'currentDir' => dirname(CMS_DIR . $match[1]) . '/'
+                ));
+
+                $cssContent .= $comment . $minified . "\n";
+
+                // delete css from main content
+                $content = str_replace($match[0], '', $content);
             }
 
-            if (strpos($match[0], 'next') !== false) {
-                continue;
-            }
-
-            if (strpos($match[0], 'prev') !== false) {
-                continue;
-            }
+            // create css cache file
+            file_put_contents($cacheCSSFile, $cssContent);
 
 
-            $file = CMS_DIR . $match[1];
+            // insert css cache file to the head
+            $content = str_replace(
+                '<!-- quiqqer css -->',
+                '<link href="' . $cacheURLCSSFile . '" rel="stylesheet" type="text/css" />',
+                $content
+            );
 
-            if (!file_exists($file)) {
-                $parse = parse_url($file);
-                $file  = $parse['path'];
-            }
-
-            if (!file_exists($file)) {
-                continue;
-            }
-
-            $comment  = "\n/* File: {$match[1]} */\n";
-            $minified = $CSSMinify->minify(file_get_contents($file), array(
-                'docRoot'    => CMS_DIR,
-                'currentDir' => dirname(CMS_DIR . $match[1]) . '/'
-            ));
-
-            $cssContent .= $comment . $minified . "\n";
-
-            // delete css from main content
-            $content = str_replace($match[0], '', $content);
+            file_put_contents($cacheHtmlFile, $content);
         }
-
-        // create css cache file
-        file_put_contents($cacheCSSFile, $cssContent);
-
-
-        // insert css cache file to the head
-        $content = str_replace(
-            '<!-- quiqqer css -->',
-            '<link href="' . $cacheURLCSSFile . '" rel="stylesheet" type="text/css" />',
-            $content
-        );
-
-        file_put_contents($cacheHtmlFile, $content);
 
         /**
          * HTML optimize
          */
-        return;
+        if ($htmlCacheSetting) {
 
-        $sources = array(
-            new \Minify_Source(array(
-                'id'            => $cacheId,
-                'content'       => $content,
-                'contentType'   => 'text/html',
-                'minifyOptions' => array(
-                    'cssMinifier' => array('Minify_CSS', 'minify'),
-                    'jsMinifier'  => array('JSMin', 'minify')
-                )
-            ))
-        );
+            $sources = array(
+                new \Minify_Source(array(
+                    'id'            => $cacheId,
+                    'content'       => $content,
+                    'contentType'   => 'text/html',
+                    'minifyOptions' => array(
+                        'cssMinifier' => array('Minify_CSS', 'minify'),
+                        'jsMinifier'  => array('JSMin', 'minify')
+                    )
+                ))
+            );
 
-        $result = $Minify->combine($sources, array(
-            'content'   => $content,
-            'id'        => $cacheId,
-            'minifyAll' => true
-        ));
+            $result = $Minify->combine($sources, array(
+                'content'   => $content,
+                'id'        => $cacheId,
+                'minifyAll' => true
+            ));
 
-        file_put_contents($cacheHtmlFile, $result);
+            file_put_contents($cacheHtmlFile, $result);
+        }
     }
 
     /**

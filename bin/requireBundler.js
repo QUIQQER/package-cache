@@ -4,28 +4,55 @@
 (function () {
     "use strict";
 
+    if ("QUIQQER_CACHE_CACHESETTING" in window && QUIQQER_CACHE_CACHESETTING === 0) {
+        return;
+    }
+
     var oldLoad = requirejs.load;
+    var Storage = window.localStorage || null;
+
+    requirejs.config({
+        map: {
+            '*': {
+                'css' : URL_OPT_DIR + 'quiqqer/cache/bin/css-cache',
+                'text': URL_OPT_DIR + 'quiqqer/cache/bin/text-cache'
+            }
+        }
+    });
 
     // amd locale storage
     requirejs.load = function (context, moduleName, url) {
 
-        if (typeof QUI === 'undefined' ||
-            typeof QUI.Storage === 'undefined') {
-
+        if (!Storage) {
+            console.warn('No locale storage');
             return oldLoad.apply(requirejs, arguments);
         }
 
-        var storage = QUI.Storage.get(url);
-
-        if (storage) {
-            new Element('script', {
-                html                : storage,
-                'data-requiremodule': moduleName
-            }).inject(document.head);
-
-            context.completeLoad(moduleName);
-            return;
+        if (url.match('/packages/quiqqer/cache/bin/css-cache')) {
+            return oldLoad.apply(requirejs, arguments);
         }
+
+        if (url.match('/packages/quiqqer/cache/bin/text-cache')) {
+            return oldLoad.apply(requirejs, arguments);
+        }
+
+        // cache
+        try {
+            var storage = Storage.getItem(url);
+
+            if (storage) {
+                new Element('script', {
+                    html                : storage,
+                    'data-requiremodule': moduleName
+                }).inject(document.head);
+
+                context.completeLoad(moduleName);
+                return;
+            }
+        } catch (e) {
+            //return (useImportLoad ? importLoad : linkLoad)(req.toUrl(cssId + '.css'), load);
+        }
+
 
         new Request({
             method   : 'get',
@@ -37,14 +64,26 @@
                     'data-requiremodule': moduleName
                 }).inject(document.head);
 
-
                 context.completeLoad(moduleName);
 
-                QUI.Storage.set(url, responseText);
+
+                try {
+                    Storage.setItem(url, responseText);
+
+                    new Element('style', {
+                        html: responseText
+                    }).inject(document.head);
+
+                    load();
+
+                } catch (e) {
+
+                }
             }
         }).send();
     };
-    //
+
+    // debug
     //
     //requirejs.onResourceLoad = function (context, map, depArray) {
     //
@@ -54,74 +93,5 @@
     //
     //    }
     //};
-
-
-    //
-    //// overwrite require with ajax combine calls
-    //window.require = function (needle, callback) {
-    //
-    //    console.info(needle);
-    //
-    //    var phpNeedle = [];
-    //    var cssNeedle = [];
-    //    var url       = '';
-    //
-    //    for (var i = 0, len = needle.length; i < len; i++) {
-    //        url = needle[i];
-    //
-    //        // is loaded?
-    //        if (require.specified(url)) {
-    //            continue;
-    //        }
-    //
-    //        if (!url.match('!')) {
-    //            phpNeedle.push(url);
-    //        }
-    //
-    //        if (url.match('css!')) {
-    //            cssNeedle.push(url);
-    //        }
-    //    }
-    //
-    //    //console.log(cssNeedle);
-    //    console.warn(phpNeedle);
-    //
-    //    if (!phpNeedle.length) {
-    //        requirejs(needle, callback);
-    //        return;
-    //    }
-    //
-    //    requirejs(needle, callback);
-    //
-    //    //requirejs(['Ajax'], function (Ajax) {
-    //    //
-    //    //    Ajax.get('package_quiqqer_cache_ajax_requirejs', function (result) {
-    //    //
-    //    //        if (!result) {
-    //    //            console.warn('Result is empty for', needle);
-    //    //            requirejs(needle, callback);
-    //    //            return;
-    //    //        }
-    //    //
-    //    //        new Element('script', {
-    //    //            html : result
-    //    //        }).inject(document.head);
-    //    //
-    //    //
-    //    //        requirejs(needle, callback);
-    //    //
-    //    //    }, {
-    //    //        'package'    : 'quiqqer/cache',
-    //    //        packages     : JSON.encode(needle),
-    //    //        requireConfig: JSON.encode(requirejs.s.contexts._.config)
-    //    //    });
-    //    //
-    //    //});
-    //};
-    //
-    //// clone requirejs functions
-    //for (var f in requirejs) {
-    //    window.require[f] = requirejs[f];
-    //}
 
 }());

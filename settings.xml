@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<quiqqer>
+    <settings>
+
+        <config>
+            <section name="settings">
+                <conf name="cache">
+                    <type><![CDATA[bool]]></type>
+                    <defaultvalue>1</defaultvalue>
+                </conf>
+
+                <conf name="htmlcache">
+                    <type><![CDATA[bool]]></type>
+                    <defaultvalue>1</defaultvalue>
+                </conf>
+                <conf name="csscache">
+                    <type><![CDATA[bool]]></type>
+                    <defaultvalue>1</defaultvalue>
+                </conf>
+                <conf name="jscache">
+                    <type><![CDATA[bool]]></type>
+                    <defaultvalue>1</defaultvalue>
+                </conf>
+            </section>
+        </config>
+
+        <window>
+            <title>Webseiten Caching Einstellungen</title>
+            <params>
+                <icon>fa fa-clone icon-code-fork</icon>
+            </params>
+
+            <categories>
+                <category name="cache_settings">
+                    <text>Webseiten Cache</text>
+                    <icon>fa fa-clone icon-code-fork</icon>
+
+                    <settings title="settings" name="settings">
+                        <title>Allgemeine Webseiten Caching Einstellungen</title>
+
+                        <input conf="settings.htmlcache" type="checkbox">
+                            <text>Cache aktivieren</text>
+                            <description>
+
+                            </description>
+                        </input>
+
+                        <input conf="settings.htmlcache" type="checkbox">
+                            <text>HTML Cache / HTML optimieren</text>
+                            <description>
+
+                            </description>
+                        </input>
+
+                        <input conf="settings.csscache" type="checkbox">
+                            <text>CSS Cache / CSS optimieren</text>
+                            <description>
+
+                            </description>
+                        </input>
+
+                        <input conf="settings.jscache" type="checkbox">
+                            <text>JavaScript Cache / JavaScript optimieren</text>
+                            <description>
+
+                            </description>
+                        </input>
+
+                    </settings>
+                </category>
+
+            </categories>
+        </window>
+
+    </settings>
+</quiqqer>
