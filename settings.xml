@@ -41,7 +41,7 @@
 
                     <settings title="settings" name="settings">
                         <title>
-                            <locale group="quiqqer/cache" value="settings.category.content.title"/>
+                            <locale group="quiqqer/cache" var="settings.category.content.title"/>
                         </title>
 
                         <input conf="settings.cache" type="checkbox">

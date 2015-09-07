@@ -34,7 +34,6 @@
             <en><![CDATA[The HTML cache optimizes the generated HTML of a page.]]></en>
         </locale>
 
-
         <locale name="settings.csscache">
             <de><![CDATA[CSS Cache aktivieren und CSS optimieren]]></de>
             <en><![CDATA[Enable CSS cache and optimize CSS]]></en>
@@ -54,7 +53,7 @@
             <de><![CDATA[JavaScript Cache aktivieren und JavaScript optimieren]]></de>
             <en><![CDATA[JavaScript cache and optimize JavaScript]]></en>
         </locale>
-        <locale name="settings.csscache.description" html="true">
+        <locale name="settings.jscache.description" html="true">
             <de><![CDATA[
             Der JavaScript Cache optimiert das JavaScript und speichert dieses zwischen. <br />
             Auch das JavaScript AMD Modulen werden optimiert.
