@@ -38,7 +38,7 @@
                     <settings title="settings" name="settings">
                         <title>Allgemeine Webseiten Caching Einstellungen</title>
 
-                        <input conf="settings.htmlcache" type="checkbox">
+                        <input conf="settings.cache" type="checkbox">
                             <text>Cache aktivieren</text>
                             <description>
 
