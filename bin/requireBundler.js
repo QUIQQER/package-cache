@@ -14,8 +14,8 @@
     requirejs.config({
         map: {
             '*': {
-                'css' : URL_OPT_DIR + 'quiqqer/cache/bin/css-cache',
-                'text': URL_OPT_DIR + 'quiqqer/cache/bin/text-cache'
+                'css' : URL_OPT_DIR + 'quiqqer/cache/bin/css-cache.js',
+                'text': URL_OPT_DIR + 'quiqqer/cache/bin/text-cache.js'
             }
         }
     });

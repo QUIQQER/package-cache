@@ -98,7 +98,7 @@ class EventCoordinator
 
         $Template->extendHeader(
             "<script>
-                var QUIQQER_CACHE_CACHESETTING = {$cacheSetting}
+                var QUIQQER_CACHE_CACHESETTING = {$cacheSetting};
             </script>"
         );
 
