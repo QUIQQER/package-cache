@@ -297,5 +297,6 @@ class Handler
     public function clearCache()
     {
         QUI::getTemp()->moveToTemp($this->getCacheDir());
+        QUI\Cache\Manager::clear('quiqqer/cache');
     }
 }

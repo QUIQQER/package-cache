@@ -19,7 +19,7 @@ function package_quiqqer_cache_ajax_requirejs($packages, $requireConfig)
 
     try
     {
-        return QUI\Cache\AMDOptimizer::optimizeAMD(
+        return QUI\Cache\Optimizer::optimizeAMD(
             $packages,
             $requireConfig
         );

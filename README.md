@@ -2,9 +2,8 @@
 Cache
 ========
 
-Dieses Modul erweitert QUIQQER um ein besseres Template Caching System. 
+Dieses Modul erweitert QUIQQER um ein besseres Webseiten Caching System. 
 Das Cache-Modul generiert statisches HTML, kombiniert und optimiert CSS und JavaScript.
-
 
 Packetname:
 
@@ -18,6 +17,8 @@ Features
 - Kombiniert CSS und JavaScript
 - Optimiert CSS und JavaScript
 - Verkleinert die Requests eines Templates
+- Nutzt locale storage für requireJS Aufrufe
+- Optimiert JavaScript AMD Module
 
 Installation
 ------------

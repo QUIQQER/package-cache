@@ -1,7 +1,7 @@
 {
     "name" : "quiqqer/cache",
     "type" : "quiqqer-plugin",
-    "description" : "",
+    "description" : "Website cache for QUIQQER",
     "version" : "dev-dev",
     "license" : "",
 

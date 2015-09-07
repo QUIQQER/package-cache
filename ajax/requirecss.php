@@ -17,7 +17,7 @@ function package_quiqqer_cache_ajax_requirecss($cssfile, $requireConfig)
     $requireConfig = json_decode($requireConfig, true);
 
     try {
-        $minified = QUI\Cache\AMDOptimizer::optimizeCSS(
+        $minified = QUI\Cache\Optimizer::optimizeCSS(
             $cssfile,
             $requireConfig
         );
