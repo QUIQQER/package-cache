@@ -71,6 +71,21 @@ class EventCoordinator
     }
 
     /**
+     * event : on package config save
+     *
+     * @param QUI\Package\Package $Package
+     */
+    static function onPackageConfigSave(QUI\Package\Package $Package)
+    {
+        if ($Package->getName() != 'quiqqer/cache') {
+            return;
+        }
+
+        // clear the cache
+        QUI\Cache\Handler::init()->clearCache();
+    }
+
+    /**
      * event : on template get header
      * Extend the header with the require js php bundler
      *

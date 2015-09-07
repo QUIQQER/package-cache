@@ -3,6 +3,7 @@
     <event on="onRequest" fire="\QUI\Cache\EventCoordinator::onRequest"/>
     <event on="onRequestOutput" fire="\QUI\Cache\EventCoordinator::onRequestOutput"/>
     <event on="onTemplateGetHeader" fire="\QUI\Cache\EventCoordinator::onTemplateGetHeader"/>
+    <event on="onPackageConfigSave" fire="\QUI\Cache\EventCoordinator::onPackageConfigSave"/>
 
     <!-- clear cache -->
     <event on="onSiteSave" fire="\QUI\Cache\EventCoordinator::clearCache"/>

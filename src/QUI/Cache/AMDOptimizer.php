@@ -23,7 +23,7 @@ class AMDOptimizer
      *
      * @throws QUI\Exception
      */
-    static function optimize(array $needles, array $requireConf)
+    static function optimizeAMD(array $needles, array $requireConf)
     {
         $rJsFile   = OPT_DIR . 'quiqqer/cache/amd/r.js';
         $cachehash = md5(serialize($needles) . serialize($requireConf));

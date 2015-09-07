@@ -19,7 +19,10 @@ function package_quiqqer_cache_ajax_requirejs($packages, $requireConfig)
 
     try
     {
-        return QUI\Cache\AMDOptimizer::optimize($packages, $requireConfig);
+        return QUI\Cache\AMDOptimizer::optimizeAMD(
+            $packages,
+            $requireConfig
+        );
 
     } catch (QUI\Exception $Exception) {
         return '';

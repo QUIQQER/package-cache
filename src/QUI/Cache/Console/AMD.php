@@ -30,6 +30,6 @@ class AMD extends QUI\System\Console\Tool
      */
     public function execute()
     {
-        QUI\Cache\AMDOptimizer::optimize($this);
+//        QUI\Cache\AMDOptimizer::optimize($this);
     }
 }
