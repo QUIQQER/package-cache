@@ -25,44 +25,58 @@
         </config>
 
         <window>
-            <title>Webseiten Caching Einstellungen</title>
+            <title>
+                <locale group="quiqqer/cache" var="settings.title"/>
+            </title>
             <params>
                 <icon>fa fa-clone icon-code-fork</icon>
             </params>
 
             <categories>
                 <category name="cache_settings">
-                    <text>Webseiten Cache</text>
+                    <text>
+                        <locale group="quiqqer/cache" var="settings.category.title"/>
+                    </text>
                     <icon>fa fa-clone icon-code-fork</icon>
 
                     <settings title="settings" name="settings">
-                        <title>Allgemeine Webseiten Caching Einstellungen</title>
+                        <title>
+                            <locale group="quiqqer/cache" value="settings.category.content.title"/>
+                        </title>
 
                         <input conf="settings.cache" type="checkbox">
-                            <text>Cache aktivieren</text>
+                            <text>
+                                <locale group="quiqqer/cache" var="settings.cache"/>
+                            </text>
                             <description>
-
+                                <locale group="quiqqer/cache" var="settings.cache.description"/>
                             </description>
                         </input>
 
                         <input conf="settings.htmlcache" type="checkbox">
-                            <text>HTML Cache / HTML optimieren</text>
+                            <text>
+                                <locale group="quiqqer/cache" var="settings.htmlcache"/>
+                            </text>
                             <description>
-
+                                <locale group="quiqqer/cache" var="settings.htmlcache.description"/>
                             </description>
                         </input>
 
                         <input conf="settings.csscache" type="checkbox">
-                            <text>CSS Cache / CSS optimieren</text>
+                            <text>
+                                <locale group="quiqqer/cache" var="settings.csscache"/>
+                            </text>
                             <description>
-
+                                <locale group="quiqqer/cache" var="settings.csscache.description"/>
                             </description>
                         </input>
 
                         <input conf="settings.jscache" type="checkbox">
-                            <text>JavaScript Cache / JavaScript optimieren</text>
+                            <text>
+                                <locale group="quiqqer/cache" var="settings.jscache"/>
+                            </text>
                             <description>
-
+                                <locale group="quiqqer/cache" var="settings.jscache.description"/>
                             </description>
                         </input>
 

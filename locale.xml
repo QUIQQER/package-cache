@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<locales>
+    <groups name="quiqqer/cache" datatype="php">
+
+        <locale name="settings.title">
+            <de><![CDATA[Webseiten Caching Einstellungen]]></de>
+            <en><![CDATA[Website caching settings]]></en>
+        </locale>
+        <locale name="settings.category.title">
+            <de><![CDATA[Caching Einstellungen]]></de>
+            <en><![CDATA[Caching settings]]></en>
+        </locale>
+
+        <locale name="settings.category.content.title">
+            <de><![CDATA[Allgemeine Webseiten Caching Einstellungen]]></de>
+            <en><![CDATA[General Websites caching settings]]></en>
+        </locale>
+
+        <locale name="settings.cache">
+            <de><![CDATA[Cache aktivieren]]></de>
+            <en><![CDATA[Enable cache]]></en>
+        </locale>
+        <locale name="settings.cache.description">
+            <de><![CDATA[Deaktivierung des kompletten Cache hat zur folge dass kein Cache generiert wird.]]></de>
+            <en><![CDATA[Deactivation of the entire cache with the result that no cache is generated.]]></en>
+        </locale>
+
+        <locale name="settings.htmlcache">
+            <de><![CDATA[HTML Cache aktivieren und HTML optimieren]]></de>
+            <en><![CDATA[Enable HTML cache and optimize HTML]]></en>
+        </locale>
+        <locale name="settings.htmlcache.description" html="true">
+            <de><![CDATA[Der HTML Cache optimiert das generierte HTML einer Seite.]]></de>
+            <en><![CDATA[The HTML cache optimizes the generated HTML of a page.]]></en>
+        </locale>
+
+
+        <locale name="settings.csscache">
+            <de><![CDATA[CSS Cache aktivieren und CSS optimieren]]></de>
+            <en><![CDATA[Enable CSS cache and optimize CSS]]></en>
+        </locale>
+        <locale name="settings.csscache.description" html="true">
+            <de><![CDATA[
+            Der CSS Cache optimiert das CSS und speichert dieses zwischen. <br />
+            Auch das CSS von JavaScript AMD Modulen wird optimiert.
+            ]]></de>
+            <en><![CDATA[
+            The CSS Cache optimizes the CSS and stores between. <br />
+            Also, the CSS JavaScript AMD modules is optimized.
+            ]]></en>
+        </locale>
+
+        <locale name="settings.jscache" html="true">
+            <de><![CDATA[JavaScript Cache aktivieren und JavaScript optimieren]]></de>
+            <en><![CDATA[JavaScript cache and optimize JavaScript]]></en>
+        </locale>
+        <locale name="settings.csscache.description" html="true">
+            <de><![CDATA[
+            Der JavaScript Cache optimiert das JavaScript und speichert dieses zwischen. <br />
+            Auch das JavaScript AMD Modulen werden optimiert.
+            ]]></de>
+            <en><![CDATA[
+            The JavaScript cache optimizes the JavaScript and stores between. <br />
+            Also the JavaScript AMD modules are optimized.
+            ]]></en>
+        </locale>
+
+
+    </groups>
+</locales>
