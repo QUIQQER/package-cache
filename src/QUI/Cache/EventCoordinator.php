@@ -93,8 +93,8 @@ class EventCoordinator
      */
     static function onTemplateGetHeader(QUI\Template $Template)
     {
-        $Package          = QUI::getPackage('quiqqer/cache');
-        $cacheSetting     = $Package->getConfig()->get('settings', 'cache');
+        $Package      = QUI::getPackage('quiqqer/cache');
+        $cacheSetting = $Package->getConfig()->get('settings', 'cache');
 
         $Template->extendHeader(
             "<script>
@@ -114,5 +114,16 @@ class EventCoordinator
     static function clearCache()
     {
         QUI\Cache\Handler::init()->clearCache();
+    }
+
+    /**
+     * event : on image create size cache
+     *
+     * @param QUI\Projects\Media\Item $Image
+     * @param \Intervention\Image\Image $Cache
+     */
+    static function onMediaCreateSizeCache(\QUI\Projects\Media\Item $Image, \Intervention\Image\Image $Cache)
+    {
+        $Cache->save(null, 70);
     }
 }

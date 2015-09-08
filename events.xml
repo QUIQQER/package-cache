@@ -15,6 +15,7 @@
     <event on="onMediaDeactivate" fire="\QUI\Cache\EventCoordinator::clearCache"/>
     <event on="onMediaSave" fire="\QUI\Cache\EventCoordinator::clearCache"/>
     <event on="onMediaDelete" fire="\QUI\Cache\EventCoordinator::clearCache"/>
+    <event on="onMediaCreateSizeCache" fire="\QUI\Cache\EventCoordinator::onMediaCreateSizeCache"/>
 
     <event on="onProjectConfigSave" fire="\QUI\Cache\EventCoordinator::clearCache"/>
     <event on="onPackageSetup" fire="\QUI\Cache\EventCoordinator::clearCache"/>
