@@ -175,6 +175,49 @@ class Optimizer
 
         return $minified;
     }
+
+    /**
+     * @param string $file
+     *
+     * @throws QUI\Exception
+     */
+    static function optimizePNG($file)
+    {
+        $optipng = shell_exec("which optipng");
+
+        if (empty($optipng)) {
+            throw new QUI\Exception('optipng is not installed');
+        }
+
+        if (!file_exists($file)) {
+            throw new QUI\Exception('File not exists', 404);
+        }
+
+        shell_exec('optipng "' . $file . '"');
+    }
+
+    /**
+     * @param string $file
+     *
+     * @throws QUI\Exception
+     */
+    static function optimizeJPG($file)
+    {
+        $jpegoptim = shell_exec("which jpegoptim");
+        $quality   = 70;
+
+        if (empty($jpegoptim)) {
+            throw new QUI\Exception('jpegoptim is not installed');
+        }
+
+        if (!file_exists($file)) {
+            throw new QUI\Exception('File not exists', 404);
+        }
+
+        shell_exec('jpegoptim -m' . $quality . ' -o --strip-all "' . $file . '"');
+    }
+
+
 //
 //    /**
 //     * @param null|QUI\System\Console\Tool $Output

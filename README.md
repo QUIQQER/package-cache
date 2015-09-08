@@ -19,6 +19,7 @@ Features
 - Verkleinert die Requests eines Templates
 - Nutzt locale storage für requireJS Aufrufe
 - Optimiert JavaScript AMD Module
+- Optimiert PNG und JPG Bilder beim Cacheaufbau
 
 Installation
 ------------
@@ -47,3 +48,7 @@ License
 Entwickler
 --------
 
+*Needle*
+- jpegoptim
+- optipng
+- npm für die AMD Komprimierung

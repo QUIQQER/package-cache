@@ -124,6 +124,25 @@ class EventCoordinator
      */
     static function onMediaCreateSizeCache(\QUI\Projects\Media\Item $Image, \Intervention\Image\Image $Cache)
     {
+
+        try
+        {
+            switch ($Cache->extension) {
+                case 'jpg':
+                    Optimizer::optimizeJPG($Cache->basePath());
+                    break;
+
+                case 'png':
+                    Optimizer::optimizeJPG($Cache->basePath());
+                    break;
+            }
+
+            return;
+
+        } catch (QUI\Exception $Exception) {
+            QUI\System\Log::addWarning($Exception->getMessage());
+        }
+
         $Cache->save(null, 70);
     }
 }
