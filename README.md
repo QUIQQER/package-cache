@@ -52,3 +52,7 @@ Entwickler
 - jpegoptim
 - optipng
 - npm für die AMD Komprimierung
+
+
+@todo
+http://www.webmaster-zentrale.de/technik/optimierung/webseiten-beschleunigen-teil-2-expires-header-verwenden/

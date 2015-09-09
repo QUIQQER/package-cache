@@ -133,7 +133,11 @@ class Optimizer
         $exec   = "{$command} {$rJsFile} -o '{$moduleBuildConfig}' mainConfigFile='{$requireBuildConfig}'";
         $result = shell_exec($exec);
 
-        // cleanup
+        // optimize
+        $optimized = self::optimizeJavaScript($buildFile);
+
+        QUI\System\Log::writeRecursive($optimized);
+
 
         if (file_exists($buildFile)) {
             return file_get_contents($buildFile);
@@ -145,7 +149,7 @@ class Optimizer
     }
 
     /**
-     * Optimize css from amd modules
+     * Optimize the content of a css file
      *
      * @param string $cssfile - css file
      * @return string
@@ -174,6 +178,40 @@ class Optimizer
         ));
 
         return $minified;
+    }
+
+    /**
+     * Optimize the content of a JavaScript file
+     *
+     * @param string $jsfile - JavaScript file
+     * @return string
+     * @throws QUI\Exception
+     */
+    static function optimizeJavaScript($jsfile)
+    {
+        $jsfilePath = $jsfile;
+
+        if (!file_exists($jsfilePath)) {
+
+            $parse      = parse_url($jsfilePath);
+            $jsfilePath = $parse['path'];
+
+            if (!file_exists($jsfilePath)) {
+                throw new QUI\Exception('File not found', 404);
+            }
+        }
+
+        $command     = 'uglifyjs';
+        $uglifyjsCheck = shell_exec("which uglifyjs");
+
+        if (empty($uglifyjsCheck)) {
+            throw new QUI\Exception('uglifyjs is not installed or is not callable');
+        }
+
+        $exec   = "{$command} {$jsfilePath} --screw-ie8 --compress --mangle";
+        $result = shell_exec($exec);
+
+        return $result;
     }
 
     /**

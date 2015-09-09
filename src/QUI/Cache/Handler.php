@@ -180,6 +180,18 @@ class Handler
             // create javascript cache file
             file_put_contents($cacheJSFile, $jsContent);
 
+            try
+            {
+                $optimized = Optimizer::optimizeJavaScript($cacheJSFile);
+
+                if (!empty($optimized)) {
+                    file_put_contents($cacheJSFile, $optimized);
+                }
+
+            } catch (QUI\Exception $Exception) {
+                // could not optimize javascript
+            }
+
 
             // insert quiqqer.cache.js
             $content = str_replace(
