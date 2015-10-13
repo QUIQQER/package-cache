@@ -66,7 +66,7 @@ class Handler
         }
 
         $dir       = $this->getCacheDir();
-        $cachefile = $dir . md5($uri) . '.html';
+        $cachefile = $dir . md5($uri) . QUI\Rewrite::getDefaultSuffix();
 
         if (file_exists($cachefile) && !is_dir($cachefile)) {
             return file_get_contents($cachefile);
@@ -122,7 +122,7 @@ class Handler
         /**
          * HTML
          */
-        $cacheHtmlFile = $dir . $cacheId . '.html';
+        $cacheHtmlFile = $dir . $cacheId . QUI\Rewrite::getDefaultSuffix();
         file_put_contents($cacheHtmlFile, $content);
 
 
@@ -180,8 +180,7 @@ class Handler
             // create javascript cache file
             file_put_contents($cacheJSFile, $jsContent);
 
-            try
-            {
+            try {
                 $optimized = Optimizer::optimizeJavaScript($cacheJSFile);
 
                 if (!empty($optimized)) {
