@@ -53,6 +53,12 @@ Entwickler
 - optipng
 - npm für die AMD Komprimierung
 
+*Konsole - Bilder optimieren*
+
+```
+php quiqqer.php --username=* --password=* --tool=package:cache-optimize --project=*
+```
+
 
 @todo
 http://www.webmaster-zentrale.de/technik/optimierung/webseiten-beschleunigen-teil-2-expires-header-verwenden/

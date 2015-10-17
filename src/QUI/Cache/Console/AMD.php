@@ -19,7 +19,7 @@ class AMD extends QUI\System\Console\Tool
      */
     public function __construct()
     {
-        $this->setName('package:console-amd')
+        $this->setName('package:cache-amd')
             ->setDescription('Optimize the AMD JavaScript Packages');
     }
 
