@@ -44,10 +44,14 @@ class Optimize extends QUI\System\Console\Tool
         }
 
         // find all pngs
-        $this->writeLn('Optimize PNG Files ...', 'green');
+        $this->writeLn('Optimize PNG Files', 'green');
 
-        $list = shell_exec('find "' . $cacheDir . '" -iname \*.png -type f -mtime -' . $mtime);
-        $list = explode("\n", trim($list));
+        $list  = shell_exec('find "' . $cacheDir . '" -iname \*.png -type f -mtime -' . $mtime);
+        $list  = explode("\n", trim($list));
+        $count = count($list);
+
+        $this->resetColor();
+        $this->writeLn('Found ' . $count . ' images');
 
         foreach ($list as $image) {
             if (file_exists(CMS_DIR . $image)) {
@@ -62,8 +66,12 @@ class Optimize extends QUI\System\Console\Tool
         // find all jpgs
         $this->writeLn('Optimize JPG Files ...', 'green');
 
-        $list = shell_exec('find "' . $cacheDir . '" -iname \*.jp*g -type f -mtime -' . $mtime);
-        $list = explode("\n", trim($list));
+        $list  = shell_exec('find "' . $cacheDir . '" -iname \*.jp*g -type f -mtime -' . $mtime);
+        $list  = explode("\n", trim($list));
+        $count = count($list);
+
+        $this->resetColor();
+        $this->writeLn('Found ' . $count . ' images');
 
         foreach ($list as $image) {
             if (file_exists(CMS_DIR . $image)) {
