@@ -195,7 +195,7 @@ class Handler
             // insert quiqqer.cache.js
             $content = str_replace(
                 '</body>',
-                '<script src="' . $cacheURLJSFile . '" type="text/javascript"></script></body>',
+                '<script src="' . $cacheURLJSFile . '" type="text/javascript" asnyc></script></body>',
                 $content
             );
 
