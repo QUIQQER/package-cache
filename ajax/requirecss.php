@@ -14,13 +14,10 @@
  */
 function package_quiqqer_cache_ajax_requirecss($cssfile, $requireConfig)
 {
-    $requireConfig = json_decode($requireConfig, true);
+//    $requireConfig = json_decode($requireConfig, true);
 
     try {
-        $minified = QUI\Cache\Optimizer::optimizeCSS(
-            $cssfile,
-            $requireConfig
-        );
+        $minified = QUI\Cache\Optimizer::optimizeCSS($cssfile);
 
         echo $minified; exit;
 
@@ -31,6 +28,7 @@ function package_quiqqer_cache_ajax_requirecss($cssfile, $requireConfig)
             \Symfony\Component\HttpFoundation\Response::HTTP_NOT_FOUND
         );
 
+        echo '';
         exit;
     }
 }

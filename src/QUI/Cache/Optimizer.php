@@ -165,7 +165,23 @@ class Optimizer
             $cssfilePath = $parse['path'];
 
             if (!file_exists($cssfilePath)) {
-                throw new QUI\Exception('File not found', 404);
+
+                // URL BIN DIR, we must use the real QUIQQER BIN DIR
+                if (strpos($cssfile, URL_BIN_DIR) === 0) {
+                    $cssfilePath = OPT_DIR .'quiqqer/quiqqer'. $cssfile;
+
+                    if (!file_exists($cssfilePath)) {
+                        $parse       = parse_url($cssfilePath);
+                        $cssfilePath = $parse['path'];
+
+                        if (!file_exists($cssfilePath)) {
+                            throw new QUI\Exception('File not found', 404);
+                        }
+                    }
+
+                } else {
+                    throw new QUI\Exception('File not found', 404);
+                }
             }
         }
 

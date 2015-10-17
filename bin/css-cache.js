@@ -231,11 +231,10 @@ define(function () {
                 (useImportLoad ? importLoad : linkLoad)(req.toUrl(cssId + '.css'), load);
             }
         }).send(Object.toQueryString({
-                    _rf            : JSON.encode(['package_quiqqer_cache_ajax_requirecss']),
-                    'package'      : 'quiqqer/cache',
-                    'cssfile'      : url,
-                    'amdPackage'   : url,
-                    'requireConfig': JSON.encode(config)
+                    _rf         : JSON.encode(['package_quiqqer_cache_ajax_requirecss']),
+                    'package'   : 'quiqqer/cache',
+                    'cssfile'   : url,
+                    'amdPackage': url
                 }));
 
     };
