@@ -122,9 +122,8 @@ class EventCoordinator
      * @param QUI\Projects\Media\Item $Image
      * @param \Intervention\Image\Image $Cache
      */
-    static function onMediaCreateSizeCache(\QUI\Projects\Media\Item $Image, \Intervention\Image\Image $Cache)
+    static function onMediaCreateSizeCache(QUI\Projects\Media\Item $Image, \Intervention\Image\Image $Cache)
     {
-
         try
         {
             switch ($Cache->extension) {
