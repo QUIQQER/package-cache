@@ -208,9 +208,7 @@ define(['module'], function (module) {
 
                         try {
                             Storage.setItem(url, result);
-                        } catch (e) {
-
-                        }
+                        } catch (e) {}
                     });
                 }, function (err) {
                     if (onLoad.error) {

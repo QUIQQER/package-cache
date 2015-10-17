@@ -208,15 +208,15 @@ define(function () {
             url      : URL_DIR + 'admin/ajax.php',
             onSuccess: function (responseText) {
 
+                new Element('style', {
+                    html: responseText
+                }).inject(document.head);
+
+                load();
+
                 try {
+
                     Storage.setItem(url, responseText);
-
-                    new Element('style', {
-                        html: responseText
-                    }).inject(document.head);
-
-                    load();
-
                 } catch (e) {
                     (useImportLoad ? importLoad : linkLoad)(req.toUrl(cssId + '.css'), load);
                 }

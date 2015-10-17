@@ -1,6 +1,8 @@
 /**
  * require js ajax bundler - local storage cache
  */
+
+/* @global requirejs */
 (function () {
     "use strict";
 
@@ -41,10 +43,8 @@
             var storage = Storage.getItem(url);
 
             if (storage) {
-                new Element('script', {
-                    html                : storage,
-                    'data-requiremodule': moduleName
-                }).inject(document.head);
+                console.info(url);
+                eval.call(window, storage);
 
                 context.completeLoad(moduleName);
                 return;
@@ -53,32 +53,28 @@
             //return (useImportLoad ? importLoad : linkLoad)(req.toUrl(cssId + '.css'), load);
         }
 
-
-        new Request({
+        return new Request({
             method   : 'get',
             url      : url,
             onSuccess: function (responseText) {
 
-                new Element('script', {
-                    html                : responseText,
-                    'data-requiremodule': moduleName
-                }).inject(document.head);
-
-                context.completeLoad(moduleName);
-
+                // hmm :-/ no better way?
+                try {
+                    eval.call(responseText);
+                } catch (e) {
+                    console.error(e, moduleName, url, responseText);
+                }
 
                 try {
                     Storage.setItem(url, responseText);
-
-                    new Element('style', {
-                        html: responseText
-                    }).inject(document.head);
-
-                    load();
-
                 } catch (e) {
+                    // maybe QUOTA_REACHED
+                    console.error(e, moduleName, url);
 
+                    Storage.clear();
                 }
+
+                context.completeLoad(moduleName);
             }
         }).send();
     };
