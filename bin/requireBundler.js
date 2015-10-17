@@ -43,9 +43,7 @@
             var storage = Storage.getItem(url);
 
             if (storage) {
-                console.info(url);
                 eval.call(window, storage);
-
                 context.completeLoad(moduleName);
                 return;
             }
