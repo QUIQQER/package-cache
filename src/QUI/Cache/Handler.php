@@ -266,9 +266,15 @@ class Handler
 
 
             // insert css cache file to the head
+//            $content = str_replace(
+//                '<!-- quiqqer css -->',
+//                '<link href="' . $cacheURLCSSFile . '" rel="stylesheet" type="text/css" />',
+//                $content
+//            );
+
             $content = str_replace(
                 '<!-- quiqqer css -->',
-                '<link href="' . $cacheURLCSSFile . '" rel="stylesheet" type="text/css" />',
+                '<style>'. $cssContent .'</style>',
                 $content
             );
 
