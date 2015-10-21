@@ -52,6 +52,7 @@ Entwickler
 - jpegoptim
 - optipng
 - npm für die AMD Komprimierung
+- uglifyjs
 
 *Konsole - Bilder optimieren*
 
