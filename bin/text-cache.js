@@ -186,8 +186,15 @@ define(['module'], function (module) {
                 return;
             }
 
+            var isUser = false;
 
-            if (Storage) {
+            if (typeof window.QUIQQER_USER !== 'undefined' &&
+                typeof window.QUIQQER_USER.id !== 'undefined' &&
+                window.QUIQQER_USER.id !== '') {
+                isUser = true;
+            }
+
+            if (Storage && !isUser) {
                 try {
                     var storage = Storage.getItem(url);
 
