@@ -31,6 +31,11 @@ class EventCoordinator
             return;
         }
 
+        // loged in users get no cache
+        if (QUI::getUsers()->isAuth(QUI::getUserBySession())) {
+            return;
+        }
+
         try {
 
             echo QUI\Cache\Handler::init()->getCacheFromRequest();
@@ -53,6 +58,11 @@ class EventCoordinator
 
         // query strings have no cache
         if (!is_null($query)) {
+            return;
+        }
+
+        // loged in users get no cache
+        if (QUI::getUsers()->isAuth(QUI::getUserBySession())) {
             return;
         }
 
