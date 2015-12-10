@@ -23,11 +23,15 @@ class EventCoordinator
      */
     public static function onRequest($Rewrite, $url)
     {
-        $Request = QUI::getRequest();
-        $query   = $Request->getQueryString();
+        $getParams  = $_GET;
+        $postParams = $_POST;
+
+        if (isset($getParams['_url'])) {
+            unset($getParams['_url']);
+        }
 
         // query strings have no cache
-        if (!is_null($query)) {
+        if (!empty($getParams) || !empty($postParams)) {
             return;
         }
 
