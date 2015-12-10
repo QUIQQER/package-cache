@@ -55,7 +55,7 @@ class EventCoordinator
         $postParams = $_POST;
 
         if (isset($getParams['_url'])) {
-            unset($getParams);
+            unset($getParams['_url']);
         }
 
         // query strings have no cache
