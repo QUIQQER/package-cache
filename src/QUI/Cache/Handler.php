@@ -131,7 +131,6 @@ class Handler
          */
 
         if ($jsCacheSetting) {
-
             preg_match_all(
                 '/<script[^>]*>(.*)<\/script>/Uis',
                 $content,
@@ -146,9 +145,7 @@ class Handler
             $cacheURLJSFile = $urlBinDir . $jsId . '.cache.js';
 
             foreach ($matches as $entry) {
-
                 if (strpos($entry[0], 'src=') === false) {
-
                     $content = str_replace($entry, '', $content);
                     $jsContent .= $entry[1];
 
@@ -207,7 +204,6 @@ class Handler
          * Bundle CSS
          */
         if ($cssCacheSetting) {
-
             $CSSMinify = new \Minify_CSS();
 
             preg_match_all(
@@ -285,7 +281,6 @@ class Handler
          * HTML optimize
          */
         if ($htmlCacheSetting) {
-
             $sources = array(
                 new \Minify_Source(array(
                     'id'            => $cacheId,

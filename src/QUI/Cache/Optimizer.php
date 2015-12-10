@@ -23,7 +23,7 @@ class Optimizer
      *
      * @throws QUI\Exception
      */
-    static function optimizeAMD(array $needles, array $requireConf)
+    public static function optimizeAMD(array $needles, array $requireConf)
     {
         $rJsFile   = OPT_DIR . 'quiqqer/cache/amd/r.js';
         $cachehash = md5(serialize($needles) . serialize($requireConf));
@@ -33,7 +33,6 @@ class Optimizer
             return QUI\Cache\Manager::get($cacheName);
 
         } catch (QUI\Exception $Exception) {
-
         }
 
         // config params
@@ -155,17 +154,15 @@ class Optimizer
      * @return string
      * @throws QUI\Exception
      */
-    static function optimizeCSS($cssfile)
+    public static function optimizeCSS($cssfile)
     {
         $cssfilePath = CMS_DIR . $cssfile;
 
         if (!file_exists($cssfilePath)) {
-
             $parse       = parse_url($cssfilePath);
             $cssfilePath = $parse['path'];
 
             if (!file_exists($cssfilePath)) {
-
                 // URL BIN DIR, we must use the real QUIQQER BIN DIR
                 if (strpos($cssfile, URL_BIN_DIR) === 0) {
                     $cssfilePath = OPT_DIR .'quiqqer/quiqqer'. $cssfile;
@@ -203,12 +200,11 @@ class Optimizer
      * @return string
      * @throws QUI\Exception
      */
-    static function optimizeJavaScript($jsfile)
+    public static function optimizeJavaScript($jsfile)
     {
         $jsfilePath = $jsfile;
 
         if (!file_exists($jsfilePath)) {
-
             $parse      = parse_url($jsfilePath);
             $jsfilePath = $parse['path'];
 
@@ -235,7 +231,7 @@ class Optimizer
      *
      * @throws QUI\Exception
      */
-    static function optimizePNG($file)
+    public static function optimizePNG($file)
     {
         $optipng = shell_exec("which optipng");
 
@@ -255,7 +251,7 @@ class Optimizer
      *
      * @throws QUI\Exception
      */
-    static function optimizeJPG($file)
+    public static function optimizeJPG($file)
     {
         $jpegoptim = shell_exec("which jpegoptim");
         $quality   = 70;
@@ -276,7 +272,7 @@ class Optimizer
      *
      * @return array
      */
-    static protected function _getbuildParams()
+    protected static function _getbuildParams()
     {
         return array(
             'appDir'                 => ".",
@@ -297,4 +293,3 @@ class Optimizer
         );
     }
 }
-
