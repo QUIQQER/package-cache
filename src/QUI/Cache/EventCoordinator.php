@@ -51,15 +51,15 @@ class EventCoordinator
      */
     public static function onRequestOutput($output)
     {
-        $Request = QUI::getRequest();
-        $query   = $Request->getQueryString();
+        $getParams  = $_GET;
+        $postParams = $_POST;
 
-        // query strings have no cache
-        if (!is_null($query)) {
-            return;
+        if (isset($getParams['_url'])) {
+            unset($getParams);
         }
 
-        if (isset($_POST['login'])) {
+        // query strings have no cache
+        if (!empty($getParams) || !empty($postParams)) {
             return;
         }
 
