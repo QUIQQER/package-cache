@@ -21,7 +21,7 @@ class EventCoordinator
      * @param QUI\Rewrite $Rewrite
      * @param string $url
      */
-    static function onRequest($Rewrite, $url)
+    public static function onRequest($Rewrite, $url)
     {
         $Request = QUI::getRequest();
         $query   = $Request->getQueryString();
@@ -37,12 +37,10 @@ class EventCoordinator
         }
 
         try {
-
             echo QUI\Cache\Handler::init()->getCacheFromRequest();
             exit;
 
         } catch (QUI\Exception $Exception) {
-
         }
     }
 
@@ -51,13 +49,17 @@ class EventCoordinator
      *
      * @param string $output
      */
-    static function onRequestOutput($output)
+    public static function onRequestOutput($output)
     {
         $Request = QUI::getRequest();
         $query   = $Request->getQueryString();
 
         // query strings have no cache
         if (!is_null($query)) {
+            return;
+        }
+
+        if (isset($_POST['login'])) {
             return;
         }
 
@@ -76,7 +78,6 @@ class EventCoordinator
         try {
             QUI\Cache\Handler::init()->generatCacheFromRequest($output);
         } catch (QUI\Exception $Exception) {
-
         }
     }
 
@@ -85,7 +86,7 @@ class EventCoordinator
      *
      * @param QUI\Package\Package $Package
      */
-    static function onPackageConfigSave(QUI\Package\Package $Package)
+    public static function onPackageConfigSave(QUI\Package\Package $Package)
     {
         if ($Package->getName() != 'quiqqer/cache') {
             return;
@@ -101,7 +102,7 @@ class EventCoordinator
      *
      * @param QUI\Template $Template
      */
-    static function onTemplateGetHeader(QUI\Template $Template)
+    public static function onTemplateGetHeader(QUI\Template $Template)
     {
         $Package      = QUI::getPackage('quiqqer/cache');
         $cacheSetting = $Package->getConfig()->get('settings', 'cache');
@@ -121,7 +122,7 @@ class EventCoordinator
      * Clear the cache -> onSiteSave ...
      * look at <!-- clear cache --> in events.xml
      */
-    static function clearCache()
+    public static function clearCache()
     {
         QUI\Cache\Handler::init()->clearCache();
     }
@@ -132,10 +133,9 @@ class EventCoordinator
      * @param QUI\Projects\Media\Item $Image
      * @param \Intervention\Image\Image $Cache
      */
-    static function onMediaCreateSizeCache(QUI\Projects\Media\Item $Image, \Intervention\Image\Image $Cache)
+    public static function onMediaCreateSizeCache(QUI\Projects\Media\Item $Image, \Intervention\Image\Image $Cache)
     {
-        try
-        {
+        try {
             switch ($Cache->extension) {
                 case 'jpg':
                     Optimizer::optimizeJPG($Cache->basePath());
