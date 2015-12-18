@@ -61,7 +61,7 @@ class Handler
         $uri     = $Request->getUri();
         $query   = $Request->getQueryString();
 
-        if (!is_null($query)) {
+        if ($query !== null) {
             throw new QUI\Exception('Get Params exists. No Cache exists', 404);
         }
 
@@ -102,7 +102,7 @@ class Handler
         $uri     = $Request->getUri();
         $query   = $Request->getQueryString();
 
-        if (!is_null($query)) {
+        if ($query !== null) {
             throw new QUI\Exception('Get Params exists. No Cache exists', 404);
         }
 
