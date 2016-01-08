@@ -5,7 +5,7 @@ Cache
 Dieses Modul erweitert QUIQQER um ein besseres Webseiten Caching System. 
 Das Cache-Modul generiert statisches HTML, kombiniert und optimiert CSS und JavaScript.
 
-Packetname:
+Paketname:
 
     quiqqer/cache
 
