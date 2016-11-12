@@ -3,8 +3,8 @@
     <groups name="quiqqer/cache" datatype="php">
 
         <locale name="settings.title">
-            <de><![CDATA[Webseiten Caching Einstellungen]]></de>
-            <en><![CDATA[Website caching settings]]></en>
+            <de><![CDATA[Webseiten Caching]]></de>
+            <en><![CDATA[Website caching]]></en>
         </locale>
         <locale name="settings.category.title">
             <de><![CDATA[Caching Einstellungen]]></de>
