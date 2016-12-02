@@ -15,6 +15,15 @@ use QUI;
 class Optimizer
 {
     /**
+     * @param $project
+     * @param int $mtime
+     */
+    public function optimizeProjectImages($project, $mtime = 2)
+    {
+        $Console = new Console\Optimize();
+    }
+
+    /**
      * Optimize and bundle a require js request
      *
      * @param array $needles
@@ -31,7 +40,6 @@ class Optimizer
 
         try {
             return QUI\Cache\Manager::get($cacheName);
-
         } catch (QUI\Exception $Exception) {
         }
 
@@ -165,7 +173,7 @@ class Optimizer
             if (!file_exists($cssfilePath)) {
                 // URL BIN DIR, we must use the real QUIQQER BIN DIR
                 if (strpos($cssfile, URL_BIN_DIR) === 0) {
-                    $cssfilePath = OPT_DIR .'quiqqer/quiqqer'. $cssfile;
+                    $cssfilePath = OPT_DIR . 'quiqqer/quiqqer' . $cssfile;
 
                     if (!file_exists($cssfilePath)) {
                         $parse       = parse_url($cssfilePath);
@@ -175,7 +183,6 @@ class Optimizer
                             throw new QUI\Exception('File not found', 404);
                         }
                     }
-
                 } else {
                     throw new QUI\Exception('File not found', 404);
                 }
@@ -213,7 +220,7 @@ class Optimizer
             }
         }
 
-        $command     = 'uglifyjs';
+        $command       = 'uglifyjs';
         $uglifyjsCheck = shell_exec("which uglifyjs");
 
         if (empty($uglifyjsCheck)) {
@@ -272,7 +279,7 @@ class Optimizer
      *
      * @return array
      */
-    protected static function _getbuildParams()
+    protected static function getbuildParams()
     {
         return array(
             'appDir'                 => ".",

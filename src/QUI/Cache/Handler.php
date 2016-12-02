@@ -183,7 +183,6 @@ class Handler
                 if (!empty($optimized)) {
                     file_put_contents($cacheJSFile, $optimized);
                 }
-
             } catch (QUI\Exception $Exception) {
                 // could not optimize javascript
             }
@@ -270,7 +269,7 @@ class Handler
 
             $content = str_replace(
                 '<!-- quiqqer css -->',
-                '<style>'. $cssContent .'</style>',
+                '<style>' . $cssContent . '</style>',
                 $content
             );
 

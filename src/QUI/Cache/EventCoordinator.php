@@ -43,7 +43,6 @@ class EventCoordinator
         try {
             echo QUI\Cache\Handler::init()->getCacheFromRequest();
             exit;
-
         } catch (QUI\Exception $Exception) {
         }
     }
@@ -151,7 +150,6 @@ class EventCoordinator
             }
 
             return;
-
         } catch (QUI\Exception $Exception) {
             QUI\System\Log::addWarning($Exception->getMessage());
         }

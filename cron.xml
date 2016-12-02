@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <crons>
     <cron exec="\QUI\Cache\Console\Optimize::clearTempFolder">
-        <title>Temp Ordner leeren</title>
+        <title>Cache: Temp Ordner leeren</title>
         <description>Ordner für temporäre Daten leeren</description>
+    </cron>
+    <cron exec="\QUI\Cache\Console\Optimize::optimizeProjectImages">
+        <title>Cache: Projekt Cachebilder optimieren</title>
+        <description>Alle Cachebilder im Projekt werden optmiert.</description>
+        <params>
+            <param name="project" type="string"/>
+            <param name="mtime" type="int"/>
+        </params>
     </cron>
 </crons>
