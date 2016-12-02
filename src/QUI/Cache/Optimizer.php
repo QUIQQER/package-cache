@@ -21,6 +21,9 @@ class Optimizer
     public function optimizeProjectImages($project, $mtime = 2)
     {
         $Console = new Console\Optimize();
+        $Console->setAttribute('project', $project);
+        $Console->setAttribute('mtime', (int)$mtime);
+        $Console->execute();
     }
 
     /**
@@ -281,6 +284,12 @@ class Optimizer
      */
     protected static function getbuildParams()
     {
+        $fileExclusionRegExp = '';
+        $fileExclusionRegExp .= '/\.git|^tests$|^build$|^coverage$|^doc$|^jsdoc$|^examples$|';
+        $fileExclusionRegExp .= '^r\.js|\.md|^package\.json|^composer\.json|^bower\.json|';
+        $fileExclusionRegExp .= '^init\.js|^initDev\.js|^\.jshintrc|^\.flowconfig|';
+        $fileExclusionRegExp .= '^build\.js|^build-jsdoc\.js|^build\-config\.js/';
+
         return array(
             'appDir'                 => ".",
             'baseUrl'                => ".",
@@ -292,7 +301,7 @@ class Optimizer
             'wrapShim'               => false,
             "findNestedDependencies" => true,
             "normalizeDirDefines"    => true,
-            'fileExclusionRegExp'    => '/\.git|^tests$|^build$|^coverage$|^doc$|^jsdoc$|^examples$|^r\.js|\.md|^package\.json|^composer\.json|^bower\.json|^init\.js|^initDev\.js|^\.jshintrc|^\.flowconfig|^build\.js|^build-jsdoc\.js|^build\-config\.js/',
+            'fileExclusionRegExp'    => $fileExclusionRegExp,
             'modules'                => array(),
             'paths'                  => array(
                 'qui' => 'quiqqer/qui/qui'
