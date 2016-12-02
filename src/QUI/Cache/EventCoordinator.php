@@ -44,6 +44,7 @@ class EventCoordinator
             echo QUI\Cache\Handler::init()->getCacheFromRequest();
             exit;
         } catch (QUI\Exception $Exception) {
+            QUI\System\Log::addNotice($Exception->getMessage());
         }
     }
 
