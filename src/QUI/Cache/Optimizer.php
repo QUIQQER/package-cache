@@ -11,6 +11,7 @@ use QUI;
  * Class Optimizer
  *
  * @package QUI\Cache
+ * @todo optipng version higher than 0.7.4
  */
 class Optimizer
 {
@@ -253,7 +254,7 @@ class Optimizer
             throw new QUI\Exception('File not exists', 404);
         }
 
-        shell_exec('optipng "' . $file . '"');
+        shell_exec('optipng -strip all "' . $file . '"');
     }
 
     /**
