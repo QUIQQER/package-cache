@@ -44,7 +44,9 @@ class EventCoordinator
             echo QUI\Cache\Handler::init()->getCacheFromRequest();
             exit;
         } catch (QUI\Exception $Exception) {
-            QUI\System\Log::addNotice($Exception->getMessage());
+            QUI\System\Log::addNotice($Exception->getMessage(), array(
+                'trace' => $Exception->getTraceAsString()
+            ));
         }
     }
 
@@ -82,7 +84,9 @@ class EventCoordinator
         try {
             QUI\Cache\Handler::init()->generatCacheFromRequest($output);
         } catch (QUI\Exception $Exception) {
-            QUI\System\Log::addNotice($Exception->getMessage());
+            QUI\System\Log::addNotice($Exception->getMessage(), array(
+                'trace' => $Exception->getTraceAsString()
+            ));
         }
     }
 
