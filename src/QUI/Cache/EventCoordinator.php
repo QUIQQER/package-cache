@@ -82,6 +82,7 @@ class EventCoordinator
         try {
             QUI\Cache\Handler::init()->generatCacheFromRequest($output);
         } catch (QUI\Exception $Exception) {
+            QUI\System\Log::addNotice($Exception->getMessage());
         }
     }
 
