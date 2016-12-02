@@ -114,6 +114,18 @@ class Handler
         $uri     = $Request->getUri();
         $query   = $Request->getQueryString();
 
+        if (is_string($query)) {
+            $query = parse_str($query);
+        }
+
+        if (!is_array($query)) {
+            $query = array();
+        }
+
+        if (isset($query['_url'])) {
+            unset($query['_url']);
+        }
+
         if ($query !== null) {
             throw new QUI\Exception('Get Params exists. No Cache exists', 404);
         }
