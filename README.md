@@ -21,6 +21,8 @@ Features
 - Optimiert JavaScript AMD Module
 - Optimiert PNG und JPG Bilder beim Cacheaufbau
 
+- **WICHTIG**: Bitte JavaScript Komprmierung ist in der Beta.
+
 Installation
 ------------
 
