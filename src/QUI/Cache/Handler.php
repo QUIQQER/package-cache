@@ -61,6 +61,14 @@ class Handler
         $uri     = $Request->getUri();
         $query   = $Request->getQueryString();
 
+        if (is_string($query)) {
+            $query = parse_str($query);
+        }
+
+        if (!is_array($query)) {
+            $query = array();
+        }
+
         if (isset($query['_url'])) {
             unset($query['_url']);
         }
