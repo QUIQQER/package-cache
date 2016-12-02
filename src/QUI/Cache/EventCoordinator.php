@@ -151,7 +151,7 @@ class EventCoordinator
                     break;
 
                 case 'png':
-                    Optimizer::optimizeJPG($Cache->basePath());
+                    Optimizer::optimizePNG($Cache->basePath());
                     break;
             }
 
