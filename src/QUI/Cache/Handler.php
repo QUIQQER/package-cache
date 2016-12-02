@@ -182,6 +182,10 @@ class Handler
                     $matches
                 );
 
+                if (!isset($matches[1])) {
+                    continue;
+                }
+
                 $file = CMS_DIR . ltrim($matches[1], '/');
 
                 if (!file_exists($file)) {
