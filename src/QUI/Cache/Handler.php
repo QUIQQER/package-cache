@@ -126,7 +126,7 @@ class Handler
             unset($query['_url']);
         }
 
-        if ($query !== null) {
+        if (!empty($query)) {
             throw new QUI\Exception('Get Params exists. No Cache exists', 404);
         }
 
