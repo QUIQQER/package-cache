@@ -19,7 +19,7 @@ class Optimizer
      * @param $project
      * @param int $mtime
      */
-    public function optimizeProjectImages($project, $mtime = 2)
+    public static function optimizeProjectImages($project, $mtime = 2)
     {
         $Console = new Console\Optimize();
         $Console->setAttribute('project', $project);

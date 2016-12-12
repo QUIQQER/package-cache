@@ -4,7 +4,7 @@
         <title>Cache: Temp Ordner leeren</title>
         <description>Ordner für temporäre Daten leeren</description>
     </cron>
-    <cron exec="\QUI\Cache\Console\Optimize::optimizeProjectImages">
+    <cron exec="\QUI\Cache\Cron::optimizeProjectImages">
         <title>Cache: Projekt Cachebilder optimieren</title>
         <description>Alle Cachebilder im Projekt werden optmiert.</description>
         <params>
