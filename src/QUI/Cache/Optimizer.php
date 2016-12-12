@@ -22,8 +22,8 @@ class Optimizer
     public static function optimizeProjectImages($project, $mtime = 2)
     {
         $Console = new Console\Optimize();
-        $Console->setAttribute('project', $project);
-        $Console->setAttribute('mtime', (int)$mtime);
+        $Console->setArgument('project', $project);
+        $Console->setArgument('mtime', (int)$mtime);
         $Console->execute();
     }
 

@@ -22,7 +22,7 @@ class Cron
     public static function optimizeProjectImages($params, $CronManager)
     {
         if (!isset($params['project'])) {
-            throw new QUI\Exception('Need a project parameter to search release dates');
+            throw new QUI\Exception('Need a project parameter');
         }
 
         $Project = QUI::getProject($params['project']);
