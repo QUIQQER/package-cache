@@ -22,8 +22,8 @@
     "mrclay/minify": ">=2.3"
   },
   "autoload": {
-    "psr-0": {
-      "QUI": "src/"
+    "psr-4": {
+      "QUI\\Cache": "src/QUI/Cache"
     }
   }
 }
