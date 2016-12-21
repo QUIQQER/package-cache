@@ -43,8 +43,10 @@ class EventCoordinator
         try {
             echo QUI\Cache\Handler::init()->getCacheFromRequest();
             exit;
-
         } catch (QUI\Exception $Exception) {
+            QUI\System\Log::addNotice($Exception->getMessage(), array(
+                'trace' => $Exception->getTraceAsString()
+            ));
         }
     }
 
@@ -82,6 +84,9 @@ class EventCoordinator
         try {
             QUI\Cache\Handler::init()->generatCacheFromRequest($output);
         } catch (QUI\Exception $Exception) {
+            QUI\System\Log::addNotice($Exception->getMessage(), array(
+                'trace' => $Exception->getTraceAsString()
+            ));
         }
     }
 
@@ -146,12 +151,11 @@ class EventCoordinator
                     break;
 
                 case 'png':
-                    Optimizer::optimizeJPG($Cache->basePath());
+                    Optimizer::optimizePNG($Cache->basePath());
                     break;
             }
 
             return;
-
         } catch (QUI\Exception $Exception) {
             QUI\System\Log::addWarning($Exception->getMessage());
         }

@@ -11,9 +11,22 @@ use QUI;
  * Class Optimizer
  *
  * @package QUI\Cache
+ * @todo optipng version higher than 0.7.4
  */
 class Optimizer
 {
+    /**
+     * @param $project
+     * @param int $mtime
+     */
+    public static function optimizeProjectImages($project, $mtime = 2)
+    {
+        $Console = new Console\Optimize();
+        $Console->setArgument('project', $project);
+        $Console->setArgument('mtime', (int)$mtime);
+        $Console->execute();
+    }
+
     /**
      * Optimize and bundle a require js request
      *
@@ -31,7 +44,6 @@ class Optimizer
 
         try {
             return QUI\Cache\Manager::get($cacheName);
-
         } catch (QUI\Exception $Exception) {
         }
 
@@ -165,7 +177,7 @@ class Optimizer
             if (!file_exists($cssfilePath)) {
                 // URL BIN DIR, we must use the real QUIQQER BIN DIR
                 if (strpos($cssfile, URL_BIN_DIR) === 0) {
-                    $cssfilePath = OPT_DIR .'quiqqer/quiqqer'. $cssfile;
+                    $cssfilePath = OPT_DIR . 'quiqqer/quiqqer' . $cssfile;
 
                     if (!file_exists($cssfilePath)) {
                         $parse       = parse_url($cssfilePath);
@@ -175,7 +187,6 @@ class Optimizer
                             throw new QUI\Exception('File not found', 404);
                         }
                     }
-
                 } else {
                     throw new QUI\Exception('File not found', 404);
                 }
@@ -213,7 +224,7 @@ class Optimizer
             }
         }
 
-        $command     = 'uglifyjs';
+        $command       = 'uglifyjs';
         $uglifyjsCheck = shell_exec("which uglifyjs");
 
         if (empty($uglifyjsCheck)) {
@@ -243,7 +254,7 @@ class Optimizer
             throw new QUI\Exception('File not exists', 404);
         }
 
-        shell_exec('optipng "' . $file . '"');
+        shell_exec('optipng -strip all "' . $file . '"');
     }
 
     /**
@@ -272,8 +283,14 @@ class Optimizer
      *
      * @return array
      */
-    protected static function _getbuildParams()
+    protected static function getbuildParams()
     {
+        $fileExclusionRegExp = '';
+        $fileExclusionRegExp .= '/\.git|^tests$|^build$|^coverage$|^doc$|^jsdoc$|^examples$|';
+        $fileExclusionRegExp .= '^r\.js|\.md|^package\.json|^composer\.json|^bower\.json|';
+        $fileExclusionRegExp .= '^init\.js|^initDev\.js|^\.jshintrc|^\.flowconfig|';
+        $fileExclusionRegExp .= '^build\.js|^build-jsdoc\.js|^build\-config\.js/';
+
         return array(
             'appDir'                 => ".",
             'baseUrl'                => ".",
@@ -285,7 +302,7 @@ class Optimizer
             'wrapShim'               => false,
             "findNestedDependencies" => true,
             "normalizeDirDefines"    => true,
-            'fileExclusionRegExp'    => '/\.git|^tests$|^build$|^coverage$|^doc$|^jsdoc$|^examples$|^r\.js|\.md|^package\.json|^composer\.json|^bower\.json|^init\.js|^initDev\.js|^\.jshintrc|^\.flowconfig|^build\.js|^build-jsdoc\.js|^build\-config\.js/',
+            'fileExclusionRegExp'    => $fileExclusionRegExp,
             'modules'                => array(),
             'paths'                  => array(
                 'qui' => 'quiqqer/qui/qui'

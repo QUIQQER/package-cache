@@ -1,4 +1,3 @@
-
 Cache
 ========
 
@@ -21,10 +20,13 @@ Features
 - Optimiert JavaScript AMD Module
 - Optimiert PNG und JPG Bilder beim Cacheaufbau
 
+- **WICHTIG**: Bitte JavaScript Komprmierung ist in der Beta.
+
 Installation
 ------------
 
 Der Paketname ist: quiqqer/cache
+
 
 
 Mitwirken
@@ -61,5 +63,5 @@ php quiqqer.php --username=* --password=* --tool=package:cache-optimize --projec
 ```
 
 
-@todo
+@todo 
 http://www.webmaster-zentrale.de/technik/optimierung/webseiten-beschleunigen-teil-2-expires-header-verwenden/

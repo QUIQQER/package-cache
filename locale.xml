@@ -1,10 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <locales>
     <groups name="quiqqer/cache" datatype="php">
+        <locale name="package.title">
+            <de><![CDATA[QUIQQER - Cache]]></de>
+            <en><![CDATA[QUIQQER - Cache]]></en>
+        </locale>
+        <locale name="package.description">
+            <de><![CDATA[
+            QUIQQER - Extra Projekt Caching System. Verwendet verschiedene Cacheing
+            Vorgehensweisen um Ihre Seite schneller zu machen.
+            ]]></de>
+            <en><![CDATA[
+            QUIQQER - Extra Project Caching System. Uses different caching approaches
+            to make your page faster.]]></en>
+        </locale>
 
         <locale name="settings.title">
-            <de><![CDATA[Webseiten Caching Einstellungen]]></de>
-            <en><![CDATA[Website caching settings]]></en>
+            <de><![CDATA[Webseiten Caching]]></de>
+            <en><![CDATA[Website caching]]></en>
         </locale>
         <locale name="settings.category.title">
             <de><![CDATA[Caching Einstellungen]]></de>

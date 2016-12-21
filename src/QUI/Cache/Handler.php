@@ -54,14 +54,26 @@ class Handler
     {
         // loged in users get no cache
         if (QUI::getUsers()->isAuth(QUI::getUserBySession())) {
-            throw new QUI\Exception('Loged in user. No Cache exists', 404);
+            throw new QUI\Exception('Logged in user. No Cache exists', 404);
         }
 
         $Request = QUI::getRequest();
         $uri     = $Request->getUri();
         $query   = $Request->getQueryString();
 
-        if ($query !== null) {
+        if (is_string($query)) {
+            $query = parse_str($query);
+        }
+
+        if (!is_array($query)) {
+            $query = array();
+        }
+
+        if (isset($query['_url'])) {
+            unset($query['_url']);
+        }
+
+        if (!empty($query)) {
             throw new QUI\Exception('Get Params exists. No Cache exists', 404);
         }
 
@@ -102,7 +114,19 @@ class Handler
         $uri     = $Request->getUri();
         $query   = $Request->getQueryString();
 
-        if ($query !== null) {
+        if (is_string($query)) {
+            $query = parse_str($query);
+        }
+
+        if (!is_array($query)) {
+            $query = array();
+        }
+
+        if (isset($query['_url'])) {
+            unset($query['_url']);
+        }
+
+        if (!empty($query)) {
             throw new QUI\Exception('Get Params exists. No Cache exists', 404);
         }
 
@@ -158,6 +182,10 @@ class Handler
                     $matches
                 );
 
+                if (!isset($matches[1])) {
+                    continue;
+                }
+
                 $file = CMS_DIR . ltrim($matches[1], '/');
 
                 if (!file_exists($file)) {
@@ -183,7 +211,6 @@ class Handler
                 if (!empty($optimized)) {
                     file_put_contents($cacheJSFile, $optimized);
                 }
-
             } catch (QUI\Exception $Exception) {
                 // could not optimize javascript
             }
@@ -270,7 +297,7 @@ class Handler
 
             $content = str_replace(
                 '<!-- quiqqer css -->',
-                '<style>'. $cssContent .'</style>',
+                '<style>' . $cssContent . '</style>',
                 $content
             );
 

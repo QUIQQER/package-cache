@@ -1,31 +1,29 @@
 {
-    "name" : "quiqqer/cache",
-    "type" : "quiqqer-plugin",
-    "description" : "Website cache for QUIQQER",
-    "version" : "dev-master",
-    "license" : "",
-
-    "authors" : [{
-        "name": "",
-        "email": "",
-        "homepage": "http://www.pcsg.de",
-        "role": "Developer"
-    }],
-
-    "support" : {
-        "email": "support@pcsg.de",
-        "url": "http://www.pcsg.de"
-    },
-
-    "require": {
-        "php" : ">=5.3",
-        "quiqqer/quiqqer" : "*@dev",
-        "mrclay/minify" : "2.2.1"
-    },
-
-    "autoload": {
-        "psr-0" : {
-            "QUI" : "src/"
-        }
+  "name": "quiqqer/cache",
+  "type": "quiqqer-plugin",
+  "description": "Website cache for QUIQQER",
+  "version": "dev-master",
+  "license": "",
+  "authors": [
+    {
+      "name": "",
+      "email": "",
+      "homepage": "http://www.pcsg.de",
+      "role": "Developer"
     }
+  ],
+  "support": {
+    "email": "support@pcsg.de",
+    "url": "http://www.pcsg.de"
+  },
+  "require": {
+    "php": ">=5.3",
+    "quiqqer/quiqqer": "*@dev",
+    "mrclay/minify": "2.2.1"
+  },
+  "autoload": {
+    "psr-0": {
+      "QUI": "src/"
+    }
+  }
 }
