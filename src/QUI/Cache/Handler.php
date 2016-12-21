@@ -54,7 +54,7 @@ class Handler
     {
         // loged in users get no cache
         if (QUI::getUsers()->isAuth(QUI::getUserBySession())) {
-            throw new QUI\Exception('Loged in user. No Cache exists', 404);
+            throw new QUI\Exception('Logged in user. No Cache exists', 404);
         }
 
         $Request = QUI::getRequest();
