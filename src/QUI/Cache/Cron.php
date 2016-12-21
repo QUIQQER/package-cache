@@ -28,7 +28,7 @@ class Cron
         $Project = QUI::getProject($params['project']);
         $mtime   = 2;
 
-        if (!isset($params['mtime'])) {
+        if (isset($params['mtime'])) {
             $mtime = (int)$params['mtime'];
         }
 
