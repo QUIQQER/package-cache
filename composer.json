@@ -23,7 +23,7 @@
   },
   "autoload": {
     "psr-4": {
-      "QUI\\Cache": "src/QUI/Cache"
+      "QUI\\Cache\\": "src/QUI/Cache"
     }
   }
 }
