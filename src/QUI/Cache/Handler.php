@@ -100,6 +100,9 @@ class Handler
             return;
         }
 
+        // @todo create cache-id
+
+
         $Package          = QUI::getPackage('quiqqer/cache');
         $cacheSetting     = $Package->getConfig()->get('settings', 'cache');
         $jsCacheSetting   = $Package->getConfig()->get('settings', 'jscache');
