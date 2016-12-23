@@ -122,6 +122,10 @@ class EventCoordinator
             </script>"
         );
 
+//        $Template->extendHeaderWithJavaScriptFile(
+//            URL_OPT_DIR . 'quiqqer/cache/bin/sw/html/init.js'
+//        );
+
         $Template->extendHeaderWithJavaScriptFile(
             URL_OPT_DIR . 'quiqqer/cache/bin/requireBundler.js'
         );
