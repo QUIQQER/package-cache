@@ -34,4 +34,12 @@ class Cron
 
         Optimizer::optimizeProjectImages($Project->getName(), $mtime);
     }
+
+    /**
+     * Clear the temp folder
+     */
+    public static function clearTempFolder()
+    {
+        QUI::getTemp()->clear();
+    }
 }

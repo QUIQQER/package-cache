@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <crons>
-    <cron exec="\QUI\Cache\Console\Optimize::clearTempFolder">
+    <cron exec="\QUI\Cache\Cron::clearTempFolder">
         <title>Cache: Temp Ordner leeren</title>
         <description>Ordner für temporäre Daten leeren</description>
     </cron>
