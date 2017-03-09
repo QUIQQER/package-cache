@@ -8,7 +8,7 @@
  define, window, process, Packages,
  java, location, Components, FileUtils */
 
-/* @localStorage intecration by www.pcsg.de (Henning Leutz) */
+/* @localStorage integration by www.pcsg.de (Henning Leutz) */
 
 define(['module'], function (module) {
     'use strict';

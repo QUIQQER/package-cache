@@ -19,7 +19,8 @@
   "require": {
     "php": ">=5.5",
     "quiqqer/quiqqer": "*@dev",
-    "mrclay/minify": ">=2.3"
+    "mrclay/minify": ">=2.3",
+    "npm-asset/dexie": "1.5.*"
   },
   "autoload": {
     "psr-4": {
