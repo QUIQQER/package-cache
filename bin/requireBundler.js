@@ -11,7 +11,6 @@
     }
 
     var oldLoad = requirejs.load;
-    var Storage = window.localStorage || null;
 
     requirejs.config({
         map: {
@@ -24,12 +23,6 @@
 
     // amd locale storage
     requirejs.load = function (context, moduleName, url) {
-
-        if (!Storage) {
-            console.warn('No locale storage');
-            return oldLoad.apply(requirejs, arguments);
-        }
-
         if (url.match('/packages/quiqqer/cache/bin/css-cache')) {
             return oldLoad.apply(requirejs, arguments);
         }
@@ -38,43 +31,48 @@
             return oldLoad.apply(requirejs, arguments);
         }
 
-        // cache
-        try {
-            var storage = Storage.getItem(url);
-
-            if (storage) {
-                eval.call(window, storage);
-                context.completeLoad(moduleName);
-                return;
-            }
-        } catch (e) {
-            //return (useImportLoad ? importLoad : linkLoad)(req.toUrl(cssId + '.css'), load);
+        if (url.match('/packages//quiqqer/cache/bin/Storage.js')) {
+            return oldLoad.apply(requirejs, arguments);
         }
 
-        return new Request({
-            method   : 'get',
-            url      : url,
-            onSuccess: function (responseText) {
+        if (url.match('/packages/bin/dexie/dist/dexie.min.js')) {
+            return oldLoad.apply(requirejs, arguments);
+        }
 
-                // hmm :-/ no better way?
-                try {
-                    eval.call(responseText);
-                } catch (e) {
-                    console.error(e, moduleName, url, responseText);
-                }
+        var loadWithRequest = function (url) {
+            return new Promise(function (resolve, reject) {
+                new Request({
+                    method   : 'get',
+                    url      : url,
+                    onSuccess: resolve,
+                    onFailure: reject
+                }).send();
+            });
+        };
 
-                try {
-                    Storage.setItem(url, responseText);
-                } catch (e) {
-                    // maybe QUOTA_REACHED
-                    console.error(e, moduleName, url);
+        var onError = function () {
+            oldLoad.apply(requirejs, arguments);
+        };
 
-                    Storage.clear();
-                }
+        var onSuccess = function (content) {
+            eval.call(window, content);
+            context.completeLoad(moduleName);
+        };
 
-                context.completeLoad(moduleName);
-            }
-        }).send();
+        // load storage
+        requirejs(['package/quiqqer/cache/bin/Storage'], function (Storage) {
+            Storage.getItem(url)
+                   .then(onSuccess)
+                   .catch(function () {
+                       // load via request
+                       loadWithRequest(url).then(function (content) {
+                           Storage.setItem(url, content).catch(function () {
+                           });
+
+                           onSuccess(content);
+                       }).catch(onError);
+                   });
+        }, onError);
     };
 
     // debug

@@ -8,23 +8,21 @@
  define, window, process, Packages,
  java, location, Components, FileUtils */
 
-/* @localStorage intecration by www.pcsg.de (Henning Leutz) */
+/* indexedDB integration by www.pcsg.de (Henning Leutz) */
 
 define(['module'], function (module) {
     'use strict';
 
     var text, fs, Cc, Ci, xpcIsWindows,
-        progIds = ['Msxml2.XMLHTTP', 'Microsoft.XMLHTTP', 'Msxml2.XMLHTTP.4.0'],
-        xmlRegExp = /^\s*<\?xml(\s)+version=[\'\"](\d)*.(\d)*[\'\"](\s)*\?>/im,
-        bodyRegExp = /<body[^>]*>\s*([\s\S]+)\s*<\/body>/im,
-        hasLocation = typeof location !== 'undefined' && location.href,
+        progIds         = ['Msxml2.XMLHTTP', 'Microsoft.XMLHTTP', 'Msxml2.XMLHTTP.4.0'],
+        xmlRegExp       = /^\s*<\?xml(\s)+version=[\'\"](\d)*.(\d)*[\'\"](\s)*\?>/im,
+        bodyRegExp      = /<body[^>]*>\s*([\s\S]+)\s*<\/body>/im,
+        hasLocation     = typeof location !== 'undefined' && location.href,
         defaultProtocol = hasLocation && location.protocol && location.protocol.replace(/\:/, ''),
         defaultHostName = hasLocation && location.hostname,
-        defaultPort = hasLocation && (location.port || undefined),
-        buildMap = {},
-        masterConfig = (module.config && module.config()) || {};
-
-    var Storage = window.localStorage || null;
+        defaultPort     = hasLocation && (location.port || undefined),
+        buildMap        = {},
+        masterConfig    = (module.config && module.config()) || {};
 
     text = {
         version: '2.0.14',
@@ -34,7 +32,7 @@ define(['module'], function (module) {
             //documents can be added to a document without worry. Also, if the string
             //is an HTML document, only the part inside the body tag is returned.
             if (content) {
-                content = content.replace(xmlRegExp, "");
+                content     = content.replace(xmlRegExp, "");
                 var matches = content.match(bodyRegExp);
                 if (matches) {
                     content = matches[1];
@@ -47,13 +45,13 @@ define(['module'], function (module) {
 
         jsEscape: function (content) {
             return content.replace(/(['\\])/g, '\\$1')
-                .replace(/[\f]/g, "\\f")
-                .replace(/[\b]/g, "\\b")
-                .replace(/[\n]/g, "\\n")
-                .replace(/[\t]/g, "\\t")
-                .replace(/[\r]/g, "\\r")
-                .replace(/[\u2028]/g, "\\u2028")
-                .replace(/[\u2029]/g, "\\u2029");
+                          .replace(/[\f]/g, "\\f")
+                          .replace(/[\b]/g, "\\b")
+                          .replace(/[\n]/g, "\\n")
+                          .replace(/[\t]/g, "\\t")
+                          .replace(/[\r]/g, "\\r")
+                          .replace(/[\u2028]/g, "\\u2028")
+                          .replace(/[\u2029]/g, "\\u2029");
         },
 
         createXhr: masterConfig.createXhr || function () {
@@ -66,7 +64,8 @@ define(['module'], function (module) {
                     progId = progIds[i];
                     try {
                         xhr = new ActiveXObject(progId);
-                    } catch (e) {}
+                    } catch (e) {
+                    }
 
                     if (xhr) {
                         progIds = [progId];  // so faster next time
@@ -88,24 +87,24 @@ define(['module'], function (module) {
          */
         parseName: function (name) {
             var modName, ext, temp,
-                strip = false,
-                index = name.lastIndexOf("."),
+                strip      = false,
+                index      = name.lastIndexOf("."),
                 isRelative = name.indexOf('./') === 0 ||
                     name.indexOf('../') === 0;
 
             if (index !== -1 && (!isRelative || index > 1)) {
                 modName = name.substring(0, index);
-                ext = name.substring(index + 1);
+                ext     = name.substring(index + 1);
             } else {
                 modName = name;
             }
 
-            temp = ext || modName;
+            temp  = ext || modName;
             index = temp.indexOf("!");
             if (index !== -1) {
                 //Pull off the strip arg.
                 strip = temp.substring(index + 1) === "strip";
-                temp = temp.substring(0, index);
+                temp  = temp.substring(0, index);
                 if (ext) {
                     ext = temp;
                 } else {
@@ -115,8 +114,8 @@ define(['module'], function (module) {
 
             return {
                 moduleName: modName,
-                ext: ext,
-                strip: strip
+                ext       : ext,
+                strip     : strip
             };
         },
 
@@ -140,7 +139,7 @@ define(['module'], function (module) {
             uHostName = match[3];
 
             uHostName = uHostName.split(':');
-            uPort = uHostName[1];
+            uPort     = uHostName[1];
             uHostName = uHostName[0];
 
             return (!uProtocol || uProtocol === protocol) &&
@@ -173,18 +172,58 @@ define(['module'], function (module) {
 
             masterConfig.isBuild = config && config.isBuild;
 
-            var parsed = text.parseName(name),
-                nonStripName = parsed.moduleName +
-                    (parsed.ext ? '.' + parsed.ext : ''),
-                url = req.toUrl(nonStripName),
-                useXhr = (masterConfig.useXhr) ||
-                    text.useXhr;
+            var parsed       = text.parseName(name),
+                nonStripName = parsed.moduleName + (parsed.ext ? '.' + parsed.ext : ''),
+                url          = req.toUrl(nonStripName),
+                useXhr       = (masterConfig.useXhr) || text.useXhr;
 
             // Do not load if it is an empty: url
             if (url.indexOf('empty:') === 0) {
                 onLoad();
                 return;
             }
+
+            var getFromStorage = function (url) {
+                return new Promise(function (resolve, reject) {
+                    requirejs(['package/quiqqer/cache/bin/Storage'], function (Storage) {
+                        Storage.getItem(url).then(resolve).catch(reject);
+                    }, reject);
+                });
+            };
+
+            var setToStorage = function (url, result) {
+                return new Promise(function (resolve, reject) {
+                    requirejs(['package/quiqqer/cache/bin/Storage'], function (Storage) {
+                        Storage.setItem(url, result).then(resolve);
+                    }, reject);
+                });
+            };
+
+            var defaultLoading = function () {
+                //Load the text. Use XHR if possible and in a browser.
+                if (!hasLocation || useXhr(url, defaultProtocol, defaultHostName, defaultPort)) {
+                    text.get(url, function (content) {
+                        text.finishLoad(name, parsed.strip, content, function (result) {
+                            onLoad(result);
+                            setToStorage(url, result);
+                        });
+                    }, function (err) {
+                        if (onLoad.error) {
+                            onLoad.error(err);
+                        }
+                    });
+                } else {
+                    //Need to fetch the resource across domains. Assume
+                    //the resource has been optimized into a JS module. Fetch
+                    //by the module name + extension, but do not include the
+                    //!strip part to avoid file system issues.
+                    req([nonStripName], function (content) {
+                        text.finishLoad(parsed.moduleName + '.' + parsed.ext,
+                            parsed.strip, content, onLoad);
+                    });
+                }
+            };
+
 
             var isUser = false;
 
@@ -194,44 +233,14 @@ define(['module'], function (module) {
                 isUser = true;
             }
 
-            if (Storage && !isUser) {
-                try {
-                    var storage = Storage.getItem(url);
-
-                    if (storage) {
-                        text.finishLoad(name, parsed.strip, storage, onLoad);
-                        return;
-                    }
-                } catch (e) {
-
-                }
+            if (!isUser) {
+                getFromStorage(url).then(function (content) {
+                    text.finishLoad(name, parsed.strip, content, onLoad);
+                }).catch(defaultLoading);
+                return;
             }
 
-            //Load the text. Use XHR if possible and in a browser.
-            if (!hasLocation || useXhr(url, defaultProtocol, defaultHostName, defaultPort)) {
-                text.get(url, function (content) {
-                    text.finishLoad(name, parsed.strip, content, function(result) {
-                        onLoad(result);
-
-                        try {
-                            Storage.setItem(url, result);
-                        } catch (e) {}
-                    });
-                }, function (err) {
-                    if (onLoad.error) {
-                        onLoad.error(err);
-                    }
-                });
-            } else {
-                //Need to fetch the resource across domains. Assume
-                //the resource has been optimized into a JS module. Fetch
-                //by the module name + extension, but do not include the
-                //!strip part to avoid file system issues.
-                req([nonStripName], function (content) {
-                    text.finishLoad(parsed.moduleName + '.' + parsed.ext,
-                        parsed.strip, content, onLoad);
-                });
-            }
+            defaultLoading();
         },
 
         write: function (pluginName, moduleName, write, config) {
@@ -245,12 +254,12 @@ define(['module'], function (module) {
         },
 
         writeFile: function (pluginName, moduleName, req, write, config) {
-            var parsed = text.parseName(moduleName),
-                extPart = parsed.ext ? '.' + parsed.ext : '',
+            var parsed       = text.parseName(moduleName),
+                extPart      = parsed.ext ? '.' + parsed.ext : '',
                 nonStripName = parsed.moduleName + extPart,
-            //Use a '.js' file name so that it indicates it is a
-            //script that can be loaded across domains.
-                fileName = req.toUrl(parsed.moduleName + extPart) + '.js';
+                //Use a '.js' file name so that it indicates it is a
+                //script that can be loaded across domains.
+                fileName     = req.toUrl(parsed.moduleName + extPart) + '.js';
 
             //Leverage own load() method to load plugin value, but only
             //write out values that do not have the strip argument,
@@ -259,7 +268,7 @@ define(['module'], function (module) {
                 //Use own write() method to construct full module value.
                 //But need to create shell that translates writeFile's
                 //write() to the right interface.
-                var textWrite = function (contents) {
+                var textWrite      = function (contents) {
                     return write(fileName, contents);
                 };
                 textWrite.asModule = function (moduleName, contents) {
@@ -273,10 +282,7 @@ define(['module'], function (module) {
 
     if (masterConfig.env === 'node' || (!masterConfig.env &&
         typeof process !== "undefined" &&
-        process.versions &&
-        !!process.versions.node &&
-        !process.versions['node-webkit'] &&
-        !process.versions['atom-shell'])) {
+        process.versions && !!process.versions.node && !process.versions['node-webkit'] && !process.versions['atom-shell'])) {
         //Using special require.nodeRequire, something added by r.js.
         fs = require.nodeRequire('fs');
 
@@ -322,7 +328,7 @@ define(['module'], function (module) {
                     status = xhr.status || 0;
                     if (status > 399 && status < 600) {
                         //An http 4xx or 5xx error. Signal an error.
-                        err = new Error(url + ' HTTP status: ' + status);
+                        err     = new Error(url + ' HTTP status: ' + status);
                         err.xhr = xhr;
                         if (errback) {
                             errback(err);
@@ -343,14 +349,14 @@ define(['module'], function (module) {
         //Why Java, why is this so awkward?
         text.get = function (url, callback) {
             var stringBuffer, line,
-                encoding = "utf-8",
-                file = new java.io.File(url),
+                encoding      = "utf-8",
+                file          = new java.io.File(url),
                 lineSeparator = java.lang.System.getProperty("line.separator"),
-                input = new java.io.BufferedReader(new java.io.InputStreamReader(new java.io.FileInputStream(file), encoding)),
-                content = '';
+                input         = new java.io.BufferedReader(new java.io.InputStreamReader(new java.io.FileInputStream(file), encoding)),
+                content       = '';
             try {
                 stringBuffer = new java.lang.StringBuffer();
-                line = input.readLine();
+                line         = input.readLine();
 
                 // Byte Order Mark (BOM) - The Unicode Standard, version 3.0, page 324
                 // http://www.unicode.org/faq/utf_bom.html

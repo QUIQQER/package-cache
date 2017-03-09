@@ -20,6 +20,7 @@ if ('serviceWorker' in navigator) {
         navigator.serviceWorker.addEventListener('message', function (event) {
             switch (event.data.command) {
                 case 'getStorage':
+                    console.log('getStorage');
                     require(['qui/QUI'], function (QUI) {
                         event.ports[0].postMessage(
                             QUI.Storage.get(event.data.key)
