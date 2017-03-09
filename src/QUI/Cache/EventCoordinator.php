@@ -41,7 +41,9 @@ class EventCoordinator
         }
 
         try {
-            echo QUI\Cache\Handler::init()->getCacheFromRequest();
+            $Response = QUI::getGlobalResponse();
+            $Response->setContent(QUI\Cache\Handler::init()->getCacheFromRequest());
+            $Response->send();
             exit;
         } catch (QUI\Exception $Exception) {
             QUI\System\Log::addNotice($Exception->getMessage(), array(

@@ -81,7 +81,11 @@ class Handler
         $cachefile = $dir . md5($uri) . QUI\Rewrite::getDefaultSuffix();
 
         if (file_exists($cachefile) && !is_dir($cachefile)) {
-            return file_get_contents($cachefile);
+            $cache = file_get_contents($cachefile);
+
+            if (!empty($cache)) {
+                return $cache;
+            }
         }
 
         throw new QUI\Exception('No Cache exists', 404);
