@@ -43,9 +43,8 @@ define(function () {
         };
     }
 
-    var Storage = window.localStorage || null;
-    var head    = document.getElementsByTagName('head')[0];
-    var engine  = window.navigator.userAgent.match(/Trident\/([^ ;]*)|AppleWebKit\/([^ ;]*)|Opera\/([^ ;]*)|rv\:([^ ;]*)(.*?)Gecko\/([^ ;]*)|MSIE\s([^ ;]*)|AndroidWebKit\/([^ ;]*)/) || 0;
+    var head   = document.getElementsByTagName('head')[0];
+    var engine = window.navigator.userAgent.match(/Trident\/([^ ;]*)|AppleWebKit\/([^ ;]*)|Opera\/([^ ;]*)|rv\:([^ ;]*)(.*?)Gecko\/([^ ;]*)|MSIE\s([^ ;]*)|AndroidWebKit\/([^ ;]*)/) || 0;
 
     // use <style> @import load method (IE < 9, Firefox < 18)
     var useImportLoad = false;
@@ -175,68 +174,50 @@ define(function () {
 
 //>>excludeStart('excludeRequireCss', pragmas.excludeRequireCss)
     cssAPI.load = function (cssId, req, load, config) {
-
         var url = req.toUrl(cssId + '.css');
 
-        if (!Storage) {
+        var onError = function () {
+            return (useImportLoad ? importLoad : linkLoad)(url, load);
+        };
 
-            // old load
-            return (useImportLoad ? importLoad : linkLoad)(req.toUrl(cssId + '.css'), load);
-        }
+        var onSuccess = function (content) {
+            new Element('style', {
+                html: content
+            }).inject(document.head);
+            load();
+        };
 
-        // cache
-        try {
-            var storage = Storage.getItem(url);
-
-            if (storage) {
-
-                new Element('style', {
-                    html: storage
-                }).inject(document.head);
-
-                load();
-                return;
-            }
-
-        } catch (e) {
-            //return (useImportLoad ? importLoad : linkLoad)(req.toUrl(cssId + '.css'), load);
-        }
-
-
-        new Request({
-            method   : 'get',
-            url      : URL_DIR + 'admin/ajax.php',
-            onSuccess: function (responseText) {
-
-                new Element('style', {
-                    html: responseText
-                }).inject(document.head);
-
-                load();
-
-                try {
-
-                    Storage.setItem(url, responseText);
-                } catch (e) {
-                    (useImportLoad ? importLoad : linkLoad)(req.toUrl(cssId + '.css'), load);
-                }
-            },
-
-            // fallbacks
-            onFailure: function () {
-                (useImportLoad ? importLoad : linkLoad)(req.toUrl(cssId + '.css'), load);
-            },
-
-            onException: function () {
-                (useImportLoad ? importLoad : linkLoad)(req.toUrl(cssId + '.css'), load);
-            }
-        }).send(Object.toQueryString({
+        var loadWithRequest = function (url) {
+            return new Promise(function (resolve, reject) {
+                new Request({
+                    method     : 'get',
+                    url        : URL_DIR + 'admin/ajax.php',
+                    onSuccess  : resolve,
+                    onFailure  : reject,
+                    onException: reject
+                }).send(Object.toQueryString({
                     _rf         : JSON.encode(['package_quiqqer_cache_ajax_requirecss']),
                     'package'   : 'quiqqer/cache',
                     'cssfile'   : url,
                     'amdPackage': url
                 }));
+            });
+        };
 
+        // load storage
+        requirejs(['package/quiqqer/cache/bin/Storage'], function (Storage) {
+            Storage.getItem(url)
+                   .then(onSuccess)
+                   .catch(function () {
+                       // load via request
+                       loadWithRequest(url).then(function (content) {
+                           Storage.setItem(url, content).catch(function () {
+                           });
+
+                           onSuccess(content);
+                       }).catch(onError);
+                   });
+        }, onError);
     };
 
 //>>excludeEnd('excludeRequireCss')
