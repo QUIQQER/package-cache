@@ -200,6 +200,7 @@ define(['module'], function (module) {
             };
 
             var defaultLoading = function () {
+
                 //Load the text. Use XHR if possible and in a browser.
                 if (!hasLocation || useXhr(url, defaultProtocol, defaultHostName, defaultPort)) {
                     text.get(url, function (content) {

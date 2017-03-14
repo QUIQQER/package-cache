@@ -51,6 +51,7 @@
         };
 
         var onError = function () {
+            console.error(arguments);
             oldLoad.apply(requirejs, arguments);
         };
 
