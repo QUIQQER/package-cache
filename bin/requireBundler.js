@@ -65,26 +65,36 @@
             Storage.getItem(url)
                    .then(onSuccess)
                    .catch(function () {
+
                        // load via request
                        loadWithRequest(url).then(function (content) {
                            Storage.setItem(url, content).catch(function () {
                            });
 
+
+                           if (moduleName == 'SecondLevelDomains') {
+                               try {
+                                   // bug fix, because URIjs defines empty define module definition
+                                   // requirejs blows up
+                                   eval.call(
+                                       window,
+                                       content.replace('define(factory)', '')
+                                   );
+
+                                   context.completeLoad(moduleName);
+                               } catch (e) {
+                               }
+                               return;
+                           }
+
                            onSuccess(content);
-                       }).catch(onError);
+                       }).catch(function (err) {
+                           console.error(url);
+                           console.error(err);
+                           onError(arguments);
+                       });
                    });
         }, onError);
     };
-
-    // debug
-    //
-    //requirejs.onResourceLoad = function (context, map, depArray) {
-    //
-    //    if (map.prefix && map.name.match('.css')) {
-    //
-    //        console.log(map);
-    //
-    //    }
-    //};
 
 }());
