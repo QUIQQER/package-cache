@@ -31,7 +31,7 @@ class Handler
      */
     public function getCacheDir()
     {
-        return VAR_DIR . 'cache/packages/cache/';
+        return VAR_DIR.'cache/packages/cache/';
     }
 
     /**
@@ -41,7 +41,7 @@ class Handler
      */
     public function getURLCacheDir()
     {
-        return URL_VAR_DIR . 'cache/packages/cache/';
+        return URL_VAR_DIR.'cache/packages/cache/';
     }
 
     /**
@@ -78,7 +78,7 @@ class Handler
         }
 
         $dir       = $this->getCacheDir();
-        $cachefile = $dir . md5($uri) . QUI\Rewrite::getDefaultSuffix();
+        $cachefile = $dir.md5($uri).QUI\Rewrite::getDefaultSuffix();
 
         if (file_exists($cachefile) && !is_dir($cachefile)) {
             $cache = file_get_contents($cachefile);
@@ -140,8 +140,8 @@ class Handler
         $cacheId = md5($uri);
         $dir     = $this->getCacheDir();
 
-        $binDir    = $this->getCacheDir() . '/bin/';
-        $urlBinDir = $this->getURLCacheDir() . '/bin/';
+        $binDir    = $this->getCacheDir().'/bin/';
+        $urlBinDir = $this->getURLCacheDir().'/bin/';
 
         QUI\Utils\System\File::mkdir($dir);
         QUI\Utils\System\File::mkdir($binDir);
@@ -153,7 +153,7 @@ class Handler
         /**
          * HTML
          */
-        $cacheHtmlFile = $dir . $cacheId . QUI\Rewrite::getDefaultSuffix();
+        $cacheHtmlFile = $dir.$cacheId.QUI\Rewrite::getDefaultSuffix();
         file_put_contents($cacheHtmlFile, $content);
 
 
@@ -172,14 +172,19 @@ class Handler
             $jsContent = '';
             $jsId      = md5(serialize($matches));
 
-            $cacheJSFile    = $binDir . $jsId . '.cache.js';
-            $cacheURLJSFile = $urlBinDir . $jsId . '.cache.js';
+            $cacheJSFile    = $binDir.$jsId.'.cache.js';
+            $cacheURLJSFile = $urlBinDir.$jsId.'.cache.js';
 
             foreach ($matches as $entry) {
-                if (strpos($entry[0], 'src=') === false) {
-                    $content = str_replace($entry, '', $content);
-                    $jsContent .= $entry[1];
+                // quiqqer/package-cache/issues/7
+                if (strpos($entry[0], 'type=') !== false
+                    && strpos($entry[0], 'type="application/javascript"') === false) {
+                    continue;
+                }
 
+                if (strpos($entry[0], 'src=') === false) {
+                    $content   = str_replace($entry, '', $content);
+                    $jsContent .= $entry[1];
                     continue;
                 }
 
@@ -193,7 +198,7 @@ class Handler
                     continue;
                 }
 
-                $file = CMS_DIR . ltrim($matches[1], '/');
+                $file = CMS_DIR.ltrim($matches[1], '/');
 
                 if (!file_exists($file)) {
                     $parse = parse_url($file);
@@ -204,7 +209,7 @@ class Handler
                     continue;
                 }
 
-                $jsContent .= file_get_contents($file) . ';';
+                $jsContent .= file_get_contents($file).';';
 
                 $content = str_replace($entry[0], '', $content);
             }
@@ -226,7 +231,7 @@ class Handler
             // insert quiqqer.cache.js
             $content = str_replace(
                 '</body>',
-                '<script async src="' . $cacheURLJSFile . '" type="text/javascript"></script></body>',
+                '<script async src="'.$cacheURLJSFile.'" type="text/javascript"></script></body>',
                 $content
             );
 
@@ -249,8 +254,8 @@ class Handler
 
             $cssId = md5(serialize($matches));
 
-            $cacheCSSFile    = $binDir . $cssId . '.cache.css';
-            $cacheURLCSSFile = $urlBinDir . $cssId . '.cache.css';
+            $cacheCSSFile    = $binDir.$cssId.'.cache.css';
+            $cacheURLCSSFile = $urlBinDir.$cssId.'.cache.css';
 
             $cssContent = '';
 
@@ -268,7 +273,7 @@ class Handler
                 }
 
 
-                $file = CMS_DIR . $match[1];
+                $file = CMS_DIR.$match[1];
 
                 if (!file_exists($file)) {
                     $parse = parse_url($file);
@@ -282,10 +287,10 @@ class Handler
                 $comment  = "\n/* File: {$match[1]} */\n";
                 $minified = $CSSMinify->minify(file_get_contents($file), array(
                     'docRoot'    => CMS_DIR,
-                    'currentDir' => dirname(CMS_DIR . $match[1]) . '/'
+                    'currentDir' => dirname(CMS_DIR.$match[1]).'/'
                 ));
 
-                $cssContent .= $comment . $minified . "\n";
+                $cssContent .= $comment.$minified."\n";
 
                 // delete css from main content
                 $content = str_replace($match[0], '', $content);
@@ -304,7 +309,7 @@ class Handler
 
             $content = str_replace(
                 '<!-- quiqqer css -->',
-                '<style>' . $cssContent . '</style>',
+                '<style>'.$cssContent.'</style>',
                 $content
             );
 
