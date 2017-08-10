@@ -22,7 +22,7 @@ class Optimize extends QUI\System\Console\Tool
         $this->setName('package:cache-optimize')
             ->setDescription('Optimize images')
             ->addArgument('project', 'Name of the Project')
-            ->addArgument('mtime', 'Only images are newer than (--mtime): in days. Default = 2', false, true);
+            ->addArgument('mtime', 'Only images are newer than (--mtime): in days. Default = 1000', false, true);
     }
 
     /**
@@ -40,7 +40,7 @@ class Optimize extends QUI\System\Console\Tool
         $cacheDir = $Media->getCacheDir();
 
         if (!$mtime) {
-            $mtime = 2;
+            $mtime = 1000;
         }
 
         // find all pngs
