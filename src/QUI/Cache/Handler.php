@@ -246,7 +246,7 @@ class Handler
             $CSSMinify = new \Minify_CSS();
 
             preg_match_all(
-                '/<link\s+?href="([^"]*)"[^>]*>/Uis',
+                '/<link[^>]+href="([^"]*)"[^>]*>/Uis',
                 $content,
                 $matches,
                 PREG_SET_ORDER
