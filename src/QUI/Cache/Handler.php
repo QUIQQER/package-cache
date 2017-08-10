@@ -260,6 +260,12 @@ class Handler
             $cssContent = '';
 
             foreach ($matches as $match) {
+                if (strpos($match[0], 'rel') !== false
+                    && strpos($match[0], 'rel="stylesheet"') === false
+                ) {
+                    continue;
+                }
+
                 if (strpos($match[0], 'alternate') !== false) {
                     continue;
                 }
