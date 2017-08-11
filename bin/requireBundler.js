@@ -39,6 +39,11 @@
             return oldLoad.apply(requirejs, arguments);
         }
 
+        // @todo
+        if (url.match('skel.min.js') || url.match('skel-layers.min.js') || url.match('/packages/quiqqer/template-helios/bin/js/init.js')) {
+            return oldLoad.apply(requirejs, arguments);
+        }
+
         var loadWithRequest = function (url) {
             return new Promise(function (resolve, reject) {
                 new Request({
