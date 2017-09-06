@@ -7,12 +7,11 @@
         </locale>
         <locale name="package.description">
             <de><![CDATA[
-            QUIQQER - Extra Projekt Caching System. Verwendet verschiedene Cacheing
-            Vorgehensweisen um Ihre Seite schneller zu machen.
+            Das Cache Module speichert Ihre Seite in verschiedene Caches. Somit wird Ihre Seite schneller, steigt in die Suchmaschinen Rankings und lässt auch Ihre Besucher staunen.
             ]]></de>
             <en><![CDATA[
-            QUIQQER - Extra Project Caching System. Uses different caching approaches
-            to make your page faster.]]></en>
+            The cache module stores your page in different caches. This makes your site faster, increases search engine rankings and also leaves your visitors astonished.
+]]></en>
         </locale>
 
         <locale name="settings.title">
