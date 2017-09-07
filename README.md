@@ -1,3 +1,5 @@
+![QUIQQER Cache](bin/images/Readme.jpg)
+
 Cache
 ========
 

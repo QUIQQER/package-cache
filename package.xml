@@ -1,0 +1,27 @@
+<quiqqer>
+    <package>
+        <title>
+            <locale group="quiqqer/cache" var="package.title"/>
+        </title>
+
+        <description>
+            <locale group="quiqqer/cache" var="package.description"/>
+        </description>
+
+        <image src="URL_OPT_DIR/quiqqer/cache/bin/images/Logo.jpg"/>
+
+        <support>
+            <email>support@pcsg.de</email>
+            <forum>https://community.quiqqer.com</forum>
+            <source>https://dev.quiqqer.com/quiqqer/package-cache</source>
+            <issues>https://dev.quiqqer.com/quiqqer/package-cache/issues</issues>
+            <wiki>https://dev.quiqqer.com/quiqqer/package-cache/wikis/home</wiki>
+        </support>
+
+        <copyright>
+            <name><![CDATA[PCSG - Computer & Internet Service OHG]]></name>
+            <license></license>
+        </copyright>
+
+    </package>
+</quiqqer>
