@@ -3,6 +3,7 @@
 /**
  * This file contains the \QUI\Cache\EventCoordinator
  */
+
 namespace QUI\Cache;
 
 use QUI;
@@ -76,6 +77,12 @@ class EventCoordinator
             return;
         }
 
+        $Response = QUI::getGlobalResponse();
+
+        if ($Response->getStatusCode() !== 200) {
+            return;
+        }
+
         $Package      = QUI::getPackage('quiqqer/cache');
         $cacheSetting = $Package->getConfig()->get('settings', 'cache');
 
@@ -129,7 +136,7 @@ class EventCoordinator
 //        );
 
         $Template->extendHeaderWithJavaScriptFile(
-            URL_OPT_DIR . 'quiqqer/cache/bin/requireBundler.js'
+            URL_OPT_DIR.'quiqqer/cache/bin/requireBundler.js'
         );
     }
 
