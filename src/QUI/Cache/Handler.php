@@ -176,11 +176,11 @@ class Handler
 
             foreach ($matches as $entry) {
                 // quiqqer/package-cache/issues/7
-                if (strpos($entry[0], 'type=') !== false
-                    && strpos($entry[0], 'type="application/javascript"') === false
-                    && strpos($entry[0], 'type="text/javascript"') === false
-                ) {
-                    continue;
+                if (strpos($entry[0], 'type=') !== false) {
+                    if (strpos($entry[0], 'type="application/javascript"') === false ||
+                        strpos($entry[0], 'type="text/javascript"') === false) {
+                        continue;
+                    }
                 }
 
                 if (strpos($entry[0], 'src=') === false) {
