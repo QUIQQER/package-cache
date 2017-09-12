@@ -3,34 +3,30 @@
 Optimizer
 ========
 
-Dieses Modul erweitert QUIQQER um ein besseres Webseiten-Caching-System. 
-Das QUIQQER Optimizer Modul generiert statisches HTML, kombiniert und optimiert CSS und JavaScript.
+This module extends QUIQQER with a better web page caching system.
+The QUIQQER Optimizer module generates static HTML, combines and optimizes CSS and JavaScript and much more.
 
-Paketname:
+
+Package name:
 
     quiqqer/cache
 
-
 Features
 --------
-
-- Generiert statisches HTML
-- Kombiniert CSS und JavaScript
-- Optimiert CSS und JavaScript
-- Verkleinert die Requests eines Templates
-- Nutzt LocaleStorage für requireJS Aufrufe
-- Optimiert JavaScript AMD Module
-- Optimiert PNG und JPG Bilder beim Cache-Aufbau
-
-- **WICHTIG**: Die JavaScript Komprimierung ist in der Beta.
+- Generates static HTML
+- Combines CSS and JavaScript
+- Optimizes CSS and JavaScript
+- Reduces the requests of a template
+- Uses LocaleStorage for requireJS calls
+- Optimizes PNG and JPG images during cache creation
 
 Installation
 ------------
 
-Der Paketname ist: quiqqer/cache
+The package name: quiqqer/cache
 
 
-Mitwirken
+Contribute
 ----------
 
 - Issue Tracker: https://dev.quiqqer.com/quiqqer/package-cache/issues
@@ -40,10 +36,12 @@ Mitwirken
 Support
 -------
 
-Falls Sie Fehler gefunden, Wünsche oder Verbesserungsvorschläge haben, 
-können Sie uns gern per Mail an support@pcsg.de darüber informieren.  
-Wir werden versuchen auf Ihre Wünsche einzugehen bzw. diese an die 
-zuständigen Entwickler des Projektes weiterleiten.
+If you have found errors, wishes or suggestions for improvement,
+you can contact us by email at support@pcsg.de.
+
+We will try to meet your needs or send them to the responsible developers
+of the project.
+
 
 License
 -------
