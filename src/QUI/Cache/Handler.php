@@ -160,7 +160,6 @@ class Handler
         /**
          * Bundle JavaScript
          */
-
         if ($jsCacheSetting) {
             preg_match_all(
                 '/<script[^>]*>(.*)<\/script>/Uis',
@@ -178,7 +177,9 @@ class Handler
             foreach ($matches as $entry) {
                 // quiqqer/package-cache/issues/7
                 if (strpos($entry[0], 'type=') !== false
-                    && strpos($entry[0], 'type="application/javascript"') === false) {
+                    && strpos($entry[0], 'type="application/javascript"') === false
+                    && strpos($entry[0], 'type="text/javascript"') === false
+                ) {
                     continue;
                 }
 
@@ -214,6 +215,7 @@ class Handler
                 $content = str_replace($entry[0], '', $content);
             }
 
+
             // create javascript cache file
             file_put_contents($cacheJSFile, $jsContent);
 
@@ -229,6 +231,74 @@ class Handler
 
 
             // insert quiqqer.cache.js
+            $content = str_replace(
+                '</body>',
+                '<script src="'.$cacheURLJSFile.'" type="text/javascript"></script></body>',
+                $content
+            );
+
+            file_put_contents($cacheHtmlFile, $content);
+
+
+            /**
+             * Bundle require modules
+             */
+            $requirePackages = array();
+            $jsContent       = '';
+
+            preg_replace_callback(
+                '/data-qui="([^"]*)"/Uis',
+                function ($found) use (&$requirePackages) {
+                    $requirePackages[] = $found[1];
+
+                    return $found[0];
+                },
+                $content
+            );
+
+            $requirePackages = array_unique($requirePackages);
+            sort($requirePackages);
+
+            foreach ($requirePackages as $require) {
+                $found = strpos($require, 'package/');
+
+                if ($found === false) {
+                    continue;
+                }
+
+                if ($found !== 0) {
+                    continue;
+                }
+
+                $file = trim(substr_replace($require, OPT_DIR, 0, strlen('package/')));
+
+                if (!file_exists($file)) {
+                    $file = $file.'.js';
+                }
+
+                if (!file_exists($file)) {
+                    continue;
+                }
+
+                $jsContent .= file_get_contents($file).';';
+            }
+
+            $jsId           = md5(serialize($requirePackages));
+            $cacheJSFile    = $binDir.$jsId.'.cache.pkg.js';
+            $cacheURLJSFile = $urlBinDir.$jsId.'.cache.pkg.js';
+
+            file_put_contents($cacheJSFile, $jsContent);
+
+            try {
+                $optimized = Optimizer::optimizeJavaScript($cacheJSFile);
+
+                if (!empty($optimized)) {
+                    file_put_contents($cacheJSFile, $optimized);
+                }
+            } catch (QUI\Exception $Exception) {
+            }
+
+            // insert quiqqer.cache.pkg.js
             $content = str_replace(
                 '</body>',
                 '<script async src="'.$cacheURLJSFile.'" type="text/javascript"></script></body>',
