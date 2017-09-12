@@ -2,8 +2,8 @@
 <locales>
     <groups name="quiqqer/cache" datatype="php">
         <locale name="package.title">
-            <de><![CDATA[QUIQQER - Cache]]></de>
-            <en><![CDATA[QUIQQER - Cache]]></en>
+            <de><![CDATA[QUIQQER - Optimizer]]></de>
+            <en><![CDATA[QUIQQER - Optimizer]]></en>
         </locale>
         <locale name="package.description">
             <de><![CDATA[
@@ -11,7 +11,7 @@
             ]]></de>
             <en><![CDATA[
             The cache module stores your page in different caches. This makes your site faster, increases search engine rankings and also leaves your visitors astonished.
-]]></en>
+            ]]></en>
         </locale>
 
         <locale name="settings.title">
