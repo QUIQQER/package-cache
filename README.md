@@ -1,10 +1,10 @@
-![QUIQQER Cache](bin/images/Readme.jpg)
+![QUIQQER Optimizer](bin/images/Readme.jpg)
 
-Cache
+Optimizer
 ========
 
 Dieses Modul erweitert QUIQQER um ein besseres Webseiten-Caching-System. 
-Das Cache-Modul generiert statisches HTML, kombiniert und optimiert CSS und JavaScript.
+Das QUIQQER Optimizer Modul generiert statisches HTML, kombiniert und optimiert CSS und JavaScript.
 
 Paketname:
 
@@ -30,7 +30,6 @@ Installation
 Der Paketname ist: quiqqer/cache
 
 
-
 Mitwirken
 ----------
 
@@ -49,22 +48,4 @@ zuständigen Entwickler des Projektes weiterleiten.
 License
 -------
 
-
-Entwickler
---------
-
-*Needle*
-- jpegoptim
-- optipng
-- npm für die AMD Komprimierung
-- uglifyjs
-
-*Konsole - Bilder optimieren*
-
-```
-php quiqqer.php --username=* --password=* --tool=package:cache-optimize --project=*
-```
-
-
-@todo 
-http://www.webmaster-zentrale.de/technik/optimierung/webseiten-beschleunigen-teil-2-expires-header-verwenden/
+MIT
