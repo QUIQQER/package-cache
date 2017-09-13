@@ -80,6 +80,9 @@
                             </description>
                         </input>
 
+                        <text>
+                            <locale group="quiqqer/cache" var="message.console.description"/>
+                        </text>
                     </settings>
                 </category>
 

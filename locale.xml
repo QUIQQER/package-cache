@@ -80,6 +80,16 @@
             ]]></en>
         </locale>
 
+        <locale name="message.console.description" html="true">
+            <de><![CDATA[
+            Für den ersten gebrauch des Cache Modules, bitte führen Sie folgenden Befehl aus:
+            <pre>php quiqqer.php --tool=package:cache-optimize --project=*</pre>
+            ]]></de>
+            <en><![CDATA[
+            For the first use of the cache module, please execute the following command:
+            <pre>php quiqqer.php --tool=package:cache-optimize --project=*</pre>
+            ]]></en>
+        </locale>
 
     </groups>
 </locales>
