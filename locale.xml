@@ -2,15 +2,19 @@
 <locales>
     <groups name="quiqqer/cache" datatype="php">
         <locale name="package.title">
-            <de><![CDATA[QUIQQER - Optimizer]]></de>
-            <en><![CDATA[QUIQQER - Optimizer]]></en>
+            <de><![CDATA[QUIQQER - Cache]]></de>
+            <en><![CDATA[QUIQQER - Cache]]></en>
         </locale>
         <locale name="package.description">
             <de><![CDATA[
-            Das Cache Module speichert Ihre Seite in verschiedene Caches. Somit wird Ihre Seite schneller, steigt in die Suchmaschinen Rankings und lässt auch Ihre Besucher staunen.
+            Das Cache Module speichert und optimiert die Dateien (Bilder,Scripte, CSS und HTML)
+            Ihrer Seite in verschiedene Caches. Somit wird Ihre Seite schneller,
+            steigt in den Suchmaschinen Rankings und lässt auch Ihre Besucher über die Schnelligkeit staunen.
             ]]></de>
             <en><![CDATA[
-            The cache module stores your page in different caches. This makes your site faster, increases search engine rankings and also leaves your visitors astonished.
+            The cache module saves and optimizes the files (images, scripts, CSS and HTML)
+            of your site in different caches. This will make your page faster,
+            increases in the search engine rankings and also makes your visitors astonished at the speed.
             ]]></en>
         </locale>
 
@@ -76,6 +80,16 @@
             ]]></en>
         </locale>
 
+        <locale name="message.console.description" html="true">
+            <de><![CDATA[
+            Für den ersten gebrauch des Cache Modules, bitte führen Sie folgenden Befehl aus:
+            <pre>php quiqqer.php --tool=package:cache-optimize --project=*</pre>
+            ]]></de>
+            <en><![CDATA[
+            For the first use of the cache module, please execute the following command:
+            <pre>php quiqqer.php --tool=package:cache-optimize --project=*</pre>
+            ]]></en>
+        </locale>
 
     </groups>
 </locales>
