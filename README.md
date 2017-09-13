@@ -1,10 +1,10 @@
-![QUIQQER Optimizer](bin/images/Readme.jpg)
+![QUIQQER Cache](bin/images/Readme.jpg)
 
-Optimizer
+Cache
 ========
 
 This module extends QUIQQER with a better web page caching system.
-The QUIQQER Optimizer module generates static HTML, combines and optimizes CSS and JavaScript and much more.
+The QUIQQER Cache module generates static HTML, combines and optimizes CSS and JavaScript and much more.
 
 
 Package name:
