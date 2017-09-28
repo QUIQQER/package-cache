@@ -7,7 +7,7 @@
         </locale>
         <locale name="package.description">
             <de><![CDATA[
-            Das Cache Module speichert und optimiert die Dateien (Bilder,Scripte, CSS und HTML)
+            Das Cache Module speichert und optimiert die Dateien (Bilder, Scripte, CSS und HTML)
             Ihrer Seite in verschiedene Caches. Somit wird Ihre Seite schneller,
             steigt in den Suchmaschinen Rankings und lässt auch Ihre Besucher über die Schnelligkeit staunen.
             ]]></de>
