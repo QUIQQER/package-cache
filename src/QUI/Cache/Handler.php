@@ -212,7 +212,7 @@ class Handler
             }
 
             // js id
-            $jsId = md5(serialize($content));
+            $jsId = md5($content);
 
             $cacheJSFile    = $binDir.$jsId.'.cache.js';
             $cacheURLJSFile = $urlBinDir.$jsId.'.cache.js';
