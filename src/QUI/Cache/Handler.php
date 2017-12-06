@@ -212,22 +212,24 @@ class Handler
             }
 
             // js id
-            $jsId = md5($content);
+            $jsId = md5($jsContent);
 
             $cacheJSFile    = $binDir.$jsId.'.cache.js';
             $cacheURLJSFile = $urlBinDir.$jsId.'.cache.js';
 
             // create javascript cache file
-            file_put_contents($cacheJSFile, $jsContent);
+            if (!file_exists($cacheJSFile)) {
+                file_put_contents($cacheJSFile, $jsContent);
 
-            try {
-                $optimized = Optimizer::optimizeJavaScript($cacheJSFile);
+                try {
+                    $optimized = Optimizer::optimizeJavaScript($cacheJSFile);
 
-                if (!empty($optimized)) {
-                    file_put_contents($cacheJSFile, $optimized);
+                    if (!empty($optimized)) {
+                        file_put_contents($cacheJSFile, $optimized);
+                    }
+                } catch (QUI\Exception $Exception) {
+                    // could not optimize javascript
                 }
-            } catch (QUI\Exception $Exception) {
-                // could not optimize javascript
             }
 
 
@@ -288,15 +290,17 @@ class Handler
             $cacheJSFile    = $binDir.$jsId.'.cache.pkg.js';
             $cacheURLJSFile = $urlBinDir.$jsId.'.cache.pkg.js';
 
-            file_put_contents($cacheJSFile, $jsContent);
+            if (!file_exists($cacheJSFile)) {
+                file_put_contents($cacheJSFile, $jsContent);
 
-            try {
-                $optimized = Optimizer::optimizeJavaScript($cacheJSFile);
+                try {
+                    $optimized = Optimizer::optimizeJavaScript($cacheJSFile);
 
-                if (!empty($optimized)) {
-                    file_put_contents($cacheJSFile, $optimized);
+                    if (!empty($optimized)) {
+                        file_put_contents($cacheJSFile, $optimized);
+                    }
+                } catch (QUI\Exception $Exception) {
                 }
-            } catch (QUI\Exception $Exception) {
             }
 
             // insert quiqqer.cache.pkg.js
@@ -308,7 +312,6 @@ class Handler
 
             file_put_contents($cacheHtmlFile, $content);
         }
-
 
         /**
          * Bundle CSS
@@ -374,7 +377,9 @@ class Handler
             }
 
             // create css cache file
-            file_put_contents($cacheCSSFile, $cssContent);
+            if (!file_exists($cacheCSSFile)) {
+                file_put_contents($cacheCSSFile, $cssContent);
+            }
 
 
             // insert css cache file to the head
