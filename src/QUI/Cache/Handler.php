@@ -169,10 +169,6 @@ class Handler
             );
 
             $jsContent = '';
-            $jsId      = md5(serialize($matches));
-
-            $cacheJSFile    = $binDir.$jsId.'.cache.js';
-            $cacheURLJSFile = $urlBinDir.$jsId.'.cache.js';
 
             foreach ($matches as $entry) {
                 // quiqqer/package-cache/issues/7
@@ -215,6 +211,11 @@ class Handler
                 $content = str_replace($entry[0], '', $content);
             }
 
+            // js id
+            $jsId = md5(serialize($content));
+
+            $cacheJSFile    = $binDir.$jsId.'.cache.js';
+            $cacheURLJSFile = $urlBinDir.$jsId.'.cache.js';
 
             // create javascript cache file
             file_put_contents($cacheJSFile, $jsContent);
