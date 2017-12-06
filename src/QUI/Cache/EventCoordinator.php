@@ -24,6 +24,12 @@ class EventCoordinator
      */
     public static function onRequest($Rewrite, $url)
     {
+        $cacheEnabled = QUI::getPackage('quiqqer/cache')->getConfig()->get('settings', 'cache');
+
+        if (!boolval($cacheEnabled)) {
+            return;
+        }
+
         $getParams  = $_GET;
         $postParams = $_POST;
 
