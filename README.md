@@ -45,5 +45,9 @@ of the project.
 
 License
 -------
-
-MIT
+- PCSG QL-1.0
+- GPL-3.0+
+  
+  
+  
+  
