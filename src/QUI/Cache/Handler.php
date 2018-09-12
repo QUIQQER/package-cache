@@ -66,7 +66,7 @@ class Handler
         }
 
         if (!is_array($query)) {
-            $query = array();
+            $query = [];
         }
 
         if (isset($query['_url'])) {
@@ -126,7 +126,7 @@ class Handler
         }
 
         if (!is_array($query)) {
-            $query = array();
+            $query = [];
         }
 
         if (isset($query['_url'])) {
@@ -168,7 +168,12 @@ class Handler
                 PREG_SET_ORDER
             );
 
-            $jsContent = '';
+            $jsContent = 'var QUIQQER_JS_IS_CACHED = true;';
+
+            // add own cache js
+            $matches[] = [
+                '<script src="'.URL_OPT_DIR.'quiqqer/cache/bin/Storage.js"></script>'
+            ];
 
             foreach ($matches as $entry) {
                 // quiqqer/package-cache/issues/7
@@ -211,6 +216,7 @@ class Handler
                 $content = str_replace($entry[0], '', $content);
             }
 
+
             // js id
             $jsId = md5($jsContent);
 
@@ -232,13 +238,12 @@ class Handler
                 }
             }
 
+            $cached = '<script src="'.URL_OPT_DIR.'bin/dexie/dist/dexie.min.js" type="text/javascript"></script>'.
+                      '<script src="'.$cacheURLJSFile.'" type="text/javascript"></script>'.
+                      '</body>';
 
             // insert quiqqer.cache.js
-            $content = str_replace(
-                '</body>',
-                '<script src="'.$cacheURLJSFile.'" type="text/javascript"></script></body>',
-                $content
-            );
+            $content = str_replace('</body>', $cached, $content);
 
             file_put_contents($cacheHtmlFile, $content);
 
@@ -246,7 +251,7 @@ class Handler
             /**
              * Bundle require modules
              */
-            $requirePackages = array();
+            $requirePackages = [];
             $jsContent       = '';
 
             preg_replace_callback(
@@ -303,7 +308,6 @@ class Handler
                 }
             }
 
-            // insert quiqqer.cache.pkg.js
             $content = str_replace(
                 '</body>',
                 '<script async src="'.$cacheURLJSFile.'" type="text/javascript"></script></body>',
@@ -365,10 +369,10 @@ class Handler
                 }
 
                 $comment  = "\n/* File: {$match[1]} */\n";
-                $minified = $CSSMinify->minify(file_get_contents($file), array(
+                $minified = $CSSMinify->minify(file_get_contents($file), [
                     'docRoot'    => CMS_DIR,
                     'currentDir' => dirname(CMS_DIR.$match[1]).'/'
-                ));
+                ]);
 
                 $cssContent .= $comment.$minified."\n";
 
@@ -402,23 +406,23 @@ class Handler
          * HTML optimize
          */
         if ($htmlCacheSetting) {
-            $sources = array(
-                new \Minify_Source(array(
+            $sources = [
+                new \Minify_Source([
                     'id'            => $cacheId,
                     'content'       => $content,
                     'contentType'   => 'text/html',
-                    'minifyOptions' => array(
-                        'cssMinifier' => array('Minify_CSS', 'minify'),
-                        'jsMinifier'  => array('JSMin', 'minify')
-                    )
-                ))
-            );
+                    'minifyOptions' => [
+                        'cssMinifier' => ['Minify_CSS', 'minify'],
+                        'jsMinifier'  => ['JSMin', 'minify']
+                    ]
+                ])
+            ];
 
-            $result = $Minify->combine($sources, array(
+            $result = $Minify->combine($sources, [
                 'content'   => $content,
                 'id'        => $cacheId,
                 'minifyAll' => true
-            ));
+            ]);
 
             file_put_contents($cacheHtmlFile, $result);
         }

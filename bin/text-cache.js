@@ -3,6 +3,7 @@
  * Available via the MIT or new BSD license.
  * see: http://github.com/requirejs/text for details
  */
+
 /*jslint regexp: true */
 /*global require, XMLHttpRequest, ActiveXObject,
  define, window, process, Packages,

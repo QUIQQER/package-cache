@@ -24,7 +24,13 @@ class EventCoordinator
      */
     public static function onRequest($Rewrite, $url)
     {
-        $cacheEnabled = QUI::getPackage('quiqqer/cache')->getConfig()->get('settings', 'cache');
+        try {
+            $cacheEnabled = QUI::getPackage('quiqqer/cache')->getConfig()->get('settings', 'cache');
+        } catch (QUI\Exception $Exception) {
+            QUI\System\Log::writeException($Exception);
+            $cacheEnabled = false;
+        }
+
 
         if (!boolval($cacheEnabled)) {
             return;
@@ -53,9 +59,9 @@ class EventCoordinator
             $Response->send();
             exit;
         } catch (QUI\Exception $Exception) {
-            QUI\System\Log::addNotice($Exception->getMessage(), array(
+            QUI\System\Log::addNotice($Exception->getMessage(), [
                 'trace' => $Exception->getTraceAsString()
-            ));
+            ]);
         }
     }
 
@@ -78,7 +84,7 @@ class EventCoordinator
             return;
         }
 
-        // loged in users get no cache
+        // logged in users get no cache
         if (QUI::getUsers()->isAuth(QUI::getUserBySession())) {
             return;
         }
@@ -89,8 +95,14 @@ class EventCoordinator
             return;
         }
 
-        $Package      = QUI::getPackage('quiqqer/cache');
-        $cacheSetting = $Package->getConfig()->get('settings', 'cache');
+        try {
+            $Package      = QUI::getPackage('quiqqer/cache');
+            $cacheSetting = $Package->getConfig()->get('settings', 'cache');
+        } catch (QUI\Exception $Exception) {
+            QUI\System\Log::writeException($Exception);
+
+            return;
+        }
 
         if (!$cacheSetting) {
             return;
@@ -99,9 +111,9 @@ class EventCoordinator
         try {
             QUI\Cache\Handler::init()->generatCacheFromRequest($output);
         } catch (QUI\Exception $Exception) {
-            QUI\System\Log::addNotice($Exception->getMessage(), array(
+            QUI\System\Log::addNotice($Exception->getMessage(), [
                 'trace' => $Exception->getTraceAsString()
-            ));
+            ]);
         }
     }
 
@@ -128,8 +140,14 @@ class EventCoordinator
      */
     public static function onTemplateGetHeader(QUI\Template $Template)
     {
-        $Package      = QUI::getPackage('quiqqer/cache');
-        $cacheSetting = $Package->getConfig()->get('settings', 'cache');
+        try {
+            $Package      = QUI::getPackage('quiqqer/cache');
+            $cacheSetting = $Package->getConfig()->get('settings', 'cache');
+        } catch (QUI\Exception $Exception) {
+            QUI\System\Log::writeException($Exception);
+
+            return;
+        }
 
         $Template->extendHeader(
             "<script>
