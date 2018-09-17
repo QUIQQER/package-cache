@@ -114,6 +114,8 @@ class EventCoordinator
             QUI\System\Log::addNotice($Exception->getMessage(), [
                 'trace' => $Exception->getTraceAsString()
             ]);
+        } catch (\Exception $Exception) {
+            QUI\System\Log::writeDebugException($Exception);
         }
     }
 
@@ -124,7 +126,7 @@ class EventCoordinator
      */
     public static function onPackageConfigSave(QUI\Package\Package $Package)
     {
-        if ($Package->getName() != 'quiqqer/cache') {
+        if ($Package->getName() !== 'quiqqer/cache') {
             return;
         }
 
