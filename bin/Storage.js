@@ -5,12 +5,24 @@
  *
  * @require URL_OPT_DIR + bin/dexie/dist/dexie.min.js
  */
-define('package/quiqqer/cache/bin/Storage', [
 
-    URL_OPT_DIR + 'bin/dexie/dist/dexie.min.js'
+var needled;
 
-], function (Dexie) {
+if (typeof window.QUIQQER_JS_IS_CACHED === 'undefined' || !window.QUIQQER_JS_IS_CACHED) {
+    needled = [URL_OPT_DIR + 'bin/dexie/dist/dexie.min.js'];
+} else {
+    needled = ['placeholder'];
+
+    define('placeholder', function () {
+    });
+}
+
+define('package/quiqqer/cache/bin/Storage', needled, function (Dexie) {
     "use strict";
+
+    if (typeof Dexie === 'undefined') {
+        Dexie = window.Dexie;
+    }
 
     var DataBase   = new Dexie('quiqqer-storage'),
         LastUpdate = QUIQQER.lu;

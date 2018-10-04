@@ -52,16 +52,16 @@
 
         <locale name="settings.csscache">
             <de><![CDATA[CSS Cache aktivieren und CSS optimieren]]></de>
-            <en><![CDATA[Enable CSS cache and optimize CSS]]></en>
+            <en><![CDATA[Enable the CSS cache and optimize CSS]]></en>
         </locale>
         <locale name="settings.csscache.description" html="true">
             <de><![CDATA[
-            Der CSS Cache optimiert das CSS und speichert dieses zwischen. <br />
+            Der CSS Cache optimiert und cached das CSS. <br />
             Auch das CSS von JavaScript AMD Modulen wird optimiert.
             ]]></de>
             <en><![CDATA[
-            The CSS Cache optimizes the CSS and stores between. <br />
-            Also, the CSS JavaScript AMD modules is optimized.
+            The CSS Cache optimizes and create the CSS Cache. <br />
+            Also, the CSS from JavaScript AMD modules will be optimized.
             ]]></en>
         </locale>
 
@@ -72,11 +72,11 @@
         <locale name="settings.jscache.description" html="true">
             <de><![CDATA[
             Der JavaScript Cache optimiert das JavaScript und speichert dieses zwischen. <br />
-            Auch das JavaScript AMD Modulen werden optimiert.
+            Auch das JavaScript von AMD Modulen wird optimiert.
             ]]></de>
             <en><![CDATA[
-            The JavaScript cache optimizes the JavaScript and stores between. <br />
-            Also the JavaScript AMD modules are optimized.
+            The JavaScript cache optimizes and create the JavaScript cache. <br />
+            Also the AMD JavaScript modules will be optimized.
             ]]></en>
         </locale>
 
