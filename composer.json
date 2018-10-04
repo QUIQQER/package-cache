@@ -1,7 +1,7 @@
 {
   "name": "quiqqer/cache",
   "type": "quiqqer-module",
-  "description": "The cache module stores your page in different caches. This makes your site faster, increases search engine rankings and also leaves your visitors astonished.",
+  "description": "The Cache Module saves your page in an optimal version. Thus your page becomes faster, rises in the search engine rankings and lets also your visitors marvel.",
   "version": "dev-master",
   "license": "PCSG QL-1.0, GPL-3.0+",
   "authors": [
