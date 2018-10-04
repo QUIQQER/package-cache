@@ -5,16 +5,20 @@
             <de><![CDATA[QUIQQER - Cache]]></de>
             <en><![CDATA[QUIQQER - Cache]]></en>
         </locale>
-        <locale name="package.description">
+        <locale name="package.description" html="true">
             <de><![CDATA[
-            Das Cache Module speichert und optimiert die Dateien (Bilder, Scripte, CSS und HTML)
-            Ihrer Seite in verschiedene Caches. Somit wird Ihre Seite schneller,
-            steigt in den Suchmaschinen Rankings und lässt auch Ihre Besucher über die Schnelligkeit staunen.
+            Das Cache Module speichert Ihre Seite in einer optimalen Version.
+            Somit wird Ihre Seite schneller, steigt in die Suchmaschinen Rankings und lässt auch Ihre Besucher staunen.
+            <br /><br />
+            Nicht nur Ihre Bilder werden optimiert, auch CSS, HTML und JavaScript.
+            Dadurch wird Ihre Seite nicht nur kleiner auch die Anfragen des Browsers werden reduziert.
             ]]></de>
             <en><![CDATA[
-            The cache module saves and optimizes the files (images, scripts, CSS and HTML)
-            of your site in different caches. This will make your page faster,
-            increases in the search engine rankings and also makes your visitors astonished at the speed.
+            The Cache Module saves your page in an optimal version.
+            Thus your page becomes faster, rises in the search engine rankings and lets also your visitors marvel.
+            <br /><br />
+            Not only your images will be optimized, but also CSS, HTML and JavaScript.
+            This will not only make your page smaller, but also reduce browser requests.
             ]]></en>
         </locale>
 
