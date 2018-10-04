@@ -75,7 +75,7 @@
             Auch das JavaScript von AMD Modulen wird optimiert.
             ]]></de>
             <en><![CDATA[
-            The JavaScript cache optimizes the JavaScript and stores between. <br />
+            The JavaScript cache optimizes and create the JavaScript cache. <br />
             Also the AMD JavaScript modules will be optimized.
             ]]></en>
         </locale>
