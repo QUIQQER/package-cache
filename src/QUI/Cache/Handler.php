@@ -62,7 +62,7 @@ class Handler
         $query   = $Request->getQueryString();
 
         if (is_string($query)) {
-            $query = parse_str($query);
+            parse_str($query, $query);
         }
 
         if (!is_array($query)) {
@@ -122,7 +122,7 @@ class Handler
         $query   = $Request->getQueryString();
 
         if (is_string($query)) {
-            $query = parse_str($query);
+            parse_str($query, $query);
         }
 
         if (!is_array($query)) {
