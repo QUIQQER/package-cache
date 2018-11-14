@@ -20,7 +20,8 @@
     "php": ">=5.3",
     "quiqqer/quiqqer": "*@dev",
     "mrclay/minify": "2.3.0",
-    "npm-asset/dexie": "1.5.*"
+    "npm-asset/dexie": "1.5.*",
+    "npm-asset/lazysizes": "4.*"
   },
   "autoload": {
     "psr-4": {

@@ -21,5 +21,4 @@
     <event on="onPackageSetup" fire="\QUI\Cache\EventCoordinator::clearCache"/>
     <event on="onPackageInstall" fire="\QUI\Cache\EventCoordinator::clearCache"/>
     <event on="onPackageUninstall" fire="\QUI\Cache\EventCoordinator::clearCache"/>
-
 </events>

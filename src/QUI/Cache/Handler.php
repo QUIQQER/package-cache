@@ -97,7 +97,7 @@ class Handler
      * @param string $content - content to store
      * @throws QUI\Exception
      */
-    public function generatCacheFromRequest($content)
+    public function generateCacheFromRequest($content)
     {
         // loged in users shouldn'tgenerate any cache
         if (QUI::getUsers()->isAuth(QUI::getUserBySession())) {
@@ -107,11 +107,12 @@ class Handler
         // @todo create cache-id
 
 
-        $Package          = QUI::getPackage('quiqqer/cache');
-        $cacheSetting     = $Package->getConfig()->get('settings', 'cache');
-        $jsCacheSetting   = $Package->getConfig()->get('settings', 'jscache');
-        $htmlCacheSetting = $Package->getConfig()->get('settings', 'htmlcache');
-        $cssCacheSetting  = $Package->getConfig()->get('settings', 'csscache');
+        $Package            = QUI::getPackage('quiqqer/cache');
+        $cacheSetting       = $Package->getConfig()->get('settings', 'cache');
+        $jsCacheSetting     = $Package->getConfig()->get('settings', 'jscache');
+        $htmlCacheSetting   = $Package->getConfig()->get('settings', 'htmlcache');
+        $cssCacheSetting    = $Package->getConfig()->get('settings', 'csscache');
+        $lazyloadingSetting = $Package->getConfig()->get('settings', 'lazyloading');
 
         if (!$cacheSetting) {
             return;
@@ -315,6 +316,14 @@ class Handler
             );
 
             file_put_contents($cacheHtmlFile, $content);
+        }
+
+        /**
+         * lazy loading
+         */
+
+        if ($lazyloadingSetting) {
+            file_put_contents($cacheHtmlFile, Parser\LazyLoading::getInstance()->parse($content));
         }
 
         /**

@@ -84,6 +84,24 @@
             ]]></en>
         </locale>
 
+        <locale name="settings.lazyloading">
+            <de><![CDATA[Lazy loading für Bilder]]></de>
+            <en><![CDATA[Lazy loading for pictures]]></en>
+        </locale>
+        <locale name="settings.lazyloading.description" html="true">
+            <de><![CDATA[
+            <b>Diese Einstellung ist experimentell.</b><br />
+            Lazy loading ist eine Strategie, Ressourcen nach Bedarf und nicht im Voraus zu laden.
+            Dieser Ansatz setzt Ressourcen beim Laden der ersten Seite frei und vermeidet das Laden von Bildern, die nie verwendet werden.
+            Bilder werden somit nur geladen wenn diese auch wirklich auf dem Gerät erscheinen.
+            ]]></de>
+            <en><![CDATA[
+            Lazy loading is the strategy of loading resources as they are needed, rather than in advance.
+            This approach frees up resources during the initial page load and avoids loading assets that are never used.
+            Images are therefore only loaded if they actually appear on the device.
+            ]]></en>
+        </locale>
+
         <locale name="message.console.description" html="true">
             <de><![CDATA[
             Für den ersten gebrauch des Cache Modules, bitte führen Sie folgenden Befehl aus:

@@ -59,7 +59,7 @@ class EventCoordinator
             $Response->send();
             exit;
         } catch (QUI\Exception $Exception) {
-            QUI\System\Log::addNotice($Exception->getMessage(), [
+            QUI\System\Log::addDebug($Exception->getMessage(), [
                 'trace' => $Exception->getTraceAsString()
             ]);
         }
@@ -109,9 +109,9 @@ class EventCoordinator
         }
 
         try {
-            QUI\Cache\Handler::init()->generatCacheFromRequest($output);
+            QUI\Cache\Handler::init()->generateCacheFromRequest($output);
         } catch (QUI\Exception $Exception) {
-            QUI\System\Log::addNotice($Exception->getMessage(), [
+            QUI\System\Log::addDebug($Exception->getMessage(), [
                 'trace' => $Exception->getTraceAsString()
             ]);
         } catch (\Exception $Exception) {
