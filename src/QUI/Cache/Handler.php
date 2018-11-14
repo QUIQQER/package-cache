@@ -112,7 +112,7 @@ class Handler
         $jsCacheSetting     = $Package->getConfig()->get('settings', 'jscache');
         $htmlCacheSetting   = $Package->getConfig()->get('settings', 'htmlcache');
         $cssCacheSetting    = $Package->getConfig()->get('settings', 'csscache');
-        $lazyloadingSetting = $Package->getConfig()->get('settings', 'lazyloading');
+        $lazyLoadingSetting = $Package->getConfig()->get('settings', 'lazyloading');
 
         if (!$cacheSetting) {
             return;
@@ -322,8 +322,9 @@ class Handler
          * lazy loading
          */
 
-        if ($lazyloadingSetting) {
-            file_put_contents($cacheHtmlFile, Parser\LazyLoading::getInstance()->parse($content));
+        if ($lazyLoadingSetting) {
+            $content = Parser\LazyLoading::getInstance()->parse($content);
+            file_put_contents($cacheHtmlFile, $content);
         }
 
         /**
