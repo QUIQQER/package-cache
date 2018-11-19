@@ -50,36 +50,21 @@ class LazyLoading extends QUI\Utils\Singleton
         $imgData    = $output[1];
         $attributes = StringUtils::getHTMLAttributes($img);
 
-        if (strpos($attributes['src'], '.svg') !== false) {
+        if (strpos($attributes['src'], '.svg') !== false
+            || strpos($attributes['src'], 'data:') !== false) {
             return $img;
         }
 
-        $src = $attributes['src'];
-        $pos = strpos($src, '__');
-
-        if ($pos !== false) {
-            $parts = mb_substr($src, $pos + 2);
-            $parts = explode('x', $parts);
-
-            if (isset($parts[0]) && !isset($attributes['width'])) {
-                $attributes['width'] = (int)$parts[0];
-            }
-
-            if (isset($parts[1]) && !isset($attributes['height'])) {
-                $attributes['height'] = (int)$parts[1];
-            }
-        }
-
-        $attributes['data-src'] = $src;
-        unset($attributes['src']);
+        $attributes['data-src'] = $attributes['src'];
+        $attributes['src']      = URL_OPT_DIR.'quiqqer/cache/bin/images/placeholder.gif';
 
         if (!isset($attributes['class'])) {
             $attributes['class'] = 'lazyload';
+        } elseif (strpos($attributes['class'], 'lazyload') === false) {
+            $attributes['class'] = $attributes['class'].' lazyload';
         }
 
-        $result = $this->render($attributes);
-
-        return $result;
+        return $this->render($attributes);
     }
 
     /**
