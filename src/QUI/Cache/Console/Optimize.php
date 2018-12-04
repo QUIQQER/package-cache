@@ -3,6 +3,7 @@
 /**
  * This file contains QUI\Cache\Console\Optimize
  */
+
 namespace QUI\Cache\Console;
 
 use QUI;
@@ -54,12 +55,10 @@ class Optimize extends QUI\System\Console\Tool
         $this->writeLn('Found ' . $count . ' images');
 
         foreach ($list as $image) {
-            if (file_exists(CMS_DIR . $image)) {
-                try {
-                    QUI\Cache\Optimizer::optimizePNG(CMS_DIR . $image);
-                } catch (QUI\Exception $Exception) {
-                    continue;
-                }
+            try {
+                QUI\Cache\Optimizer::optimizePNG(CMS_DIR . $image);
+            } catch (QUI\Exception $Exception) {
+                continue;
             }
         }
 
@@ -74,12 +73,10 @@ class Optimize extends QUI\System\Console\Tool
         $this->writeLn('Found ' . $count . ' images');
 
         foreach ($list as $image) {
-            if (file_exists(CMS_DIR . $image)) {
-                try {
-                    QUI\Cache\Optimizer::optimizeJPG(CMS_DIR . $image);
-                } catch (QUI\Exception $Exception) {
-                    continue;
-                }
+            try {
+                QUI\Cache\Optimizer::optimizeJPG(CMS_DIR . $image);
+            } catch (QUI\Exception $Exception) {
+                continue;
             }
         }
 
