@@ -349,7 +349,7 @@ class Optimizer
 
         self::$isJpegoptimInstalled = false;
 
-        if (self::isCommandAvailable("jpegoptim")) {
+        if (!self::isCommandAvailable("jpegoptim")) {
             throw new QUI\Exception('jpegoptim is not installed');
         }
 
@@ -400,7 +400,7 @@ class Optimizer
 
         self::$isOptiPngInstalled = false;
 
-        if (self::isCommandAvailable("optipng")) {
+        if (!self::isCommandAvailable("optipng")) {
             throw new QUI\Exception('OptiPNG is not installed');
         }
 
@@ -452,7 +452,7 @@ class Optimizer
 
         self::$isUglifyJsInstalled = false;
 
-        if (self::isCommandAvailable("uglifyjs")) {
+        if (!self::isCommandAvailable("uglifyjs")) {
             throw new QUI\Exception('UglifyJS is not installed');
         }
 
