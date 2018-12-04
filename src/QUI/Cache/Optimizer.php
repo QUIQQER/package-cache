@@ -131,14 +131,14 @@ class Optimizer
 
         // compile
         $command     = 'nodejs';
-        $nodejsCheck = shell_exec("which nodejs");
+        exec("command -v {$command}", $output, $returnCode);
 
-        if (empty($nodejsCheck)) {
+        if ($returnCode != 0) {
             $command     = 'node';
-            $nodejsCheck = shell_exec("which node");
+            exec("command -v {$command}", $output, $returnCode);
         }
 
-        if (empty($nodejsCheck)) {
+        if ($returnCode != 0) {
             throw new QUI\Exception('nodejs is not installed or is not callable');
         }
 
