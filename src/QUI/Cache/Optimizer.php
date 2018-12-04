@@ -17,6 +17,29 @@ use QUI;
 class Optimizer
 {
     /**
+     * Stores/Caches if Jpegoptim is installed.
+     * @var bool
+     */
+    protected static $isJpegoptimInstalled = null;
+
+
+    /**
+     * Stores/Caches if OptiPNG is installed.
+     * @var bool
+     */
+    protected static $isOptiPngInstalled = null;
+
+
+    /**
+     * Stores/Caches if UglifyJS is installed.
+     * @var bool
+     */
+    protected static $isUglifyJsInstalled = null;
+
+
+    // region Optimization Methods
+
+    /**
      * @param $project
      * @param int $mtime
      */
@@ -130,11 +153,11 @@ class Optimizer
 
 
         // compile
-        $command     = 'nodejs';
+        $command = 'nodejs';
         exec("command -v {$command}", $output, $returnCode);
 
         if ($returnCode != 0) {
-            $command     = 'node';
+            $command = 'node';
             exec("command -v {$command}", $output, $returnCode);
         }
 
@@ -225,11 +248,7 @@ class Optimizer
             }
         }
 
-        exec("command -v uglifyjs", $output, $returnCode);
-
-        if ($returnCode != 0) {
-            throw new QUI\Exception('uglifyjs is not installed');
-        }
+        self::checkUglifyJsInstalled();
 
         $exec   = "uglifyjs {$jsfilePath} --screw-ie8 --compress --mangle";
         $result = shell_exec($exec);
@@ -244,10 +263,8 @@ class Optimizer
      */
     public static function optimizePNG($file)
     {
-        exec("command -v optipng", $output, $returnCode);
-
-        if ($returnCode != 0) {
-            throw new QUI\Exception('optipng is not installed');
+        if (!self::isOptiPngInstalled()) {
+            return;
         }
 
         if (!file_exists($file)) {
@@ -258,25 +275,27 @@ class Optimizer
     }
 
     /**
-     * @param string $file
+     * Optimize a given JPG file.
+     *
+     * @param string $file - The file's absolute path
      *
      * @throws QUI\Exception
      */
     public static function optimizeJPG($file)
     {
-        exec("command -v jpegoptim", $output, $returnCode);
-        $quality = 70;
-
-        if ($returnCode != 0) {
-            throw new QUI\Exception('jpegoptim is not installed');
+        if (!self::isJpegoptimInstalled()) {
+            return;
         }
 
         if (!file_exists($file)) {
             throw new QUI\Exception('File not exists', 404);
         }
 
+        $quality = 70;
         shell_exec('jpegoptim -m' . $quality . ' -o --strip-all "' . $file . '"');
     }
+    // endregion
+
 
     /**
      * Return config build params
@@ -308,5 +327,173 @@ class Optimizer
                 'qui' => 'quiqqer/qui/qui'
             )
         );
+    }
+
+    // region Jpegoptim installation state methods
+
+    /**
+     * Checks if Jpegoptim is installed.
+     * Throws an exception if it's not installed.
+     *
+     * @throws QUI\Exception
+     */
+    public static function checkJpegoptimInstalled()
+    {
+        if (self::$isJpegoptimInstalled !== null) {
+            if (self::$isJpegoptimInstalled === false) {
+                throw new QUI\Exception('jpegoptim is not installed');
+            }
+
+            return;
+        }
+
+        self::$isJpegoptimInstalled = false;
+
+        if (self::isCommandAvailable("jpegoptim")) {
+            throw new QUI\Exception('jpegoptim is not installed');
+        }
+
+        // Only reached if no exception is thrown above
+        self::$isJpegoptimInstalled = true;
+    }
+
+    /**
+     * Returns if Jpegoptim is installed.
+     *
+     * @return bool
+     */
+    public static function isJpegoptimInstalled()
+    {
+        if (self::$isJpegoptimInstalled !== null) {
+            return self::$isJpegoptimInstalled;
+        }
+
+        try {
+            self::checkJpegoptimInstalled();
+        } catch (QUI\Exception $Exception) {
+            return false;
+        }
+
+        return true;
+    }
+
+    // endregion
+
+
+    // region OptiPNG installation state methods
+
+    /**
+     * Checks if OptiPNG is installed.
+     * Throws an exception if it's not installed.
+     *
+     * @throws QUI\Exception
+     */
+    public static function checkOptiPngInstalled()
+    {
+        if (self::$isOptiPngInstalled !== null) {
+            if (self::$isOptiPngInstalled === false) {
+                throw new QUI\Exception('OptiPNG is not installed');
+            }
+
+            return;
+        }
+
+        self::$isOptiPngInstalled = false;
+
+        if (self::isCommandAvailable("optipng")) {
+            throw new QUI\Exception('OptiPNG is not installed');
+        }
+
+        // Only reached if no exception is thrown above
+        self::$isOptiPngInstalled = true;
+    }
+
+
+    /**
+     * Returns if OptiPNG is installed.
+     *
+     * @return bool
+     */
+    public static function isOptiPngInstalled()
+    {
+        if (self::$isOptiPngInstalled !== null) {
+            return self::$isOptiPngInstalled;
+        }
+
+        try {
+            self::checkOptiPngInstalled();
+        } catch (QUI\Exception $Exception) {
+            return false;
+        }
+
+        return true;
+    }
+
+    // endregion
+
+
+    // region UglifyJS installation state methods
+
+    /**
+     * Checks if UglifyJS is installed.
+     * Throws an exception if it's not installed.
+     *
+     * @throws QUI\Exception
+     */
+    public static function checkUglifyJsInstalled()
+    {
+        if (self::$isUglifyJsInstalled !== null) {
+            if (self::$isUglifyJsInstalled === false) {
+                throw new QUI\Exception('UglifyJS is not installed');
+            }
+
+            return;
+        }
+
+        self::$isUglifyJsInstalled = false;
+
+        if (self::isCommandAvailable("uglifyjs")) {
+            throw new QUI\Exception('UglifyJS is not installed');
+        }
+
+        // Only reached if no exception is thrown above
+        self::$isUglifyJsInstalled = true;
+    }
+
+
+    /**
+     * Returns if UglifyJS is installed.
+     *
+     * @return bool
+     */
+    public static function isUglifyJsInstalled()
+    {
+        if (self::$isUglifyJsInstalled !== null) {
+            return self::$isUglifyJsInstalled;
+        }
+
+        try {
+            self::checkUglifyJsInstalled();
+        } catch (QUI\Exception $Exception) {
+            return false;
+        }
+
+        return true;
+    }
+
+    // endregion
+
+
+    /**
+     * Checks if the given (system-)command is available on the system.
+     *
+     * @param string $command
+     * @return bool
+     */
+    public static function isCommandAvailable($command)
+    {
+        exec("command -v {$command}", $output, $returnCode);
+
+        return $returnCode == 0;
     }
 }
