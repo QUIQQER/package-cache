@@ -3,6 +3,7 @@
 /**
  * This file contains QUI\Cache\Optimizer
  */
+
 namespace QUI\Cache;
 
 use QUI;
@@ -224,14 +225,13 @@ class Optimizer
             }
         }
 
-        $command       = 'uglifyjs';
-        $uglifyjsCheck = shell_exec("which uglifyjs");
+        exec("command -v uglifyjs", $output, $returnCode);
 
-        if (empty($uglifyjsCheck)) {
-            throw new QUI\Exception('uglifyjs is not installed or is not callable');
+        if ($returnCode != 0) {
+            throw new QUI\Exception('uglifyjs is not installed');
         }
 
-        $exec   = "{$command} {$jsfilePath} --screw-ie8 --compress --mangle";
+        $exec   = "uglifyjs {$jsfilePath} --screw-ie8 --compress --mangle";
         $result = shell_exec($exec);
 
         return $result;
@@ -244,9 +244,9 @@ class Optimizer
      */
     public static function optimizePNG($file)
     {
-        $optipng = shell_exec("which optipng");
+        exec("command -v optipng", $output, $returnCode);
 
-        if (empty($optipng)) {
+        if ($returnCode != 0) {
             throw new QUI\Exception('optipng is not installed');
         }
 
@@ -264,10 +264,10 @@ class Optimizer
      */
     public static function optimizeJPG($file)
     {
-        $jpegoptim = shell_exec("which jpegoptim");
-        $quality   = 70;
+        exec("command -v jpegoptim", $output, $returnCode);
+        $quality = 70;
 
-        if (empty($jpegoptim)) {
+        if ($returnCode != 0) {
             throw new QUI\Exception('jpegoptim is not installed');
         }
 
