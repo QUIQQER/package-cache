@@ -3,6 +3,7 @@
 /**
  * This file contains QUI\Cache\Console\Optimize
  */
+
 namespace QUI\Cache\Console;
 
 use QUI;
@@ -43,47 +44,77 @@ class Optimize extends QUI\System\Console\Tool
             $mtime = 1000;
         }
 
-        // find all pngs
-        $this->writeLn('Optimize PNG Files', 'green');
+        if (QUI\Cache\Optimizer::isOptiPngInstalled()) {
+            // find all pngs
+            $this->writeLn('Optimize PNG Files', 'green');
 
-        $list  = shell_exec('find "' . $cacheDir . '" -iname \*.png -type f -mtime -' . $mtime);
-        $list  = explode("\n", trim($list));
-        $count = count($list);
+            $list  = shell_exec('find "' . $cacheDir . '" -iname \*.png -type f -mtime -' . $mtime);
+            $list  = explode("\n", trim($list));
+            $count = count($list);
 
-        $this->resetColor();
-        $this->writeLn('Found ' . $count . ' images');
+            $this->resetColor();
+            $this->writeLn('Found ' . $count . ' images');
 
-        foreach ($list as $image) {
-            if (file_exists(CMS_DIR . $image)) {
+            foreach ($list as $image) {
                 try {
                     QUI\Cache\Optimizer::optimizePNG(CMS_DIR . $image);
                 } catch (QUI\Exception $Exception) {
                     continue;
                 }
             }
+        } else {
+            $this->writeLn(
+                'Notice:',
+                'yellow'
+            );
+            $this->writeLn(
+                'In order to optimize PNGs you need to install OptiPNG on your system.',
+                'yellow'
+            );
+            $this->writeLn(
+                'Find out more about this in the wiki: https://dev.quiqqer.com/quiqqer/package-cache/wikis/home',
+                'yellow'
+            );
+            $this->writeLn();
+            $this->resetColor();
         }
 
-        // find all jpgs
-        $this->writeLn('Optimize JPG Files ...', 'green');
+        if (QUI\Cache\Optimizer::isJpegoptimInstalled()) {
+            // find all jpgs
+            $this->writeLn('Optimize JPG Files ...', 'green');
 
-        $list  = shell_exec('find "' . $cacheDir . '" -iname \*.jp*g -type f -mtime -' . $mtime);
-        $list  = explode("\n", trim($list));
-        $count = count($list);
+            $list  = shell_exec('find "' . $cacheDir . '" -iname \*.jp*g -type f -mtime -' . $mtime);
+            $list  = explode("\n", trim($list));
+            $count = count($list);
 
-        $this->resetColor();
-        $this->writeLn('Found ' . $count . ' images');
+            $this->resetColor();
+            $this->writeLn('Found ' . $count . ' images');
 
-        foreach ($list as $image) {
-            if (file_exists(CMS_DIR . $image)) {
+            foreach ($list as $image) {
                 try {
                     QUI\Cache\Optimizer::optimizeJPG(CMS_DIR . $image);
                 } catch (QUI\Exception $Exception) {
                     continue;
                 }
             }
+        } else {
+            $this->writeLn(
+                'Notice:',
+                'yellow'
+            );
+            $this->writeLn(
+                'In order to optimize JPGs you need to install Jpegoptim on your system.',
+                'yellow'
+            );
+            $this->writeLn(
+                'Find out more about this in the wiki: https://dev.quiqqer.com/quiqqer/package-cache/wikis/home',
+                'yellow'
+            );
+            $this->writeLn();
+            $this->resetColor();
         }
 
-        $this->writeLn('DONE', 'green');
+        $this->writeLn('DONE.', 'green');
         $this->writeLn();
         $this->resetColor();
     }

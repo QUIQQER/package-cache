@@ -41,8 +41,8 @@
             <en><![CDATA[Enable cache]]></en>
         </locale>
         <locale name="settings.cache.description">
-            <de><![CDATA[Deaktivierung des kompletten Cache hat zur folge dass kein Cache generiert wird.]]></de>
-            <en><![CDATA[Deactivation of the entire cache with the result that no cache is generated.]]></en>
+            <de><![CDATA[Diese Funktion aktiviert (Häkchen) oder deaktiviert (kein Häkchen) den gesamten Cache. Ist der Cache deaktiviert, wird keiner der anderen Caches erzeugt.]]></de>
+            <en><![CDATA[This function enables (checked box) or disables (unchecked box) the entire cache. If the cache is disabled, none of the other caches will be created.]]></en>
         </locale>
 
         <locale name="settings.htmlcache">
