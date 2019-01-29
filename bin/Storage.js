@@ -9,9 +9,16 @@
 var needled;
 
 if (typeof window.QUIQQER_JS_IS_CACHED === 'undefined' || !window.QUIQQER_JS_IS_CACHED) {
-    needled = [URL_OPT_DIR + 'bin/dexie/dist/dexie.min.js'];
+    needled = [
+        'qui/lib/polyfills/Promise',
+        URL_OPT_DIR + 'bin/dexie/dist/dexie.min.js'
+    ];
 } else {
     needled = ['placeholder'];
+
+    if (typeof window.Promise === 'undefined') {
+        needled.push('qui/lib/polyfills/Promise');
+    }
 
     define('placeholder', function () {
     });

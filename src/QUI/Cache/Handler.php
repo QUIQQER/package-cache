@@ -173,7 +173,8 @@ class Handler
 
             // add own cache js
             $matches[] = [
-                '<script src="'.URL_OPT_DIR.'quiqqer/cache/bin/Storage.js"></script>'
+                '<script src="'.URL_OPT_DIR.'quiqqer/cache/bin/Storage.js"></script>',
+                '<script src="'.URL_OPT_DIR.'quiqqer/qui/qui/lib/polyfills/Promise.js"></script>'
             ];
 
             foreach ($matches as $entry) {
