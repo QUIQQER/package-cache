@@ -10,6 +10,13 @@
         return;
     }
 
+    // ie11 workaround
+    // no bundler for IE11
+    // old browser workaround
+    if (typeof window.Promise === 'undefined' || typeof localStorage !== 'undefined') {
+        return;
+    }
+
     var oldLoad = requirejs.load;
 
     requirejs.config({
@@ -77,7 +84,7 @@
                            });
 
 
-                           if (moduleName == 'SecondLevelDomains') {
+                           if (moduleName === 'SecondLevelDomains') {
                                try {
                                    // bug fix, because URIjs defines empty define module definition
                                    // requirejs blows up
