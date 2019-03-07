@@ -78,14 +78,40 @@ class Handler
         }
 
         $dir       = $this->getCacheDir();
-        $cachefile = $dir.md5($uri).QUI\Rewrite::getDefaultSuffix();
+        $cacheFile = $dir.md5($uri).QUI\Rewrite::getDefaultSuffix();
 
-        if (file_exists($cachefile) && !is_dir($cachefile)) {
-            $cache = file_get_contents($cachefile);
+        if (file_exists($cacheFile) && !is_dir($cacheFile)) {
+            $cache = file_get_contents($cacheFile);
 
-            if (!empty($cache)) {
-                return $cache;
+            if (empty($cache)) {
+                throw new QUI\Exception('No Cache exists', 404);
             }
+
+            // replace user data
+            $cache = preg_replace_callback(
+                '/<script id="quiqqer-user-defined">(.*)<\/script>/Uis',
+                function () {
+                    $Nobody      = QUI::getUsers()->getNobody();
+                    $Country     = $Nobody->getCountry();
+                    $countryCode = '';
+
+                    if ($Country) {
+                        $countryCode = $Country->getCode();
+                    }
+
+                    $user = [
+                        'id'      => 0,
+                        'name'    => $Nobody->getName(),
+                        'lang'    => $Nobody->getLang(),
+                        'country' => $countryCode
+                    ];
+
+                    return '<script id="quiqqer-user-defined">var QUIQQER_USER= '.json_encode($user).';</script>';
+                },
+                $cache
+            );
+
+            return $cache;
         }
 
         throw new QUI\Exception('No Cache exists', 404);
@@ -178,10 +204,15 @@ class Handler
             ];
 
             foreach ($matches as $entry) {
+                if (strpos($entry[0], 'id="quiqqer-user-defined"') !== false) {
+                    continue;
+                }
+
                 // quiqqer/package-cache/issues/7
                 if (strpos($entry[0], 'type=') !== false) {
                     if (strpos($entry[0], 'type="application/javascript"') === false ||
-                        strpos($entry[0], 'type="text/javascript"') === false) {
+                        strpos($entry[0], 'type="text/javascript"') === false
+                    ) {
                         continue;
                     }
                 }
