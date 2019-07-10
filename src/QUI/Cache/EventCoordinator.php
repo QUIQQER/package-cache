@@ -96,6 +96,10 @@ class EventCoordinator
         }
 
         try {
+            if (QUI::getRewrite()->getSite()->getAttribute('nocache')) {
+                return;
+            }
+
             $Package      = QUI::getPackage('quiqqer/cache');
             $cacheSetting = $Package->getConfig()->get('settings', 'cache');
         } catch (QUI\Exception $Exception) {
