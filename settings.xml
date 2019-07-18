@@ -25,6 +25,11 @@
                     <type><![CDATA[bool]]></type>
                     <defaultvalue>1</defaultvalue>
                 </conf>
+
+                <conf name="optimize_on_resize">
+                    <type><![CDATA[bool]]></type>
+                    <defaultvalue>1</defaultvalue>
+                </conf>
             </section>
         </config>
 
@@ -90,6 +95,15 @@
                             </text>
                             <description>
                                 <locale group="quiqqer/cache" var="settings.lazyloading.description"/>
+                            </description>
+                        </input>
+
+                        <input conf="settings.optimize_on_resize" type="checkbox">
+                            <text>
+                                <locale group="quiqqer/cache" var="settings.optimize_on_resize"/>
+                            </text>
+                            <description>
+                                <locale group="quiqqer/cache" var="settings.optimize_on_resize.description"/>
                             </description>
                         </input>
 
