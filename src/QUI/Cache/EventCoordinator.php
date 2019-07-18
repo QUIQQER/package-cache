@@ -188,6 +188,18 @@ class EventCoordinator
     public static function onMediaCreateSizeCache(QUI\Projects\Media\Item $Image, \Intervention\Image\Image $Cache)
     {
         try {
+            $Package          = QUI::getPackage('quiqqer/cache');
+            $optimizeOnResize = $Package->getConfig()->get('settings', 'optimize_on_resize');
+        } catch (QUI\Exception $Exception) {
+            QUI\System\Log::writeException($Exception);
+            return;
+        }
+
+        if (empty($optimizeOnResize)) {
+            return;
+        }
+
+        try {
             switch ($Cache->extension) {
                 case 'jpg':
                     Optimizer::optimizeJPG($Cache->basePath());
