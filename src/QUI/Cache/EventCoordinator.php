@@ -54,8 +54,13 @@ class EventCoordinator
         }
 
         try {
+            $content  = QUI\Cache\Handler::init()->getCacheFromRequest();
             $Response = QUI::getGlobalResponse();
-            $Response->setContent(QUI\Cache\Handler::init()->getCacheFromRequest());
+            $Response->setContent($content);
+
+            QUI\Cache\Parser\HTTP2ServerPush::parseCSS($content, $Response);
+            QUI\Cache\Parser\HTTP2ServerPush::parseImages($content, $Response);
+
             $Response->send();
             exit;
         } catch (QUI\Exception $Exception) {
