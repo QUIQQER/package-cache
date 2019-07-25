@@ -89,6 +89,15 @@ class EventCoordinator
             return;
         }
 
+        try {
+            if (QUI::getRewrite()->getSite()->getAttribute('nocache')) {
+                return;
+            }
+        } catch (QUI\Exception $Exception) {
+            QUI\System\Log::addDebug($Exception->getMessage());
+        }
+
+
         $Response = QUI::getGlobalResponse();
 
         if ($Response->getStatusCode() !== 200) {
@@ -192,6 +201,7 @@ class EventCoordinator
             $optimizeOnResize = $Package->getConfig()->get('settings', 'optimize_on_resize');
         } catch (QUI\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
+
             return;
         }
 
