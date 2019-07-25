@@ -11,6 +11,7 @@ use QUI\Utils\StringHelper as StringUtils;
 
 /**
  * Class HTTP2ServerPush
+ * EXPERIMENTAL
  *
  * @package QUI\Cache\Parser
  */
@@ -26,6 +27,7 @@ class HTTP2ServerPush
             $Response = QUI::getGlobalResponse();
         }
 
+        return;
         \preg_match_all('#<img([^>]*)>#i', $output, $images);
 
         $images = $images[1];
@@ -62,6 +64,7 @@ class HTTP2ServerPush
             $Response = QUI::getGlobalResponse();
         }
 
+        return;
         \preg_match_all('/<link[^>]+href="([^"]*)"[^>]*>/Uis', $output, $matches);
 
         foreach ($matches as $match) {
@@ -84,6 +87,7 @@ class HTTP2ServerPush
             }
 
             $file = CMS_DIR.$match[1];
+            $file = \str_replace("\n", ' ', $file);
 
             if (!\file_exists($file)) {
                 $parse = \parse_url($file);
