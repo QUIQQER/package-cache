@@ -32,7 +32,7 @@ class EventCoordinator
         }
 
 
-        if (!boolval($cacheEnabled)) {
+        if (!\boolval($cacheEnabled)) {
             return;
         }
 

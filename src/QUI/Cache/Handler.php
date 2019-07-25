@@ -61,11 +61,11 @@ class Handler
         $uri     = $Request->getUri();
         $query   = $Request->getQueryString();
 
-        if (is_string($query)) {
-            parse_str($query, $query);
+        if (\is_string($query)) {
+            \parse_str($query, $query);
         }
 
-        if (!is_array($query)) {
+        if (!\is_array($query)) {
             $query = [];
         }
 
@@ -78,17 +78,17 @@ class Handler
         }
 
         $dir       = $this->getCacheDir();
-        $cacheFile = $dir.md5($uri).QUI\Rewrite::getDefaultSuffix();
+        $cacheFile = $dir.\md5($uri).QUI\Rewrite::getDefaultSuffix();
 
-        if (file_exists($cacheFile) && !is_dir($cacheFile)) {
-            $cache = file_get_contents($cacheFile);
+        if (\file_exists($cacheFile) && !\is_dir($cacheFile)) {
+            $cache = \file_get_contents($cacheFile);
 
             if (empty($cache)) {
                 throw new QUI\Exception('No Cache exists', 404);
             }
 
             // replace user data
-            $cache = preg_replace_callback(
+            $cache = \preg_replace_callback(
                 '/<script id="quiqqer-user-defined">(.*)<\/script>/Uis',
                 function () {
                     $Nobody      = QUI::getUsers()->getNobody();
@@ -106,7 +106,7 @@ class Handler
                         'country' => $countryCode
                     ];
 
-                    return '<script id="quiqqer-user-defined">var QUIQQER_USER= '.json_encode($user).';</script>';
+                    return '<script id="quiqqer-user-defined">var QUIQQER_USER= '.\json_encode($user).';</script>';
                 },
                 $cache
             );
@@ -148,11 +148,11 @@ class Handler
         $uri     = $Request->getUri();
         $query   = $Request->getQueryString();
 
-        if (is_string($query)) {
-            parse_str($query, $query);
+        if (\is_string($query)) {
+            \parse_str($query, $query);
         }
 
-        if (!is_array($query)) {
+        if (!\is_array($query)) {
             $query = [];
         }
 
@@ -164,7 +164,7 @@ class Handler
             throw new QUI\Exception('Get Params exists. No Cache exists', 404);
         }
 
-        $cacheId = md5($uri);
+        $cacheId = \md5($uri);
         $dir     = $this->getCacheDir();
 
         $binDir    = $this->getCacheDir().'/bin/';
@@ -181,14 +181,14 @@ class Handler
          * HTML
          */
         $cacheHtmlFile = $dir.$cacheId.QUI\Rewrite::getDefaultSuffix();
-        file_put_contents($cacheHtmlFile, $content);
+        \file_put_contents($cacheHtmlFile, $content);
 
 
         /**
          * Bundle JavaScript
          */
         if ($jsCacheSetting) {
-            preg_match_all(
+            \preg_match_all(
                 '/<script[^>]*>(.*)<\/script>/Uis',
                 $content,
                 $matches,
@@ -204,26 +204,26 @@ class Handler
             ];
 
             foreach ($matches as $entry) {
-                if (strpos($entry[0], 'id="quiqqer-user-defined"') !== false) {
+                if (\strpos($entry[0], 'id="quiqqer-user-defined"') !== false) {
                     continue;
                 }
 
                 // quiqqer/package-cache/issues/7
-                if (strpos($entry[0], 'type=') !== false) {
-                    if (strpos($entry[0], 'type="application/javascript"') === false ||
-                        strpos($entry[0], 'type="text/javascript"') === false
+                if (\strpos($entry[0], 'type=') !== false) {
+                    if (\strpos($entry[0], 'type="application/javascript"') === false ||
+                        \strpos($entry[0], 'type="text/javascript"') === false
                     ) {
                         continue;
                     }
                 }
 
-                if (strpos($entry[0], 'src=') === false) {
-                    $content   = str_replace($entry, '', $content);
+                if (\strpos($entry[0], 'src=') === false) {
+                    $content   = \str_replace($entry, '', $content);
                     $jsContent .= $entry[1];
                     continue;
                 }
 
-                preg_match(
+                \preg_match(
                     '/<script\s+?src="([^"]*)"[^>]*>(.*)<\/script>/Uis',
                     $entry[0],
                     $matches
@@ -233,38 +233,38 @@ class Handler
                     continue;
                 }
 
-                $file = CMS_DIR.ltrim($matches[1], '/');
+                $file = CMS_DIR.\ltrim($matches[1], '/');
 
-                if (!file_exists($file)) {
-                    $parse = parse_url($file);
+                if (!\file_exists($file)) {
+                    $parse = \parse_url($file);
                     $file  = $parse['path'];
                 }
 
-                if (!file_exists($file)) {
+                if (!\file_exists($file)) {
                     continue;
                 }
 
-                $jsContent .= file_get_contents($file).';';
+                $jsContent .= \file_get_contents($file).';';
 
-                $content = str_replace($entry[0], '', $content);
+                $content = \str_replace($entry[0], '', $content);
             }
 
 
             // js id
-            $jsId = md5($jsContent);
+            $jsId = \md5($jsContent);
 
             $cacheJSFile    = $binDir.$jsId.'.cache.js';
             $cacheURLJSFile = $urlBinDir.$jsId.'.cache.js';
 
             // create javascript cache file
-            if (!file_exists($cacheJSFile)) {
-                file_put_contents($cacheJSFile, $jsContent);
+            if (!\file_exists($cacheJSFile)) {
+                \file_put_contents($cacheJSFile, $jsContent);
 
                 try {
                     $optimized = Optimizer::optimizeJavaScript($cacheJSFile);
 
                     if (!empty($optimized)) {
-                        file_put_contents($cacheJSFile, $optimized);
+                        \file_put_contents($cacheJSFile, $optimized);
                     }
                 } catch (QUI\Exception $Exception) {
                     // could not optimize javascript
@@ -276,9 +276,9 @@ class Handler
                       '</body>';
 
             // insert quiqqer.cache.js
-            $content = str_replace('</body>', $cached, $content);
+            $content = \str_replace('</body>', $cached, $content);
 
-            file_put_contents($cacheHtmlFile, $content);
+            \file_put_contents($cacheHtmlFile, $content);
 
 
             /**
@@ -287,7 +287,7 @@ class Handler
             $requirePackages = [];
             $jsContent       = '';
 
-            preg_replace_callback(
+            \preg_replace_callback(
                 '/data-qui="([^"]*)"/Uis',
                 function ($found) use (&$requirePackages) {
                     $requirePackages[] = $found[1];
@@ -297,11 +297,11 @@ class Handler
                 $content
             );
 
-            $requirePackages = array_unique($requirePackages);
-            sort($requirePackages);
+            $requirePackages = \array_unique($requirePackages);
+            \sort($requirePackages);
 
             foreach ($requirePackages as $require) {
-                $found = strpos($require, 'package/');
+                $found = \strpos($require, 'package/');
 
                 if ($found === false) {
                     continue;
@@ -311,43 +311,43 @@ class Handler
                     continue;
                 }
 
-                $file = trim(substr_replace($require, OPT_DIR, 0, strlen('package/')));
+                $file = \trim(\substr_replace($require, OPT_DIR, 0, \strlen('package/')));
 
-                if (!file_exists($file)) {
+                if (!\file_exists($file)) {
                     $file = $file.'.js';
                 }
 
-                if (!file_exists($file)) {
+                if (!\file_exists($file)) {
                     continue;
                 }
 
-                $jsContent .= file_get_contents($file).';';
+                $jsContent .= \file_get_contents($file).';';
             }
 
-            $jsId           = md5(serialize($requirePackages));
+            $jsId           = \md5(\serialize($requirePackages));
             $cacheJSFile    = $binDir.$jsId.'.cache.pkg.js';
             $cacheURLJSFile = $urlBinDir.$jsId.'.cache.pkg.js';
 
-            if (!file_exists($cacheJSFile)) {
-                file_put_contents($cacheJSFile, $jsContent);
+            if (!\file_exists($cacheJSFile)) {
+                \file_put_contents($cacheJSFile, $jsContent);
 
                 try {
                     $optimized = Optimizer::optimizeJavaScript($cacheJSFile);
 
                     if (!empty($optimized)) {
-                        file_put_contents($cacheJSFile, $optimized);
+                        \file_put_contents($cacheJSFile, $optimized);
                     }
                 } catch (QUI\Exception $Exception) {
                 }
             }
 
-            $content = str_replace(
+            $content = \str_replace(
                 '</body>',
                 '<script async src="'.$cacheURLJSFile.'" type="text/javascript"></script></body>',
                 $content
             );
 
-            file_put_contents($cacheHtmlFile, $content);
+            \file_put_contents($cacheHtmlFile, $content);
         }
 
         /**
@@ -356,7 +356,7 @@ class Handler
 
         if ($lazyLoadingSetting) {
             $content = Parser\LazyLoading::getInstance()->parse($content);
-            file_put_contents($cacheHtmlFile, $content);
+            \file_put_contents($cacheHtmlFile, $content);
         }
 
         /**
@@ -365,14 +365,14 @@ class Handler
         if ($cssCacheSetting) {
             $CSSMinify = new \Minify_CSS();
 
-            preg_match_all(
+            \preg_match_all(
                 '/<link[^>]+href="([^"]*)"[^>]*>/Uis',
                 $content,
                 $matches,
                 PREG_SET_ORDER
             );
 
-            $cssId = md5(serialize($matches));
+            $cssId = \md5(\serialize($matches));
 
             $cacheCSSFile    = $binDir.$cssId.'.cache.css';
             $cacheURLCSSFile = $urlBinDir.$cssId.'.cache.css';
@@ -380,51 +380,51 @@ class Handler
             $cssContent = '';
 
             foreach ($matches as $match) {
-                if (strpos($match[0], 'rel') !== false
-                    && strpos($match[0], 'rel="stylesheet"') === false
+                if (\strpos($match[0], 'rel') !== false
+                    && \strpos($match[0], 'rel="stylesheet"') === false
                 ) {
                     continue;
                 }
 
-                if (strpos($match[0], 'alternate') !== false) {
+                if (\strpos($match[0], 'alternate') !== false) {
                     continue;
                 }
 
-                if (strpos($match[0], 'next') !== false) {
+                if (\strpos($match[0], 'next') !== false) {
                     continue;
                 }
 
-                if (strpos($match[0], 'prev') !== false) {
+                if (\strpos($match[0], 'prev') !== false) {
                     continue;
                 }
 
 
                 $file = CMS_DIR.$match[1];
 
-                if (!file_exists($file)) {
-                    $parse = parse_url($file);
+                if (!\file_exists($file)) {
+                    $parse = \parse_url($file);
                     $file  = $parse['path'];
                 }
 
-                if (!file_exists($file)) {
+                if (!\file_exists($file)) {
                     continue;
                 }
 
                 $comment  = "\n/* File: {$match[1]} */\n";
-                $minified = $CSSMinify->minify(file_get_contents($file), [
+                $minified = $CSSMinify->minify(\file_get_contents($file), [
                     'docRoot'    => CMS_DIR,
-                    'currentDir' => dirname(CMS_DIR.$match[1]).'/'
+                    'currentDir' => \dirname(CMS_DIR.$match[1]).'/'
                 ]);
 
                 $cssContent .= $comment.$minified."\n";
 
                 // delete css from main content
-                $content = str_replace($match[0], '', $content);
+                $content = \str_replace($match[0], '', $content);
             }
 
             // create css cache file
-            if (!file_exists($cacheCSSFile)) {
-                file_put_contents($cacheCSSFile, $cssContent);
+            if (!\file_exists($cacheCSSFile)) {
+                \file_put_contents($cacheCSSFile, $cssContent);
             }
 
 
@@ -435,13 +435,13 @@ class Handler
 //                $content
 //            );
 
-            $content = str_replace(
+            $content = \str_replace(
                 '<!-- quiqqer css -->',
                 '<style>'.$cssContent.'</style>',
                 $content
             );
 
-            file_put_contents($cacheHtmlFile, $content);
+            \file_put_contents($cacheHtmlFile, $content);
         }
 
         /**
@@ -466,7 +466,7 @@ class Handler
                 'minifyAll' => true
             ]);
 
-            file_put_contents($cacheHtmlFile, $result);
+            \file_put_contents($cacheHtmlFile, $result);
         }
     }
 
