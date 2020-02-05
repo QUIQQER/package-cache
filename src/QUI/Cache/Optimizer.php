@@ -22,12 +22,17 @@ class Optimizer
      */
     protected static $isJpegoptimInstalled = null;
 
-
     /**
      * Stores/Caches if OptiPNG is installed.
      * @var bool
      */
     protected static $isOptiPngInstalled = null;
+
+    /**
+     * Stores/Caches if WebP is installed.
+     * @var bool
+     */
+    protected static $isWebPInstalled = null;
 
 
     /**
@@ -294,6 +299,7 @@ class Optimizer
         $quality = 70;
         \shell_exec('jpegoptim -m'.$quality.' -o --strip-all "'.$file.'"');
     }
+
     // endregion
 
 
@@ -431,6 +437,100 @@ class Optimizer
 
     // endregion
 
+    // region webP
+
+    /**
+     * Checks if OptiPNG is installed.
+     * Throws an exception if it's not installed.
+     *
+     * @throws QUI\Exception
+     */
+    public static function checkWebPInstalled()
+    {
+        if (self::$isWebPInstalled !== null) {
+            if (self::$isWebPInstalled === false) {
+                throw new QUI\Exception('WebP is not installed');
+            }
+
+            return;
+        }
+
+        self::$isWebPInstalled = false;
+
+        if (!self::webPCommand()) {
+            throw new QUI\Exception('WebP is not installed');
+        }
+
+        // Only reached if no exception is thrown above
+        self::$isWebPInstalled = true;
+    }
+
+    /**
+     * Returns if webP is installed.
+     *
+     * @return bool
+     */
+    public static function isWebPInstalled()
+    {
+        if (self::$isWebPInstalled !== null) {
+            return self::$isWebPInstalled;
+        }
+
+        try {
+            self::checkWebPInstalled();
+        } catch (QUI\Exception $Exception) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @return bool|string
+     */
+    public static function webPCommand()
+    {
+        if (self::isCommandAvailable("cwebp")) {
+            return 'cwebp';
+        }
+
+        return false;
+    }
+
+    /**
+     * Convert a file to a webP file
+     *
+     * @param string $file
+     * @return string|false
+     */
+    public static function convertToWebP($file)
+    {
+        if (!file_exists($file)) {
+            return false;
+        }
+
+        $quality = 70;
+        $parts   = \pathinfo($file);
+
+        if ($parts['extension'] === 'svg') {
+            return false;
+        }
+
+        $webPFile = $parts['dirname'].DIRECTORY_SEPARATOR.$parts['filename'].'.webp';
+        $webP     = self::webPCommand();
+
+        if ($parts['extension'] === 'gif') {
+            $webP = 'gif2webp';
+        }
+
+        $command = $webP.' -q '.\escapeshellarg($quality).' '.\escapeshellarg($file).' -o '.\escapeshellarg($webPFile);
+
+        \shell_exec($command);
+
+        return $webPFile;
+    }
+
+    // endregion
 
     // region UglifyJS installation state methods
 
@@ -459,7 +559,6 @@ class Optimizer
         // Only reached if no exception is thrown above
         self::$isUglifyJsInstalled = true;
     }
-
 
     /**
      * Returns if UglifyJS is installed.

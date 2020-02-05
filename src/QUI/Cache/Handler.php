@@ -17,6 +17,11 @@ use QUI;
 class Handler
 {
     /**
+     * @var null|bool
+     */
+    protected $webP = null;
+
+    /**
      * @return Handler
      */
     public static function init()
@@ -42,6 +47,26 @@ class Handler
     public function getURLCacheDir()
     {
         return URL_VAR_DIR.'cache/packages/cache/';
+    }
+
+    /**
+     * @return bool
+     */
+    public function useWebP()
+    {
+        if ($this->webP !== null) {
+            return $this->webP;
+        }
+
+        try {
+            $Package    = QUI::getPackage('quiqqer/cache');
+            $this->webP = $Package->getConfig()->get('settings', 'webp');
+            $this->webP = !!$this->webP;
+        } catch (QUI\Exception $Exception) {
+            QUI\System\Log::addDebug($Exception->getMessage());
+        }
+
+        return $this->webP;
     }
 
     /**
