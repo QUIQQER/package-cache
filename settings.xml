@@ -30,6 +30,11 @@
                     <type><![CDATA[bool]]></type>
                     <defaultvalue>1</defaultvalue>
                 </conf>
+
+                <conf name="webp">
+                    <type><![CDATA[bool]]></type>
+                    <defaultvalue>0</defaultvalue>
+                </conf>
             </section>
         </config>
 
@@ -88,6 +93,21 @@
                                 <locale group="quiqqer/cache" var="settings.jscache.description"/>
                             </description>
                         </input>
+                    </settings>
+
+                    <settings title="settings" name="settings">
+                        <title>
+                            <locale group="quiqqer/cache" var="settings.category.image.title"/>
+                        </title>
+
+                        <input conf="settings.webp" type="checkbox">
+                            <text>
+                                <locale group="quiqqer/cache" var="settings.webp"/>
+                            </text>
+                            <description>
+                                <locale group="quiqqer/cache" var="settings.webp.description"/>
+                            </description>
+                        </input>
 
                         <input conf="settings.lazyloading" type="checkbox">
                             <text>
@@ -108,9 +128,12 @@
                         </input>
 
                         <text>
-                            <locale group="quiqqer/cache" var="message.console.description"/>
+                            <description>
+                                <locale group="quiqqer/cache" var="message.console.description"/>
+                            </description>
                         </text>
                     </settings>
+
                 </category>
 
             </categories>

@@ -35,14 +35,24 @@
             <de><![CDATA[Allgemeine Webseiten Caching Einstellungen]]></de>
             <en><![CDATA[General Websites caching settings]]></en>
         </locale>
+        <locale name="settings.category.image.title">
+            <de><![CDATA[Bild Optimierungen]]></de>
+            <en><![CDATA[Image optimizations]]></en>
+        </locale>
 
         <locale name="settings.cache">
             <de><![CDATA[Cache aktivieren]]></de>
             <en><![CDATA[Enable cache]]></en>
         </locale>
         <locale name="settings.cache.description">
-            <de><![CDATA[Diese Funktion aktiviert (Häkchen) oder deaktiviert (kein Häkchen) den gesamten Cache. Ist der Cache deaktiviert, wird keiner der anderen Caches erzeugt.]]></de>
-            <en><![CDATA[This function enables (checked box) or disables (unchecked box) the entire cache. If the cache is disabled, none of the other caches will be created.]]></en>
+            <de><![CDATA[
+            Diese Funktion aktiviert (Häkchen) oder deaktiviert (kein Häkchen) den gesamten Cache.
+            Ist der Cache deaktiviert, wird keiner der anderen Caches erzeugt.
+            ]]></de>
+            <en><![CDATA[
+            This function enables (checked box) or disables (unchecked box) the entire cache.
+            If the cache is disabled, none of the other caches will be created.
+            ]]></en>
         </locale>
 
         <locale name="settings.htmlcache">
@@ -101,14 +111,34 @@
             Images are therefore only loaded if they actually appear on the device.
             ]]></en>
         </locale>
-        
+
         <locale name="settings.optimize_on_resize">
             <de><![CDATA[Bild-Optimierung bei Resize durchführen]]></de>
             <en><![CDATA[Image optimization when resizing]]></en>
         </locale>
         <locale name="settings.optimize_on_resize.description">
-            <de><![CDATA[Wenn der Bilder-Cache für Bilder bei ihrer erstmaligen Anfrage in einer bestimmten Größe erstellt wird, soll gleichzeitig auch die Bildoptimierung durchgeführt werden. Dies kann bei einer großen Anzahl an Bildern auf einer Seite u.U. die Anfragezeit beim erstmaligen Aufruf stark erhöhen.]]></de>
-            <en><![CDATA[If the image cache for images is created in a certain size at their first request, image optimization should also be performed at the same time. This can increase the initial request time if there is a large number of images on a page.]]></en>
+            <de><![CDATA[
+            Wenn der Bilder-Cache für Bilder bei ihrer erstmaligen Anfrage in einer bestimmten Größe erstellt wird,
+            soll gleichzeitig auch die Bildoptimierung durchgeführt werden. Dies kann bei einer großen Anzahl an Bildern auf einer Seite u.U. die Anfragezeit beim erstmaligen Aufruf stark erhöhen.
+            ]]></de>
+            <en><![CDATA[
+            If the image cache for images is created in a certain size at their first request,
+            image optimization should also be performed at the same time.
+            This can increase the initial request time if there is a large number of images on a page.
+            ]]></en>
+        </locale>
+
+        <locale name="settings.webp">
+            <de><![CDATA[WebP Umwandlung]]></de>
+            <en><![CDATA[WebP conversion]]></en>
+        </locale>
+        <locale name="settings.webp.description" html="true">
+            <de><![CDATA[
+            Caching Bilder auch im WebP Format anbieten.<br />
+            QUIQQER versucht Bilder auch im WebP Format anzubieten.
+            WebP ist ein Grafikformat für verlustbehaftet oder verlustfrei komprimierte statische oder animierte Bilder.
+            ]]></de>
+            <en><![CDATA[WebP conversion]]></en>
         </locale>
 
         <locale name="message.console.description" html="true">
