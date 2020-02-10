@@ -24,11 +24,28 @@ class LazyLoading extends QUI\Utils\Singleton
      */
     public function parse($content)
     {
-        $content = \str_replace(
-            '</body>',
-            '<script async src="'.URL_OPT_DIR.'/bin/lazysizes/lazysizes.min.js" type="text/javascript"></script></body>',
-            $content
-        );
+        $script = "
+        <script>
+            if ('loading' in HTMLImageElement.prototype) {
+              var images = document.querySelectorAll('img.lazyload');
+              
+              images.forEach(function (img) {
+                  img.src = img.get('data-src');
+              });
+            } else {
+                require([window.URL_OPT_DIR +'bin/lazysizes/lazysizes.min.js']);
+            }
+        </script>
+       
+        <style> .lazyload-no-js {display: none;} </style>
+        <noscript><style> 
+        .lazyload { display: none; } 
+        .lazyload-no-js { display: inherit} 
+        </style></noscript>
+        
+        ";
+
+        $content = \str_replace('</body>', $script, $content);
 
         // parse images
         $content = \preg_replace_callback(
@@ -55,6 +72,7 @@ class LazyLoading extends QUI\Utils\Singleton
             return $img;
         }
 
+        $attributes['loading']  = 'lazy';
         $attributes['data-src'] = $attributes['src'];
         $attributes['src']      = URL_OPT_DIR.'quiqqer/cache/bin/images/placeholder.gif';
 
@@ -81,6 +99,26 @@ class LazyLoading extends QUI\Utils\Singleton
         }
 
         $img .= '/>';
+
+        // noscript
+        if (!isset($attributes['class'])) {
+            $attributes['class'] = '';
+        }
+
+        $attributes['class'] = \str_replace('lazyload', '', $attributes['class']);
+        $attributes['class'] = \trim($attributes['class']);
+
+        $attributes['class'] = $attributes['class'].' lazyload-no-js';
+        $attributes['src']   = $attributes['data-src'];
+
+        $img .= '<noscript><img ';
+
+        foreach ($attributes as $key => $value) {
+            $img .= \htmlspecialchars($key).'="'.\htmlspecialchars($value).'" ';
+        }
+
+        $img .= '/></noscript>';
+
 
         return $img;
     }

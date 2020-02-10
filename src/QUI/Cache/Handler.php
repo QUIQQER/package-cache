@@ -148,7 +148,7 @@ class Handler
      * @param string $content - content to store
      * @throws QUI\Exception
      */
-    public function generateCacheFromRequest($content)
+    public function generateCacheFromRequest(&$content)
     {
         // loged in users shouldn'tgenerate any cache
         if (QUI::getUsers()->isAuth(QUI::getUserBySession())) {
@@ -492,6 +492,8 @@ class Handler
             ]);
 
             \file_put_contents($cacheHtmlFile, $result);
+
+            $content = $result;
         }
     }
 
