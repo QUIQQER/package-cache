@@ -376,7 +376,7 @@ class Handler
         }
 
         /**
-         * lazy loading
+         * lazy loading during the cache
          */
 
         if ($lazyLoadingSetting) {

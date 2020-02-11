@@ -111,6 +111,7 @@ class LazyLoading extends QUI\Utils\Singleton
         $attributes['class'] = $attributes['class'].' lazyload-no-js';
         $attributes['src']   = $attributes['data-src'];
 
+
         $img .= '<noscript><img ';
 
         foreach ($attributes as $key => $value) {

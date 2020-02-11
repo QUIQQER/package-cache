@@ -136,7 +136,7 @@ class EventCoordinator
      */
     public static function outputWebP($webPFile)
     {
-        if (file_exists($webPFile)) {
+        if (\file_exists($webPFile)) {
             try {
                 QUI\Utils\System\File::fileHeader($webPFile);
             } catch (QUI\Exception $Exception) {
@@ -407,7 +407,7 @@ class EventCoordinator
             $sourceSets
         );
 
-        if (!count($sourceSets)) {
+        if (!\count($sourceSets)) {
             return;
         }
 
@@ -441,6 +441,6 @@ class EventCoordinator
         }
 
         $webPs   = \implode('', $webPs);
-        $picture = str_replace('<picture>', '<picture>'.$webPs, $picture);
+        $picture = \preg_replace('#<picture([^>]*)>#i', '<picture\\1>'.$webPs, $picture);
     }
 }
