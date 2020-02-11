@@ -18,6 +18,7 @@
   "require": {
     "php": ">=5.5",
     "quiqqer\/quiqqer": ">=1.4|dev-master|dev-dev",
+    "quiqqer/mobile-detection": "*",
     "mrclay\/minify": "2.3.0",
     "npm-asset\/dexie": "1.5.*",
     "npm-asset\/lazysizes": "4.*"

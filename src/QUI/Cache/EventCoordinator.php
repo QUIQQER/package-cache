@@ -204,7 +204,7 @@ class EventCoordinator
      *
      * @param string $output
      */
-    public static function onRequestOutput($output)
+    public static function onRequestOutput(&$output)
     {
         $getParams  = $_GET;
         $postParams = $_POST;
@@ -220,6 +220,12 @@ class EventCoordinator
 
         // logged in users get no cache
         if (QUI::getUsers()->isAuth(QUI::getUserBySession())) {
+            // @todo webp für alle
+            // @todo lazy loading für alle
+            // @todo check output referenz
+
+            $output = QUI\Cache\Parser\LazyLoading::getInstance()->parse($output);
+
             return;
         }
 
