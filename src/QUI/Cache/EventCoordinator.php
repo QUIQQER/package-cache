@@ -395,6 +395,20 @@ class EventCoordinator
         }
 
         Optimizer::convertToWebP($cacheFile);
+
+        // check if same file exists
+        try {
+            $Folder   = $Item->getParent();
+            $filename = $Item->getPathinfo(\PATHINFO_FILENAME);
+            $children = $Folder->getChildrenByName($filename);
+
+            if (\count($children) >= 2) {
+                QUI::getMessagesHandler()->addAttention(
+                    QUI::getLocale()->get('quiqqer/cache', 'message.attention.webp.duplicate.file')
+                );
+            }
+        } catch (QUI\Exception $Exception) {
+        }
     }
 
     /**
