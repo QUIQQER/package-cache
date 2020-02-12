@@ -220,11 +220,7 @@ class EventCoordinator
 
         // logged in users get no cache
         if (QUI::getUsers()->isAuth(QUI::getUserBySession())) {
-            // @todo webp für alle
-            // @todo lazy loading für alle
-            // @todo check output referenz
-
-            $output = QUI\Cache\Parser\LazyLoading::getInstance()->parse($output);
+            QUI\Cache\Parser\LazyLoading::getInstance()->parse($output);
 
             return;
         }
