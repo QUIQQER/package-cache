@@ -505,7 +505,7 @@ class Optimizer
      */
     public static function convertToWebP($file)
     {
-        if (!file_exists($file)) {
+        if (!\file_exists($file)) {
             return false;
         }
 

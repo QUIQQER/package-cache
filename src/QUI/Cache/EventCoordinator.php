@@ -136,7 +136,7 @@ class EventCoordinator
      */
     public static function outputWebP($webPFile)
     {
-        if (file_exists($webPFile)) {
+        if (\file_exists($webPFile)) {
             try {
                 QUI\Utils\System\File::fileHeader($webPFile);
             } catch (QUI\Exception $Exception) {
@@ -204,7 +204,7 @@ class EventCoordinator
      *
      * @param string $output
      */
-    public static function onRequestOutput($output)
+    public static function onRequestOutput(&$output)
     {
         $getParams  = $_GET;
         $postParams = $_POST;
@@ -220,6 +220,8 @@ class EventCoordinator
 
         // logged in users get no cache
         if (QUI::getUsers()->isAuth(QUI::getUserBySession())) {
+            QUI\Cache\Parser\LazyLoading::getInstance()->parse($output);
+
             return;
         }
 
@@ -407,7 +409,7 @@ class EventCoordinator
             $sourceSets
         );
 
-        if (!count($sourceSets)) {
+        if (!\count($sourceSets)) {
             return;
         }
 
@@ -441,6 +443,6 @@ class EventCoordinator
         }
 
         $webPs   = \implode('', $webPs);
-        $picture = str_replace('<picture>', '<picture>'.$webPs, $picture);
+        $picture = \preg_replace('#<picture([^>]*)>#i', '<picture\\1>'.$webPs, $picture);
     }
 }
