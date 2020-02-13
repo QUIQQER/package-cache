@@ -416,6 +416,10 @@ class EventCoordinator
      */
     public static function onMediaCreateImageHtml(&$picture)
     {
+        if (Handler::init()->useWebP() === false) {
+            return;
+        }
+        
         // rewrite image
         \preg_match_all(
             '#(<source[^>]*>)#i',
