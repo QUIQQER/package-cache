@@ -512,6 +512,10 @@ class Optimizer
         $quality = 70;
         $parts   = \pathinfo($file);
 
+        if (!isset($parts['extension'])) {
+            return false;
+        }
+        
         if ($parts['extension'] === 'svg') {
             return false;
         }
