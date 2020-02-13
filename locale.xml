@@ -152,5 +152,18 @@
             ]]></en>
         </locale>
 
+        <locale name="message.attention.webp.duplicate.file">
+            <de><![CDATA[
+                Die WebP Generierung ist aktiviert. Jedoch wurde erkannt das eine Datei mit dem selben Namen existiert.
+                Dies kann bei der automatischen Cache Generierung zu Problemen führen.
+                Bitte benenne die Datei um oder deaktiviere die WebP Generierung.
+            ]]></de>
+            <en><![CDATA[
+                The WebP generation is activated. But it was recognized that a file with the same name exists.
+                This can lead to problems with the automatic cache generation.
+                Please rename the file or disable the WebP generation.
+            ]]></en>
+        </locale>
+
     </groups>
 </locales>

@@ -36,6 +36,19 @@ class Optimize extends QUI\System\Console\Tool
         $project = $this->getArgument('project');
         $mtime   = $this->getArgument('mtime');
 
+        if ($project === '') {
+            $projects = QUI::getProjectManager()->getProjectList();
+            $projects = \array_map(function ($Project) {
+                /* @var $Project QUI\Projects\Project */
+                return $Project->getName();
+            }, $projects);
+
+            $projects = \array_unique($projects);
+
+            $this->write('Please select a project ['.\implode(',', $projects).']:');
+            $project = $this->readInput();
+        }
+
         $Project  = QUI::getProjectManager()->getProject($project);
         $Media    = $Project->getMedia();
         $cacheDir = $Media->getCacheDir();
@@ -46,18 +59,18 @@ class Optimize extends QUI\System\Console\Tool
 
         if (QUI\Cache\Optimizer::isOptiPngInstalled()) {
             // find all pngs
-            $this->writeLn('Optimize PNG Files', 'green');
+            $this->writeLn('Optimize PNG files', 'green');
 
-            $list  = \shell_exec('find "' . $cacheDir . '" -iname \*.png -type f -mtime -' . $mtime);
+            $list  = \shell_exec('find "'.$cacheDir.'" -iname \*.png -type f -mtime -'.$mtime);
             $list  = \explode("\n", \trim($list));
             $count = \count($list);
 
             $this->resetColor();
-            $this->writeLn('Found ' . $count . ' images');
+            $this->writeLn('Found '.$count.' images');
 
             foreach ($list as $image) {
                 try {
-                    QUI\Cache\Optimizer::optimizePNG(CMS_DIR . $image);
+                    QUI\Cache\Optimizer::optimizePNG(CMS_DIR.$image);
                 } catch (QUI\Exception $Exception) {
                     continue;
                 }
@@ -81,18 +94,18 @@ class Optimize extends QUI\System\Console\Tool
 
         if (QUI\Cache\Optimizer::isJpegoptimInstalled()) {
             // find all jpgs
-            $this->writeLn('Optimize JPG Files ...', 'green');
+            $this->writeLn('Optimize JPG files ...', 'green');
 
-            $list  = \shell_exec('find "' . $cacheDir . '" -iname \*.jp*g -type f -mtime -' . $mtime);
+            $list  = \shell_exec('find "'.$cacheDir.'" -iname \*.jp*g -type f -mtime -'.$mtime);
             $list  = \explode("\n", \trim($list));
             $count = \count($list);
 
             $this->resetColor();
-            $this->writeLn('Found ' . $count . ' images');
+            $this->writeLn('Found '.$count.' images');
 
             foreach ($list as $image) {
                 try {
-                    QUI\Cache\Optimizer::optimizeJPG(CMS_DIR . $image);
+                    QUI\Cache\Optimizer::optimizeJPG(CMS_DIR.$image);
                 } catch (QUI\Exception $Exception) {
                     continue;
                 }
@@ -114,8 +127,34 @@ class Optimize extends QUI\System\Console\Tool
             $this->resetColor();
         }
 
+        if (QUI\Cache\Handler::init()->useWebP()) {
+            // find all jpgs
+            $this->writeLn('Optimize images to webp files ...', 'green');
+
+            $list  = \shell_exec('find "'.$cacheDir.'" -name \'*\' -exec file {} \; | grep -o -P \'^.+: \w+ image\'');
+            $list  = \explode("\n", \trim($list));
+            $count = \count($list);
+
+            $this->resetColor();
+            $this->writeLn('Found '.$count.' images');
+
+            foreach ($list as $image) {
+                $image = \explode(':', $image);
+                $image = $image[0];
+
+                // check if webp exists
+                $parts    = \pathinfo(CMS_DIR.$image);
+                $webPFile = $parts['dirname'].DIRECTORY_SEPARATOR.$parts['filename'].'.webp';
+
+                if (!\file_exists($webPFile)) {
+                    QUI\Cache\Optimizer::convertToWebP(CMS_DIR.$image);
+                }
+            }
+        }
+
         $this->writeLn('DONE.', 'green');
         $this->writeLn();
         $this->resetColor();
+        exit;
     }
 }
