@@ -84,9 +84,16 @@ class EventCoordinator
             return;
         }
 
-        $originalFile      = CMS_DIR.'media/sites/'.$project.'/'.$result[0]['file'];
-        $originalCache     = CMS_DIR.'media/cache/'.$project.'/'.$result[0]['file'];
-        $originalExtension = \pathinfo($originalFile, \FILEINFO_EXTENSION);
+        $originalFile  = CMS_DIR.'media/sites/'.$project.'/'.$result[0]['file'];
+        $originalCache = CMS_DIR.'media/cache/'.$project.'/'.$result[0]['file'];
+        
+        if (defined('FILEINFO_EXTENSION')) {
+            $originalExtension = \pathinfo($originalFile, \FILEINFO_EXTENSION);
+        } else {
+            /* @deprecated */
+            $pathInfo          = \pathinfo($originalFile);
+            $originalExtension = $pathInfo['extension'];
+        }
 
         if (!\file_exists($originalFile)) {
             return;
