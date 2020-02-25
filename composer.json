@@ -16,7 +16,7 @@
     "url": "http:\/\/www.pcsg.de"
   },
   "require": {
-    "php": ">=5.5",
+    "php": ">=7.2",
     "quiqqer\/quiqqer": ">=1.4|dev-master|dev-dev",
     "quiqqer/mobile-detection": "*",
     "mrclay\/minify": "2.3.0",

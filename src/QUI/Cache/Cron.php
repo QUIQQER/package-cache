@@ -36,10 +36,17 @@ class Cron
     }
 
     /**
+     * @deprecated
+     *
      * Clear the temp folder
      */
     public static function clearTempFolder()
     {
-        QUI::getTemp()->clear();
+        QUI\System\Log::addWarning(
+            '\QUI\Cache::clearTempFolder is deprecated. Please switch cron to quiqqer/cron by deleting this cron and'
+            .' setting it up again.'
+        );
+
+        QUI\Cron\QuiqqerCrons::clearTempFolder();
     }
 }
