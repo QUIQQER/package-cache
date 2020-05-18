@@ -155,6 +155,5 @@ class Optimize extends QUI\System\Console\Tool
         $this->writeLn('DONE.', 'green');
         $this->writeLn();
         $this->resetColor();
-        exit;
     }
 }
