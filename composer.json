@@ -19,7 +19,7 @@
     "php": ">=7.2",
     "quiqqer\/quiqqer": ">=1.4|dev-master|dev-dev",
     "quiqqer/mobile-detection": "*",
-    "mrclay\/minify": "2.3.0",
+    "matthiasmullie/minify": "1.3.*",
     "npm-asset\/dexie": "1.5.*",
     "npm-asset\/lazysizes": "4.*"
   },
