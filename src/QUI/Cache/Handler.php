@@ -388,7 +388,7 @@ class Handler
          * Bundle CSS
          */
         if ($cssCacheSetting) {
-            $CSSMinify = new \Minify_CSS();
+            $CSSMinify = new \MatthiasMullie\Minify\CSS();
 
             \preg_match_all(
                 '/<link[^>]+href="([^"]*)"[^>]*>/Uis',
@@ -435,12 +435,10 @@ class Handler
                     continue;
                 }
 
-                $comment  = "\n/* File: {$match[1]} */\n";
-                $minified = $CSSMinify->minify(\file_get_contents($file), [
-                    'docRoot'    => CMS_DIR,
-                    'currentDir' => \dirname(CMS_DIR.$match[1]).'/'
-                ]);
+                $comment = "\n/* File: {$match[1]} */\n";
+                $CSSMinify->add(\file_get_contents($file));
 
+                $minified   = $CSSMinify->minify();
                 $cssContent .= $comment.$minified."\n";
 
                 // delete css from main content
@@ -479,8 +477,7 @@ class Handler
                     'content'       => $content,
                     'contentType'   => 'text/html',
                     'minifyOptions' => [
-                        'cssMinifier' => ['Minify_CSS', 'minify'],
-                        'jsMinifier'  => ['JSMin', 'minify']
+                        'jsMinifier' => ['JSMin', 'minify']
                     ]
                 ])
             ];
