@@ -386,8 +386,8 @@ class Handler
         /**
          * Bundle CSS
          */
-        \file_put_contents($cacheHtmlFile, $this->generateCSSCache($content));
-
+        $content = $this->generateCSSCache($content);
+        \file_put_contents($cacheHtmlFile, $content);
 
         /**
          * HTML optimize
