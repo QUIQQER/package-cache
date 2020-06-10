@@ -13,10 +13,6 @@
                     <type><![CDATA[bool]]></type>
                     <defaultvalue>1</defaultvalue>
                 </conf>
-                <conf name="csscache">
-                    <type><![CDATA[bool]]></type>
-                    <defaultvalue>1</defaultvalue>
-                </conf>
                 <conf name="jscache">
                     <type><![CDATA[bool]]></type>
                     <defaultvalue>1</defaultvalue>
@@ -34,6 +30,17 @@
                 <conf name="webp">
                     <type><![CDATA[bool]]></type>
                     <defaultvalue>0</defaultvalue>
+                </conf>
+            </section>
+
+            <section name="css">
+                <conf name="status">
+                    <type><![CDATA[bool]]></type>
+                    <defaultvalue>1</defaultvalue>
+                </conf>
+                <conf name="css_inline">
+                    <type><![CDATA[string]]></type>
+                    <defaultvalue></defaultvalue>
                 </conf>
             </section>
         </config>
@@ -76,15 +83,6 @@
                             </description>
                         </input>
 
-                        <input conf="settings.csscache" type="checkbox">
-                            <text>
-                                <locale group="quiqqer/cache" var="settings.csscache"/>
-                            </text>
-                            <description>
-                                <locale group="quiqqer/cache" var="settings.csscache.description"/>
-                            </description>
-                        </input>
-
                         <input conf="settings.jscache" type="checkbox">
                             <text>
                                 <locale group="quiqqer/cache" var="settings.jscache"/>
@@ -93,6 +91,37 @@
                                 <locale group="quiqqer/cache" var="settings.jscache.description"/>
                             </description>
                         </input>
+                    </settings>
+
+                    <settings>
+                        <title>
+                            <locale group="quiqqer/cache" var="settings.category.css.title"/>
+                        </title>
+
+                        <input conf="css.status" type="checkbox">
+                            <text>
+                                <locale group="quiqqer/cache" var="settings.csscache"/>
+                            </text>
+                        </input>
+
+                        <select conf="css.css_inline" type="checkbox">
+                            <text>
+                                <locale group="quiqqer/cache" var="settings.css_inline"/>
+                            </text>
+                            <description>
+                                <locale group="quiqqer/cache" var="settings.css_inline.description"/>
+                            </description>
+
+                            <option value="">
+                                <locale group="quiqqer/cache" var="settings.css_inline.nothing"/>
+                            </option>
+                            <option value="inline">
+                                <locale group="quiqqer/cache" var="settings.css_inline.inline"/>
+                            </option>
+                            <option value="inline_as_file">
+                                <locale group="quiqqer/cache" var="settings.css_inline.inline_as_file"/>
+                            </option>
+                        </select>
                     </settings>
 
                     <settings title="settings" name="settings">

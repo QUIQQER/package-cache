@@ -433,9 +433,10 @@ class Handler
     public function generateCSSCache($content)
     {
         $Package    = QUI::getPackage('quiqqer/cache');
-        $cssEnabled = $Package->getConfig()->get('settings', 'csscache');
+        $cssEnabled = $Package->getConfig()->get('css', 'status');
+        $cssInline  = $Package->getConfig()->get('css', 'css_inline');
 
-        if (!$cssEnabled || defined('QUIQQER_CACHE_NO_CSS_CACHE')) {
+        if (!$cssEnabled || \defined('QUIQQER_CACHE_NO_CSS_CACHE')) {
             return $content;
         }
 
@@ -444,7 +445,6 @@ class Handler
 
         $templateFiles = [];
         $cssFiles      = [];
-        $inlineCSS     = []; // @todo match inline css
 
         $template     = QUI::getRewrite()->getProject()->getAttribute('template');
         $customCss    = USR_DIR.QUI::getRewrite()->getProject()->getName().'/bin/custom.css';
@@ -515,6 +515,10 @@ class Handler
                 $match   = $fileData['match'];
                 $cssFile = $binDir.\md5($file).'.css';
 
+                if ($cssInline === 'inline') {
+                    $cssFile = CMS_DIR.\md5($file).'.css';
+                }
+
                 $CSSMinify = new \MatthiasMullie\Minify\CSS();
                 $CSSMinify->add($file);
                 $CSSMinify->minify($cssFile);
@@ -522,14 +526,12 @@ class Handler
                 $comment    = "\n/* File: {$match[1]} */\n";
                 $cssContent .= $comment.file_get_contents($cssFile)."\n";
 
-                // delete css from main content
+                unlink($cssFile);
+
                 $content = \str_replace($match[0], '', $content);
             }
 
-            // create css cache file
-            if (!\file_exists($cacheTplFile)) {
-                \file_put_contents($cacheTplFile, $cssContent);
-            }
+            \file_put_contents($cacheTplFile, $cssContent);
 
             $replace .= '<link href="'.$cacheUrlTplFile.'" rel="stylesheet" type="text/css" />';
         }
@@ -546,6 +548,10 @@ class Handler
                 $match   = $fileData['match'];
                 $cssFile = $binDir.\md5($file).'.css';
 
+                if ($cssInline === 'inline') {
+                    $cssFile = CMS_DIR.\md5($file).'.css';
+                }
+
                 $CSSMinify = new \MatthiasMullie\Minify\CSS();
                 $CSSMinify->add($file);
                 $CSSMinify->minify($cssFile);
@@ -553,31 +559,84 @@ class Handler
                 $comment    = "\n/* File: {$match[1]} */\n";
                 $cssContent .= $comment.file_get_contents($cssFile)."\n";
 
+                unlink($cssFile);
+
                 // delete css from main content
                 $content = \str_replace($match[0], '', $content);
             }
 
-            // create css cache file
-            if (!\file_exists($cacheSedFile)) {
-                \file_put_contents($cacheSedFile, $cssContent);
-            }
+            \file_put_contents($cacheSedFile, $cssContent);
 
             $replace .= '<link href="'.$cacheUrlSedFile.'" rel="stylesheet" type="text/css" />';
         }
 
-
-        // @todo setting, inline or file
-        // insert into the content
-        $content = str_replace(
-            '<!-- quiqqer css -->',
-            $replace,
-            $content
+        // inline css
+        \preg_match_all(
+            '#<style>(.*)</style>#Uis',
+            $content,
+            $matches,
+            \PREG_SET_ORDER
         );
-//            $content = \str_replace(
-//                '<!-- quiqqer css -->',
-//                '<style>'.$cssContent.'</style>',
-//                $content
-//            );
+
+        if ($cssInline === 'inline_as_file') {
+            $inlineCSS = '';
+
+            $cssId              = \md5(\serialize($matches));
+            $cacheInlineFile    = $binDir.$cssId.'.inline.cache.css';
+            $cacheUrlInlineFile = $urlBinDir.$cssId.'.inline.cache.css';
+
+            foreach ($matches as $match) {
+                $inlineCSS .= $match[1];
+                $content   = \str_replace($match[0], '', $content);
+            }
+
+            $CSSMinify = new \MatthiasMullie\Minify\CSS();
+            $CSSMinify->add($inlineCSS);
+
+            \file_put_contents($cacheInlineFile, $CSSMinify->minify());
+
+            $replace .= '<link href="'.$cacheUrlInlineFile.'" rel="stylesheet" type="text/css" />';
+        } else {
+            foreach ($matches as $match) {
+                $CSSMinify = new \MatthiasMullie\Minify\CSS();
+                $CSSMinify->add($match[1]);
+
+                $content = \str_replace(
+                    $match[0],
+                    '<style>'.$CSSMinify->minify().'</style>',
+                    $content
+                );
+            }
+        }
+
+        // prepare output
+        if ($cssInline === 'inline') {
+            // insert as inline
+            $cssContent = '';
+
+            if (isset($cacheTplFile)) {
+                $cssContent .= \file_get_contents($cacheTplFile);
+            }
+
+            if (isset($cacheSedFile)) {
+                $cssContent .= \file_get_contents($cacheSedFile);
+            }
+
+            if (!empty($cssContent)) {
+                $content = \str_replace(
+                    '<!-- quiqqer css -->',
+                    '<style>'.$cssContent.'</style>',
+                    $content
+                );
+            }
+        } else {
+            // insert as file
+            $content = str_replace(
+                '<!-- quiqqer css -->',
+                $replace,
+                $content
+            );
+        }
 
         return $content;
     }

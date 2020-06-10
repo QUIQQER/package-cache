@@ -68,16 +68,6 @@
             <de><![CDATA[CSS Cache aktivieren und CSS optimieren]]></de>
             <en><![CDATA[Enable the CSS cache and optimize CSS]]></en>
         </locale>
-        <locale name="settings.csscache.description" html="true">
-            <de><![CDATA[
-            Der CSS Cache optimiert und cached das CSS. <br />
-            Auch das CSS von JavaScript AMD Modulen wird optimiert.
-            ]]></de>
-            <en><![CDATA[
-            The CSS Cache optimizes and create the CSS Cache. <br />
-            Also, the CSS from JavaScript AMD modules will be optimized.
-            ]]></en>
-        </locale>
 
         <locale name="settings.jscache" html="true">
             <de><![CDATA[JavaScript Cache aktivieren und JavaScript optimieren]]></de>
@@ -163,6 +153,45 @@
                 This can lead to problems with the automatic cache generation.
                 Please rename the file or disable the WebP generation.
             ]]></en>
+        </locale>
+
+        <locale name="settings.category.css.title">
+            <de><![CDATA[CSS Caching Einstellungen]]></de>
+            <en><![CDATA[CSS caching settings]]></en>
+        </locale>
+        <locale name="settings.css_inline">
+            <de><![CDATA[Inline CSS]]></de>
+            <en><![CDATA[Inline CSS]]></en>
+        </locale>
+        <locale name="settings.css_inline.description" html="true">
+            <de><![CDATA[
+            <p>Jedes CSS als Inline CSS nutzen: Es werden alle CSS Dateien als Inline CSS verwendet.
+            Dies vergrössert die Anfangsübertragung aber verringert die Request Anzahl.
+            Für Onepage Seiten kann dies von Vorteil sein.</p>
+            <p>&nbsp;</p>
+            <p>Inline CSS als CSS Datei auslagern: Jedes Inline CSS wird zu einer Datei kombrimiert.
+            Dies verringert die grösse des ersten Request aber erhöht die Request Anzahl.</p>
+            ]]></de>
+            <en><![CDATA[
+            <p>Use any CSS as Inline CSS: All CSS files are used as inline CSS. This increases the initial transmission but
+            reduces the number of requests. This can be advantageous for Onepage pages.</p>
+            <p>&nbsp;</p>
+            <p>Outsource inline CSS as CSS file: Each inline CSS is combined to one file.
+            This reduces the size of the first request but increases the number of requests.</p>
+            ]]></en>
+        </locale>
+
+        <locale name="settings.css_inline.nothing">
+            <de><![CDATA[Standard - Keine Veränderung vornehmen]]></de>
+            <en><![CDATA[Default - Do not change]]></en>
+        </locale>
+        <locale name="settings.css_inline.inline">
+            <de><![CDATA[Jedes CSS als Inline CSS nutzen]]></de>
+            <en><![CDATA[Use any CSS as Inline CSS]]></en>
+        </locale>
+        <locale name="settings.css_inline.inline_as_file">
+            <de><![CDATA[Inline CSS als CSS Datei auslagern]]></de>
+            <en><![CDATA[Outsource inline CSS as CSS file]]></en>
         </locale>
 
     </groups>
