@@ -25,14 +25,27 @@ class Cron
             throw new QUI\Exception('Need a project parameter');
         }
 
-        $Project = QUI::getProject($params['project']);
-        $mtime   = 2;
+        if ($params['project'] === '*') {
+            $projects = QUI::getProjectManager()->getProjectList();
+            $projects = \array_map(function ($Project) {
+                return $Project->getName();
+            }, $projects);
 
-        if (isset($params['mtime'])) {
-            $mtime = (int)$params['mtime'];
+            $projects = \array_unique($projects);
+        } else {
+            $projects = [$params['project']];
         }
 
-        Optimizer::optimizeProjectImages($Project->getName(), $mtime);
+        foreach ($projects as $project) {
+            $Project = QUI::getProject($project);
+            $mtime   = 2;
+
+            if (isset($params['mtime'])) {
+                $mtime = (int)$params['mtime'];
+            }
+
+            Optimizer::optimizeProjectImages($Project->getName(), $mtime);
+        }
     }
 
     /**
