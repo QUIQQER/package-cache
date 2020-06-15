@@ -134,11 +134,11 @@
         <locale name="message.console.description" html="true">
             <de><![CDATA[
             Führe bitte, für den ersten Gebrauch des Cache Modules, folgenden Befehl aus:
-            <pre>./console --tool=package:cache-optimize --project=*</pre>
+            <pre>./console --tool=package:cache-optimize --project=* --username=[Dein Benutzername]</pre>
             ]]></de>
             <en><![CDATA[
             For the first use of the cache module, please execute the following command:
-            <pre>./console --tool=package:cache-optimize --project=*</pre>
+            <pre>./console --tool=package:cache-optimize --project=* --username=[Your username]</pre>
             ]]></en>
         </locale>
 
