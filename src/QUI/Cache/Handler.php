@@ -173,6 +173,15 @@ class Handler
         $uri     = $Request->getUri();
         $query   = $Request->getQueryString();
 
+        // check if host exist, if not, we generate no cache
+        $vhosts    = QUI::vhosts();
+        $urlParams = \parse_url($uri);
+        $urlHost   = $urlParams['host'];
+
+        if (!isset($vhosts[$urlHost])) {
+            return;
+        }
+        
         if (\is_string($query)) {
             \parse_str($query, $query);
         }
