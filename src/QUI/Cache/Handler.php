@@ -450,6 +450,11 @@ class Handler
         $customCss    = USR_DIR.QUI::getRewrite()->getProject()->getName().'/bin/custom.css';
         $templatePath = OPT_DIR.$template;
 
+        // if no template exists
+        if (empty($template)) {
+            return $content;
+        }
+        
         \preg_match_all(
             '/<link[^>]+href="([^"]*)"[^>]*>/Uis',
             $content,
