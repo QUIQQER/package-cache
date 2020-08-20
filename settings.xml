@@ -45,7 +45,7 @@
             </section>
         </config>
 
-        <window>
+        <window name="quiqqer-cache" menu-parent="/settings/quiqqer/">
             <title>
                 <locale group="quiqqer/cache" var="settings.title"/>
             </title>
@@ -54,7 +54,7 @@
             </params>
 
             <categories>
-                <category name="cache_settings">
+                <category name="cache_settings" priority="5">
                     <text>
                         <locale group="quiqqer/cache" var="settings.category.title"/>
                     </text>
