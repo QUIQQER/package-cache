@@ -150,19 +150,19 @@ class Handler
      */
     public function generateCacheFromRequest(&$content)
     {
-        // loged in users shouldn'tgenerate any cache
+        // logged in users shouldn'tgenerate any cache
         if (QUI::getUsers()->isAuth(QUI::getUserBySession())) {
             return;
         }
 
         // @todo create cache-id
+        // cache-id = group ids hash
 
 
         $Package            = QUI::getPackage('quiqqer/cache');
         $cacheSetting       = $Package->getConfig()->get('settings', 'cache');
         $jsCacheSetting     = $Package->getConfig()->get('settings', 'jscache');
         $htmlCacheSetting   = $Package->getConfig()->get('settings', 'htmlcache');
-        $cssCacheSetting    = $Package->getConfig()->get('settings', 'csscache');
         $lazyLoadingSetting = $Package->getConfig()->get('settings', 'lazyloading');
 
         if (!$cacheSetting) {
@@ -173,6 +173,15 @@ class Handler
         $uri     = $Request->getUri();
         $query   = $Request->getQueryString();
 
+        // check if host exist, if not, we generate no cache
+        $vhosts    = QUI::vhosts();
+        $urlParams = \parse_url($uri);
+        $urlHost   = $urlParams['host'];
+
+        if (!isset($vhosts[$urlHost])) {
+            return;
+        }
+        
         if (\is_string($query)) {
             \parse_str($query, $query);
         }
@@ -189,11 +198,10 @@ class Handler
             throw new QUI\Exception('Get Params exists. No Cache exists', 404);
         }
 
-        $cacheId = \md5($uri);
-        $dir     = $this->getCacheDir();
-
-        $binDir    = $this->getCacheDir().'/bin/';
-        $urlBinDir = $this->getURLCacheDir().'/bin/';
+        $cacheId   = \md5($uri);
+        $dir       = $this->getCacheDir();
+        $binDir    = $this->getCacheDir().'bin/';
+        $urlBinDir = $this->getURLCacheDir().'bin/';
 
         QUI\Utils\System\File::mkdir($dir);
         QUI\Utils\System\File::mkdir($binDir);
@@ -387,87 +395,8 @@ class Handler
         /**
          * Bundle CSS
          */
-        if ($cssCacheSetting) {
-            $CSSMinify = new \Minify_CSS();
-
-            \preg_match_all(
-                '/<link[^>]+href="([^"]*)"[^>]*>/Uis',
-                $content,
-                $matches,
-                PREG_SET_ORDER
-            );
-
-            $cssId = \md5(\serialize($matches));
-
-            $cacheCSSFile    = $binDir.$cssId.'.cache.css';
-            $cacheURLCSSFile = $urlBinDir.$cssId.'.cache.css';
-
-            $cssContent = '';
-
-            foreach ($matches as $match) {
-                if (\strpos($match[0], 'rel') !== false
-                    && \strpos($match[0], 'rel="stylesheet"') === false
-                ) {
-                    continue;
-                }
-
-                if (\strpos($match[0], 'alternate') !== false) {
-                    continue;
-                }
-
-                if (\strpos($match[0], 'next') !== false) {
-                    continue;
-                }
-
-                if (\strpos($match[0], 'prev') !== false) {
-                    continue;
-                }
-
-
-                $file = CMS_DIR.$match[1];
-
-                if (!\file_exists($file)) {
-                    $parse = \parse_url($file);
-                    $file  = $parse['path'];
-                }
-
-                if (!\file_exists($file)) {
-                    continue;
-                }
-
-                $comment  = "\n/* File: {$match[1]} */\n";
-                $minified = $CSSMinify->minify(\file_get_contents($file), [
-                    'docRoot'    => CMS_DIR,
-                    'currentDir' => \dirname(CMS_DIR.$match[1]).'/'
-                ]);
-
-                $cssContent .= $comment.$minified."\n";
-
-                // delete css from main content
-                $content = \str_replace($match[0], '', $content);
-            }
-
-            // create css cache file
-            if (!\file_exists($cacheCSSFile)) {
-                \file_put_contents($cacheCSSFile, $cssContent);
-            }
-
-
-            // insert css cache file to the head
-//            $content = str_replace(
-//                '<!-- quiqqer css -->',
-//                '<link href="' . $cacheURLCSSFile . '" rel="stylesheet" type="text/css" />',
-//                $content
-//            );
-
-            $content = \str_replace(
-                '<!-- quiqqer css -->',
-                '<style>'.$cssContent.'</style>',
-                $content
-            );
-
-            \file_put_contents($cacheHtmlFile, $content);
-        }
+        $content = $this->generateCSSCache($content);
+        \file_put_contents($cacheHtmlFile, $content);
 
         /**
          * HTML optimize
@@ -479,8 +408,7 @@ class Handler
                     'content'       => $content,
                     'contentType'   => 'text/html',
                     'minifyOptions' => [
-                        'cssMinifier' => ['Minify_CSS', 'minify'],
-                        'jsMinifier'  => ['JSMin', 'minify']
+                        'jsMinifier' => ['JSMin', 'minify']
                     ]
                 ])
             ];
@@ -504,5 +432,226 @@ class Handler
     {
         QUI::getTemp()->moveToTemp($this->getCacheDir());
         QUI\Cache\Manager::clear('quiqqer/cache');
+    }
+
+    /**
+     * @param $content
+     * @return string|string[]
+     * @throws QUI\Exception
+     */
+    public function generateCSSCache($content)
+    {
+        $Package    = QUI::getPackage('quiqqer/cache');
+        $cssEnabled = $Package->getConfig()->get('css', 'status');
+        $cssInline  = $Package->getConfig()->get('css', 'css_inline');
+
+        if (!$cssEnabled || \defined('QUIQQER_CACHE_NO_CSS_CACHE')) {
+            return $content;
+        }
+
+        $binDir    = $this->getCacheDir().'bin/';
+        $urlBinDir = $this->getURLCacheDir().'bin/';
+
+        $templateFiles = [];
+        $cssFiles      = [];
+
+        $template     = QUI::getRewrite()->getProject()->getAttribute('template');
+        $customCss    = USR_DIR.QUI::getRewrite()->getProject()->getName().'/bin/custom.css';
+        $templatePath = OPT_DIR.$template;
+
+        // if no template exists
+        if (empty($template)) {
+            return $content;
+        }
+        
+        \preg_match_all(
+            '/<link[^>]+href="([^"]*)"[^>]*>/Uis',
+            $content,
+            $matches,
+            \PREG_SET_ORDER
+        );
+
+        // filter files
+        foreach ($matches as $match) {
+            if (\strpos($match[0], 'rel') !== false && \strpos($match[0], 'rel="stylesheet"') === false) {
+                continue;
+            }
+
+            if (\strpos($match[0], 'alternate') !== false) {
+                continue;
+            }
+
+            if (\strpos($match[0], 'next') !== false) {
+                continue;
+            }
+
+            if (\strpos($match[0], 'prev') !== false) {
+                continue;
+            }
+
+            $file = CMS_DIR.$match[1];
+
+            if (!\file_exists($file)) {
+                $parse = \parse_url($file);
+                $file  = $parse['path'];
+            }
+
+            if (!\file_exists($file)) {
+                continue;
+            }
+
+            $file = QUI\Utils\StringHelper::replaceDblSlashes($file);
+
+            if (\strpos($file, $templatePath) !== false || $file === $customCss) {
+                $templateFiles[] = [
+                    'file'  => $file,
+                    'match' => $match
+                ];
+            } else {
+                $cssFiles[] = [
+                    'file'  => $file,
+                    'match' => $match
+                ];
+            }
+        }
+
+        $replace = '';
+
+        // generate template files
+        if (\count($templateFiles)) {
+            $cssContent      = '';
+            $cssId           = \md5(\serialize($templateFiles));
+            $cacheTplFile    = $binDir.$cssId.'.tpl.cache.css';
+            $cacheUrlTplFile = $urlBinDir.$cssId.'.tpl.cache.css';
+
+            foreach ($templateFiles as $fileData) {
+                $file    = $fileData['file'];
+                $match   = $fileData['match'];
+                $cssFile = $binDir.\md5($file).'.css';
+
+                if ($cssInline === 'inline') {
+                    $cssFile = CMS_DIR.\md5($file).'.css';
+                }
+
+                $CSSMinify = new \MatthiasMullie\Minify\CSS();
+                $CSSMinify->add($file);
+                $CSSMinify->minify($cssFile);
+
+                $comment    = "\n/* File: {$match[1]} */\n";
+                $cssContent .= $comment.file_get_contents($cssFile)."\n";
+
+                unlink($cssFile);
+
+                $content = \str_replace($match[0], '', $content);
+            }
+
+            \file_put_contents($cacheTplFile, $cssContent);
+
+            $replace .= '<link href="'.$cacheUrlTplFile.'" rel="stylesheet" type="text/css" />';
+        }
+
+        // generate sediment css files
+        if (\count($cssFiles)) {
+            $cssContent      = '';
+            $cssId           = \md5(\serialize($cssFiles));
+            $cacheSedFile    = $binDir.$cssId.'.sed.cache.css';
+            $cacheUrlSedFile = $urlBinDir.$cssId.'.sed.cache.css';
+
+            foreach ($cssFiles as $fileData) {
+                $file    = $fileData['file'];
+                $match   = $fileData['match'];
+                $cssFile = $binDir.\md5($file).'.css';
+
+                if ($cssInline === 'inline') {
+                    $cssFile = CMS_DIR.\md5($file).'.css';
+                }
+
+                $CSSMinify = new \MatthiasMullie\Minify\CSS();
+                $CSSMinify->add($file);
+                $CSSMinify->minify($cssFile);
+
+                $comment    = "\n/* File: {$match[1]} */\n";
+                $cssContent .= $comment.file_get_contents($cssFile)."\n";
+
+                unlink($cssFile);
+
+                // delete css from main content
+                $content = \str_replace($match[0], '', $content);
+            }
+
+            \file_put_contents($cacheSedFile, $cssContent);
+
+            $replace .= '<link href="'.$cacheUrlSedFile.'" rel="stylesheet" type="text/css" />';
+        }
+
+        // inline css
+        \preg_match_all(
+            '#<style>(.*)</style>#Uis',
+            $content,
+            $matches,
+            \PREG_SET_ORDER
+        );
+
+        if ($cssInline === 'inline_as_file') {
+            $inlineCSS = '';
+
+            $cssId              = \md5(\serialize($matches));
+            $cacheInlineFile    = $binDir.$cssId.'.inline.cache.css';
+            $cacheUrlInlineFile = $urlBinDir.$cssId.'.inline.cache.css';
+
+            foreach ($matches as $match) {
+                $inlineCSS .= $match[1];
+                $content   = \str_replace($match[0], '', $content);
+            }
+
+            $CSSMinify = new \MatthiasMullie\Minify\CSS();
+            $CSSMinify->add($inlineCSS);
+
+            \file_put_contents($cacheInlineFile, $CSSMinify->minify());
+
+            $replace .= '<link href="'.$cacheUrlInlineFile.'" rel="stylesheet" type="text/css" />';
+        } else {
+            foreach ($matches as $match) {
+                $CSSMinify = new \MatthiasMullie\Minify\CSS();
+                $CSSMinify->add($match[1]);
+
+                $content = \str_replace(
+                    $match[0],
+                    '<style>'.$CSSMinify->minify().'</style>',
+                    $content
+                );
+            }
+        }
+
+        // prepare output
+        if ($cssInline === 'inline') {
+            // insert as inline
+            $cssContent = '';
+
+            if (isset($cacheTplFile)) {
+                $cssContent .= \file_get_contents($cacheTplFile);
+            }
+
+            if (isset($cacheSedFile)) {
+                $cssContent .= \file_get_contents($cacheSedFile);
+            }
+
+            if (!empty($cssContent)) {
+                $content = \str_replace(
+                    '<!-- quiqqer css -->',
+                    '<style>'.$cssContent.'</style>',
+                    $content
+                );
+            }
+        } else {
+            // insert as file
+            $content = str_replace(
+                '<!-- quiqqer css -->',
+                $replace,
+                $content
+            );
+        }
+
+        return $content;
     }
 }

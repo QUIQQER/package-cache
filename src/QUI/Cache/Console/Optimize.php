@@ -36,10 +36,9 @@ class Optimize extends QUI\System\Console\Tool
         $project = $this->getArgument('project');
         $mtime   = $this->getArgument('mtime');
 
-        if ($project === '') {
+        if ($project === '' || $project === '*') {
             $projects = QUI::getProjectManager()->getProjectList();
             $projects = \array_map(function ($Project) {
-                /* @var $Project QUI\Projects\Project */
                 return $Project->getName();
             }, $projects);
 
@@ -47,6 +46,10 @@ class Optimize extends QUI\System\Console\Tool
 
             $this->write('Please select a project ['.\implode(',', $projects).']:');
             $project = $this->readInput();
+        }
+
+        if (empty($project)) {
+            $project = QUI::getProjectManager()->getStandard()->getName();
         }
 
         $Project  = QUI::getProjectManager()->getProject($project);

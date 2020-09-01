@@ -67,6 +67,14 @@ class LazyLoading extends QUI\Utils\Singleton
         $imgData    = $output[1];
         $attributes = StringUtils::getHTMLAttributes($img);
 
+        if (!isset($attributes['src'])) {
+            return $img;
+        }
+        
+        if (isset($attributes['loading']) && $attributes['loading'] === 'lazy' && isset($attributes['data-src'])) {
+            return $img;
+        }
+
         if (\strpos($attributes['src'], '.svg') !== false
             || \strpos($attributes['src'], 'data:') !== false) {
             return $img;

@@ -86,7 +86,7 @@ class EventCoordinator
 
         $originalFile  = CMS_DIR.'media/sites/'.$project.'/'.$result[0]['file'];
         $originalCache = CMS_DIR.'media/cache/'.$project.'/'.$result[0]['file'];
-        
+
         if (defined('FILEINFO_EXTENSION')) {
             $originalExtension = \pathinfo($originalFile, \FILEINFO_EXTENSION);
         } else {
@@ -426,7 +426,7 @@ class EventCoordinator
         if (Handler::init()->useWebP() === false) {
             return;
         }
-        
+
         // rewrite image
         \preg_match_all(
             '#(<source[^>]*>)#i',
@@ -469,5 +469,13 @@ class EventCoordinator
 
         $webPs   = \implode('', $webPs);
         $picture = \preg_replace('#<picture([^>]*)>#i', '<picture\\1>'.$webPs, $picture);
+    }
+
+    /**
+     * event: on quiqqer translator publish
+     */
+    public static function quiqqerTranslatorPublish()
+    {
+        self::clearCache();
     }
 }
