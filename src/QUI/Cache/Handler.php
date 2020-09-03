@@ -477,6 +477,18 @@ class Handler
                 continue;
             }
 
+            if (\mb_strpos($match[0], 'rel="preload"') !== false) {
+                continue;
+            }
+
+            if (\mb_strpos($match[0], 'rel="prefetch"') !== false) {
+                continue;
+            }
+
+            if (\mb_strpos($match[0], 'rel="preconnect"') !== false) {
+                continue;
+            }
+
             if (\strpos($match[0], 'alternate') !== false) {
                 continue;
             }
