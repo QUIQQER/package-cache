@@ -160,6 +160,8 @@ class EventCoordinator
      */
     public static function onRequest($Rewrite, $url)
     {
+        \define('NO_INTERNAL_CACHE', true); // use only website cache, not the quiqqer internal cache
+        
         try {
             $cacheEnabled = QUI::getPackage('quiqqer/cache')->getConfig()->get('settings', 'cache');
         } catch (QUI\Exception $Exception) {
