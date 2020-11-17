@@ -30,10 +30,12 @@ class LazyLoading extends QUI\Utils\Singleton
               var images = document.querySelectorAll('img.lazyload');
               
               images.forEach(function (img) {
-                  img.src = img.get('data-src');
+                  img.src = img.getAttribute('data-src');
               });
             } else {
-                require([window.URL_OPT_DIR +'bin/lazysizes/lazysizes.min.js']);
+                if (typeof require !== 'undefined') {
+                    require([window.URL_OPT_DIR +'bin/lazysizes/lazysizes.min.js']);     
+                }
             }
         </script>
        
