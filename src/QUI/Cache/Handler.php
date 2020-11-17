@@ -233,8 +233,12 @@ class Handler
             // add own cache js
             $matches[] = [
                 '<script src="'.URL_OPT_DIR.'quiqqer/cache/bin/Storage.js"></script>',
+            ];
+
+            $matches[] = [
                 '<script src="'.URL_OPT_DIR.'quiqqer/qui/qui/lib/polyfills/Promise.js"></script>'
             ];
+
 
             foreach ($matches as $entry) {
                 if (\strpos($entry[0], 'id="quiqqer-user-defined"') !== false) {
@@ -243,7 +247,7 @@ class Handler
 
                 // quiqqer/package-cache/issues/7
                 if (\strpos($entry[0], 'type=') !== false) {
-                    if (\strpos($entry[0], 'type="application/javascript"') === false ||
+                    if (\strpos($entry[0], 'type="application/javascript"') === false &&
                         \strpos($entry[0], 'type="text/javascript"') === false
                     ) {
                         continue;
