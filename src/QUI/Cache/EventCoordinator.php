@@ -232,7 +232,7 @@ class EventCoordinator
 
         // logged in users get no cache
         if (QUI::getUsers()->isAuth(QUI::getUserBySession())) {
-            QUI\Cache\Parser\LazyLoading::getInstance()->parse($output);
+            $output = QUI\Cache\Parser\LazyLoading::getInstance()->parse($output);
 
             return;
         }
