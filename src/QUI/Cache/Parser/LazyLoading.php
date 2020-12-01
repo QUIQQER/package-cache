@@ -110,27 +110,6 @@ class LazyLoading extends QUI\Utils\Singleton
 
         $img .= '/>';
 
-        // noscript
-        if (!isset($attributes['class'])) {
-            $attributes['class'] = '';
-        }
-
-        $attributes['class'] = \str_replace('lazyload', '', $attributes['class']);
-        $attributes['class'] = \trim($attributes['class']);
-
-        $attributes['class'] = $attributes['class'].' lazyload-no-js';
-        $attributes['src']   = $attributes['data-src'];
-
-
-        $img .= '<noscript><img ';
-
-        foreach ($attributes as $key => $value) {
-            $img .= \htmlspecialchars($key).'="'.\htmlspecialchars($value).'" ';
-        }
-
-        $img .= '/></noscript>';
-
-
         return $img;
     }
 }
