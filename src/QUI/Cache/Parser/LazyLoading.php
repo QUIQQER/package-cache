@@ -24,31 +24,6 @@ class LazyLoading extends QUI\Utils\Singleton
      */
     public function parse($content)
     {
-        $script = "
-        <script>
-            if ('loading' in HTMLImageElement.prototype) {
-              var images = document.querySelectorAll('img.lazyload');
-              
-              images.forEach(function (img) {
-                  img.src = img.getAttribute('data-src');
-              });
-            } else {
-                if (typeof require !== 'undefined') {
-                    require([window.URL_OPT_DIR +'bin/lazysizes/lazysizes.min.js']);     
-                }
-            }
-        </script>
-       
-        <style> .lazyload-no-js {display: none;} </style>
-        <noscript><style> 
-        .lazyload { display: none; } 
-        .lazyload-no-js { display: inherit} 
-        </style></noscript>
-        
-        ";
-
-        $content = \str_replace('</body>', $script, $content);
-
         // parse images
         $content = \preg_replace_callback(
             '#<img([^>]*)>#i',
@@ -72,7 +47,7 @@ class LazyLoading extends QUI\Utils\Singleton
         if (!isset($attributes['src'])) {
             return $img;
         }
-        
+
         if (isset($attributes['loading']) && $attributes['loading'] === 'lazy' && isset($attributes['data-src'])) {
             return $img;
         }
@@ -82,9 +57,7 @@ class LazyLoading extends QUI\Utils\Singleton
             return $img;
         }
 
-        $attributes['loading']  = 'lazy';
-        $attributes['data-src'] = $attributes['src'];
-        $attributes['src']      = URL_OPT_DIR.'quiqqer/cache/bin/images/placeholder.gif';
+        $attributes['loading'] = 'lazy';
 
         if (!isset($attributes['class'])) {
             $attributes['class'] = 'lazyload';
