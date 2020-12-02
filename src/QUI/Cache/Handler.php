@@ -573,10 +573,8 @@ class Handler
         }
 
         // default qui stuff
-        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/lib/css.js"></script>'];
-        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/lib/text.js"></script>'];
-
         $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/QUI.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/Locale.js"></script>'];
         $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/classes/QUI.js"></script>'];
         $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/classes/request/Ajax.js"></script>'];
         $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/classes/Controls.js"></script>'];
@@ -584,14 +582,27 @@ class Handler
         $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/classes/Locale.js"></script>'];
         $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/classes/utils/Push.js"></script>'];
         $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/utils/Object.js"></script>'];
-        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/controls/messages/Favico.js"></script>'];
         $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/utils/Elements.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/utils/Functions.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/utils/Controls.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/classes/utils/Animate.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/classes/storage/Storage.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/lib/element-query/ResizeSensor.js"></script>'];
         $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/lib/element-query/ElementQuery.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/controls/messages/Handler.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/controls/messages/Message.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/controls/messages/Attention.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/controls/messages/Information.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/controls/messages/Success.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/controls/messages/Loading.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/controls/messages/Error.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/classes/utils/SimulateEvent.js"></script>'];
 
         $matches[] = ['<script src="'.URL_OPT_DIR.'quiqqer/quiqqer/bin/QUI/utils/Session.js"></script>'];
         $matches[] = ['<script src="'.URL_OPT_DIR.'quiqqer/quiqqer/bin/QUI/Ajax.js"></script>'];
         $matches[] = ['<script src="'.URL_OPT_DIR.'quiqqer/quiqqer/bin/QUI/Locale.js"></script>'];
         $matches[] = ['<script src="'.URL_OPT_DIR.'quiqqer/quiqqer/bin/QUI/classes/Locale.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'quiqqer/quiqqer/bin/QUI/classes/request/Bundler.js"></script>'];
 
 
         foreach ($matches as $entry) {
@@ -723,11 +734,11 @@ class Handler
             \file_put_contents($cacheJSFile, $jsContent);
 
             try {
-                $optimized = Optimizer::optimizeJavaScript($cacheJSFile);
-
-                if (!empty($optimized)) {
-                    \file_put_contents($cacheJSFile, $optimized);
-                }
+//                $optimized = Optimizer::optimizeJavaScript($cacheJSFile);
+//
+//                if (!empty($optimized)) {
+//                    \file_put_contents($cacheJSFile, $optimized);
+//                }
             } catch (QUI\Exception $Exception) {
             }
         }
