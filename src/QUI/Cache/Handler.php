@@ -181,7 +181,7 @@ class Handler
         if (!isset($vhosts[$urlHost])) {
             return;
         }
-        
+
         if (\is_string($query)) {
             \parse_str($query, $query);
         }
@@ -221,169 +221,7 @@ class Handler
          * Bundle JavaScript
          */
         if ($jsCacheSetting) {
-            \preg_match_all(
-                '/<script[^>]*>(.*)<\/script>/Uis',
-                $content,
-                $matches,
-                PREG_SET_ORDER
-            );
-
-            $jsContent = 'var QUIQQER_JS_IS_CACHED = true;';
-
-            // add own cache js
-            $matches[] = [
-                '<script src="'.URL_OPT_DIR.'quiqqer/cache/bin/Storage.js"></script>',
-            ];
-
-            $matches[] = [
-                '<script src="'.URL_OPT_DIR.'quiqqer/qui/qui/lib/polyfills/Promise.js"></script>'
-            ];
-
-
-            foreach ($matches as $entry) {
-                if (\strpos($entry[0], 'id="quiqqer-user-defined"') !== false) {
-                    continue;
-                }
-
-                // quiqqer/package-cache/issues/7
-                if (\strpos($entry[0], 'type=') !== false) {
-                    if (\strpos($entry[0], 'type="application/javascript"') === false &&
-                        \strpos($entry[0], 'type="text/javascript"') === false
-                    ) {
-                        continue;
-                    }
-                }
-
-                if (\strpos($entry[0], 'src=') === false) {
-                    $content   = \str_replace($entry, '', $content);
-                    $jsContent .= $entry[1];
-                    continue;
-                }
-
-                \preg_match(
-                    '/<script\s+?src="([^"]*)"[^>]*>(.*)<\/script>/Uis',
-                    $entry[0],
-                    $matches
-                );
-
-                if (!isset($matches[1])) {
-                    continue;
-                }
-
-                $file = CMS_DIR.\ltrim($matches[1], '/');
-
-                if (!\file_exists($file)) {
-                    $parse = \parse_url($file);
-                    $file  = $parse['path'];
-                }
-
-                if (!\file_exists($file)) {
-                    continue;
-                }
-
-                $jsContent .= \file_get_contents($file).';';
-
-                $content = \str_replace($entry[0], '', $content);
-            }
-
-
-            // js id
-            $jsId = \md5($jsContent);
-
-            $cacheJSFile    = $binDir.$jsId.'.cache.js';
-            $cacheURLJSFile = $urlBinDir.$jsId.'.cache.js';
-
-            // create javascript cache file
-            if (!\file_exists($cacheJSFile)) {
-                \file_put_contents($cacheJSFile, $jsContent);
-
-                try {
-                    $optimized = Optimizer::optimizeJavaScript($cacheJSFile);
-
-                    if (!empty($optimized)) {
-                        \file_put_contents($cacheJSFile, $optimized);
-                    }
-                } catch (QUI\Exception $Exception) {
-                    // could not optimize javascript
-                }
-            }
-
-            $cached = '<script src="'.URL_OPT_DIR.'bin/dexie/dist/dexie.min.js" type="text/javascript"></script>'.
-                      '<script src="'.$cacheURLJSFile.'" type="text/javascript"></script>'.
-                      '</body>';
-
-            // insert quiqqer.cache.js
-            $content = \str_replace('</body>', $cached, $content);
-
-            \file_put_contents($cacheHtmlFile, $content);
-
-
-            /**
-             * Bundle require modules
-             */
-            $requirePackages = [];
-            $jsContent       = '';
-
-            \preg_replace_callback(
-                '/data-qui="([^"]*)"/Uis',
-                function ($found) use (&$requirePackages) {
-                    $requirePackages[] = $found[1];
-
-                    return $found[0];
-                },
-                $content
-            );
-
-            $requirePackages = \array_unique($requirePackages);
-            \sort($requirePackages);
-
-            foreach ($requirePackages as $require) {
-                $found = \strpos($require, 'package/');
-
-                if ($found === false) {
-                    continue;
-                }
-
-                if ($found !== 0) {
-                    continue;
-                }
-
-                $file = \trim(\substr_replace($require, OPT_DIR, 0, \strlen('package/')));
-
-                if (!\file_exists($file)) {
-                    $file = $file.'.js';
-                }
-
-                if (!\file_exists($file)) {
-                    continue;
-                }
-
-                $jsContent .= \file_get_contents($file).';';
-            }
-
-            $jsId           = \md5(\serialize($requirePackages));
-            $cacheJSFile    = $binDir.$jsId.'.cache.pkg.js';
-            $cacheURLJSFile = $urlBinDir.$jsId.'.cache.pkg.js';
-
-            if (!\file_exists($cacheJSFile)) {
-                \file_put_contents($cacheJSFile, $jsContent);
-
-                try {
-                    $optimized = Optimizer::optimizeJavaScript($cacheJSFile);
-
-                    if (!empty($optimized)) {
-                        \file_put_contents($cacheJSFile, $optimized);
-                    }
-                } catch (QUI\Exception $Exception) {
-                }
-            }
-
-            $content = \str_replace(
-                '</body>',
-                '<script async src="'.$cacheURLJSFile.'" type="text/javascript"></script></body>',
-                $content
-            );
-
+            $content = $this->generateJavaScriptCache($content);
             \file_put_contents($cacheHtmlFile, $content);
         }
 
@@ -467,7 +305,7 @@ class Handler
         if (empty($template)) {
             return $content;
         }
-        
+
         \preg_match_all(
             '/<link[^>]+href="([^"]*)"[^>]*>/Uis',
             $content,
@@ -667,6 +505,238 @@ class Handler
                 $content
             );
         }
+
+        return $content;
+    }
+
+    /**
+     * @param $content
+     * @return string|string[]
+     */
+    public function generateJavaScriptCache($content)
+    {
+        $binDir    = $this->getCacheDir().'bin/';
+        $urlBinDir = $this->getURLCacheDir().'bin/';
+
+        \preg_match_all(
+            '/<script[^>]*>(.*)<\/script>/Uis',
+            $content,
+            $matches,
+            PREG_SET_ORDER
+        );
+
+        $jsContent = 'var QUIQQER_JS_IS_CACHED = true;';
+
+        // add own cache js
+        $matches[] = ['<script src="'.URL_OPT_DIR.'quiqqer/cache/bin/Storage.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'quiqqer/qui/qui/lib/polyfills/Promise.js"></script>'];
+
+        /**
+         * LOAD AMD
+         */
+        \preg_match_all(
+            '/data-qui="([^"]*)"/Uis',
+            $content,
+            $amdModules,
+            \PREG_SET_ORDER
+        );
+
+        foreach ($amdModules as $amdModule) {
+            $path = \trim($amdModule[1]);
+            $path = \trim($path, '"');
+
+            if (\strpos($path, 'package/') !== 0) {
+                continue;
+            }
+
+            $path = $path.'.js';
+
+            $absPath = \substr_replace(
+                $path,
+                OPT_DIR,
+                0,
+                \strlen('package/')
+            );
+
+            $relPath = \substr_replace(
+                $path,
+                URL_OPT_DIR,
+                0,
+                \strlen('package/')
+            );
+
+            if (\file_exists($absPath)) {
+                $matches[] = [
+                    '<script src="'.$relPath.'"></script>'
+                ];
+            }
+        }
+
+        // default qui stuff
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/lib/css.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/lib/text.js"></script>'];
+
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/QUI.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/classes/QUI.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/classes/request/Ajax.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/classes/Controls.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/classes/DOM.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/classes/Locale.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/classes/utils/Push.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/utils/Object.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/controls/messages/Favico.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/utils/Elements.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/lib/element-query/ElementQuery.js"></script>'];
+
+        $matches[] = ['<script src="'.URL_OPT_DIR.'quiqqer/quiqqer/bin/QUI/utils/Session.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'quiqqer/quiqqer/bin/QUI/Ajax.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'quiqqer/quiqqer/bin/QUI/Locale.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'quiqqer/quiqqer/bin/QUI/classes/Locale.js"></script>'];
+
+
+        foreach ($matches as $entry) {
+            if (\strpos($entry[0], 'id="quiqqer-user-defined"') !== false) {
+                continue;
+            }
+
+            // quiqqer/package-cache/issues/7
+            if (\strpos($entry[0], 'type=') !== false) {
+                if (\strpos($entry[0], 'type="application/javascript"') === false &&
+                    \strpos($entry[0], 'type="text/javascript"') === false
+                ) {
+                    continue;
+                }
+            }
+
+            if (\strpos($entry[0], 'src=') === false) {
+                $content   = \str_replace($entry, '', $content);
+                $jsContent .= $entry[1];
+                continue;
+            }
+
+            \preg_match(
+                '/<script\s+?src="([^"]*)"[^>]*>(.*)<\/script>/Uis',
+                $entry[0],
+                $matches
+            );
+
+            if (!isset($matches[1])) {
+                continue;
+            }
+
+            $file = CMS_DIR.\ltrim($matches[1], '/');
+
+            if (!\file_exists($file)) {
+                $parse = \parse_url($file);
+                $file  = $parse['path'];
+            }
+
+            if (!\file_exists($file)) {
+                continue;
+            }
+
+            $jsContent .= \file_get_contents($file).';';
+
+            $content = \str_replace($entry[0], '', $content);
+        }
+
+
+        // js id
+        $jsId = \md5($jsContent);
+
+        $cacheJSFile    = $binDir.$jsId.'.cache.js';
+        $cacheURLJSFile = $urlBinDir.$jsId.'.cache.js';
+
+        // create javascript cache file
+        if (!\file_exists($cacheJSFile)) {
+            \file_put_contents($cacheJSFile, $jsContent);
+
+            try {
+                /*
+                $optimized = Optimizer::optimizeJavaScript($cacheJSFile);
+
+                if (!empty($optimized)) {
+                    \file_put_contents($cacheJSFile, $optimized);
+                }
+                */
+            } catch (QUI\Exception $Exception) {
+                // could not optimize javascript
+            }
+        }
+
+        $cached = '<script src="'.URL_OPT_DIR.'bin/dexie/dist/dexie.min.js" type="text/javascript"></script>'.
+                  '<script src="'.$cacheURLJSFile.'" type="text/javascript"></script>'.
+                  '</body>';
+
+        // insert quiqqer.cache.js
+        $content = \str_replace('</body>', $cached, $content);
+
+
+        /**
+         * Bundle require modules
+         */
+        $requirePackages = [];
+        $jsContent       = '';
+
+        \preg_replace_callback(
+            '/data-qui="([^"]*)"/Uis',
+            function ($found) use (&$requirePackages) {
+                $requirePackages[] = $found[1];
+
+                return $found[0];
+            },
+            $content
+        );
+
+        $requirePackages = \array_unique($requirePackages);
+        \sort($requirePackages);
+
+        foreach ($requirePackages as $require) {
+            $found = \strpos($require, 'package/');
+
+            if ($found === false) {
+                continue;
+            }
+
+            if ($found !== 0) {
+                continue;
+            }
+
+            $file = \trim(\substr_replace($require, OPT_DIR, 0, \strlen('package/')));
+
+            if (!\file_exists($file)) {
+                $file = $file.'.js';
+            }
+
+            if (!\file_exists($file)) {
+                continue;
+            }
+
+            $jsContent .= \file_get_contents($file).';';
+        }
+
+        $jsId           = \md5(\serialize($requirePackages));
+        $cacheJSFile    = $binDir.$jsId.'.cache.pkg.js';
+        $cacheURLJSFile = $urlBinDir.$jsId.'.cache.pkg.js';
+
+        if (!\file_exists($cacheJSFile)) {
+            \file_put_contents($cacheJSFile, $jsContent);
+
+            try {
+                $optimized = Optimizer::optimizeJavaScript($cacheJSFile);
+
+                if (!empty($optimized)) {
+                    \file_put_contents($cacheJSFile, $optimized);
+                }
+            } catch (QUI\Exception $Exception) {
+            }
+        }
+
+        $content = \str_replace(
+            '</body>',
+            '<script async src="'.$cacheURLJSFile.'" type="text/javascript"></script></body>',
+            $content
+        );
 
         return $content;
     }
