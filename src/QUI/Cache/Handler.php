@@ -369,6 +369,65 @@ class Handler
             }
         }
 
+        /**
+         * LOAD AMD
+         */
+        $amdCssFiles = $this->getAmdCssFiles($content);
+
+        if (!empty($amdCssFiles)) {
+            $jsContent = '<script>var QUIQQER_CSS_PREFETCHED = '.\json_encode($amdCssFiles).'</script>';
+            $content   = \str_replace(
+                '<!-- quiqqer-js-defined -->',
+                '<!-- quiqqer-js-defined -->'.$jsContent,
+                $content
+            );
+
+            // add css files
+            foreach ($amdCssFiles as $cssFile => $v) {
+                if (\strpos($cssFile, 'qui/') === 0) {
+                    $absPath = \substr_replace(
+                        $cssFile,
+                        OPT_DIR.'bin/qui/qui/',
+                        0,
+                        \strlen('qui/')
+                    );
+
+                    $cssFiles[] = [
+                        'file'  => $absPath,
+                        'match' => [
+                            '<link href="'.$cssFile.'" rel="stylesheet">',
+                            $cssFile
+                        ]
+                    ];
+
+                    continue;
+                }
+
+                $absPath = \substr_replace(
+                    $cssFile,
+                    OPT_DIR,
+                    0,
+                    \strlen('package/')
+                );
+
+                $relPath = \substr_replace(
+                    $cssFile,
+                    URL_OPT_DIR,
+                    0,
+                    \strlen('package/')
+                );
+
+                $cssFiles[] = [
+                    'file'  => $absPath,
+                    'match' => [
+                        '<link href="'.$relPath.'" rel="stylesheet">',
+                        $relPath
+                    ]
+                ];
+            }
+        }
+
+
         $replace = '';
 
         // generate template files
@@ -392,9 +451,9 @@ class Handler
                 $CSSMinify->minify($cssFile);
 
                 $comment    = "\n/* File: {$match[1]} */\n";
-                $cssContent .= $comment.file_get_contents($cssFile)."\n";
+                $cssContent .= $comment.\file_get_contents($cssFile)."\n";
 
-                unlink($cssFile);
+                \unlink($cssFile);
 
                 $content = \str_replace($match[0], '', $content);
             }
@@ -425,9 +484,9 @@ class Handler
                 $CSSMinify->minify($cssFile);
 
                 $comment    = "\n/* File: {$match[1]} */\n";
-                $cssContent .= $comment.file_get_contents($cssFile)."\n";
+                $cssContent .= $comment.\file_get_contents($cssFile)."\n";
 
-                unlink($cssFile);
+                \unlink($cssFile);
 
                 // delete css from main content
                 $content = \str_replace($match[0], '', $content);
@@ -499,7 +558,7 @@ class Handler
             }
         } else {
             // insert as file
-            $content = str_replace(
+            $content = \str_replace(
                 '<!-- quiqqer css -->',
                 $replace,
                 $content
@@ -750,5 +809,73 @@ class Handler
         );
 
         return $content;
+    }
+
+    /**
+     * Search the amd css files
+     *
+     * @param $content
+     * @return array
+     */
+    protected function getAmdCssFiles($content)
+    {
+        \preg_match_all(
+            '/data-qui="([^"]*)"/Uis',
+            $content,
+            $amdModules,
+            \PREG_SET_ORDER
+        );
+
+        // default amd files
+        $amdCssFiles = [
+            'qui/controls/messages/Message.css' => true,
+            'qui/controls/windows/Popup.css' => true,
+            'qui/controls/buttons/Button.css' => true,
+            'qui/controls/Control.css' => true,
+            'qui/controls/loader/Loader.css' => true,
+            'qui/controls/loader/Loader.fa-spinner.css' => true,
+            'qui/controls/messages/Handler.css' => true
+        ];
+
+        foreach ($amdModules as $amdModule) {
+            $path = \trim($amdModule[1]);
+            $path = \trim($path, '"');
+
+            if (\strpos($path, 'package/') !== 0) {
+                continue;
+            }
+
+            $path = $path.'.js';
+
+            $absPath = \substr_replace(
+                $path,
+                OPT_DIR,
+                0,
+                \strlen('package/')
+            );
+
+            if (!\file_exists($absPath)) {
+                continue;
+            }
+
+            $moduleContent = \file_get_contents($absPath);
+
+            if (\strpos($moduleContent, 'css!') === false) {
+                continue;
+            }
+
+            \preg_match_all(
+                '/css\!([^\'"]*)\.css/Uis',
+                $moduleContent,
+                $amdCssFileMatches,
+                \PREG_SET_ORDER
+            );
+
+            foreach ($amdCssFileMatches as $cssFile) {
+                $amdCssFiles[$cssFile[1].'.css'] = true;
+            }
+        }
+
+        return $amdCssFiles;
     }
 }
