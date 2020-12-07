@@ -174,10 +174,7 @@ class Optimizer
         $result = \shell_exec($exec);
 
         // optimize
-        $optimized = self::optimizeJavaScript($buildFile);
-
-        QUI\System\Log::writeRecursive($optimized);
-
+        self::optimizeJavaScript($buildFile);
 
         if (\file_exists($buildFile)) {
             return \file_get_contents($buildFile);
@@ -237,7 +234,6 @@ class Optimizer
      * Optimize the content of a JavaScript file
      *
      * @param string $jsfile - JavaScript file
-     * @return string
      * @throws QUI\Exception
      */
     public static function optimizeJavaScript($jsfile)
@@ -255,10 +251,17 @@ class Optimizer
 
         self::checkUglifyJsInstalled();
 
-        $exec   = "uglifyjs {$jsfilePath} --screw-ie8 --compress --mangle";
-        $result = \shell_exec($exec);
+        $o = $jsfilePath.'_o';
 
-        return $result;
+        $exec  = "uglifyjs {$jsfilePath} --screw-ie8 --compress --mangle > ".$o;
+        \shell_exec($exec);
+
+        $oc = \file_get_contents($o);
+
+        if (!empty($oc)) {
+            \unlink($jsfilePath);
+            \rename($o, $jsfilePath);
+        }
     }
 
     /**
@@ -515,7 +518,7 @@ class Optimizer
         if (!isset($parts['extension'])) {
             return false;
         }
-        
+
         if ($parts['extension'] === 'svg') {
             return false;
         }
