@@ -639,15 +639,18 @@ class Handler
         $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/classes/Controls.js"></script>'];
         $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/classes/DOM.js"></script>'];
         $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/classes/Locale.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/classes/Windows.js"></script>'];
         $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/classes/utils/Push.js"></script>'];
         $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/utils/Object.js"></script>'];
         $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/utils/Elements.js"></script>'];
         $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/utils/Functions.js"></script>'];
         $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/utils/Controls.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/utils/System.js"></script>'];
         $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/classes/utils/Animate.js"></script>'];
         $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/classes/storage/Storage.js"></script>'];
         $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/lib/element-query/ResizeSensor.js"></script>'];
         $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/lib/element-query/ElementQuery.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/controls/Control.js"></script>'];
         $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/controls/messages/Handler.js"></script>'];
         $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/controls/messages/Message.js"></script>'];
         $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/controls/messages/Attention.js"></script>'];
