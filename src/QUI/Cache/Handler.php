@@ -725,13 +725,7 @@ class Handler
             \file_put_contents($cacheJSFile, $jsContent);
 
             try {
-                /*
-                $optimized = Optimizer::optimizeJavaScript($cacheJSFile);
-
-                if (!empty($optimized)) {
-                    \file_put_contents($cacheJSFile, $optimized);
-                }
-                */
+                Optimizer::optimizeJavaScript($cacheJSFile);
             } catch (QUI\Exception $Exception) {
                 // could not optimize javascript
             }
@@ -796,11 +790,7 @@ class Handler
             \file_put_contents($cacheJSFile, $jsContent);
 
             try {
-//                $optimized = Optimizer::optimizeJavaScript($cacheJSFile);
-//
-//                if (!empty($optimized)) {
-//                    \file_put_contents($cacheJSFile, $optimized);
-//                }
+                Optimizer::optimizeJavaScript($cacheJSFile);
             } catch (QUI\Exception $Exception) {
             }
         }
