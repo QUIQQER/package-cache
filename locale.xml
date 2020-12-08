@@ -23,12 +23,12 @@
         </locale>
 
         <locale name="settings.title">
-            <de><![CDATA[Webseiten Caching]]></de>
-            <en><![CDATA[Website caching]]></en>
+            <de><![CDATA[Cache Einstellungen]]></de>
+            <en><![CDATA[Cache settings]]></en>
         </locale>
         <locale name="settings.category.title">
-            <de><![CDATA[Caching Einstellungen]]></de>
-            <en><![CDATA[Caching settings]]></en>
+            <de><![CDATA[Webseiten Caching]]></de>
+            <en><![CDATA[Website caching]]></en>
         </locale>
 
         <locale name="settings.category.content.title">
