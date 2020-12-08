@@ -27,13 +27,13 @@
             <en><![CDATA[Cache settings]]></en>
         </locale>
         <locale name="settings.category.title">
-            <de><![CDATA[Webseiten Caching]]></de>
-            <en><![CDATA[Website caching]]></en>
+            <de><![CDATA[Frontend Caching]]></de>
+            <en><![CDATA[Frontend caching]]></en>
         </locale>
 
         <locale name="settings.category.content.title">
-            <de><![CDATA[Allgemeine Webseiten Caching Einstellungen]]></de>
-            <en><![CDATA[General Websites caching settings]]></en>
+            <de><![CDATA[Allgemeine Frontend Caching Einstellungen]]></de>
+            <en><![CDATA[General frontend caching settings]]></en>
         </locale>
         <locale name="settings.category.image.title">
             <de><![CDATA[Bild Optimierungen]]></de>
@@ -41,8 +41,8 @@
         </locale>
 
         <locale name="settings.cache">
-            <de><![CDATA[Cache aktivieren]]></de>
-            <en><![CDATA[Enable cache]]></en>
+            <de><![CDATA[Frontend Cache aktivieren]]></de>
+            <en><![CDATA[Enable frontend cache]]></en>
         </locale>
         <locale name="settings.cache.description">
             <de><![CDATA[
