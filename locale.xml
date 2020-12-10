@@ -194,5 +194,16 @@
             <en><![CDATA[Outsource inline CSS as CSS file]]></en>
         </locale>
 
+        <locale name="cache.clear.success">
+            <de><![CDATA[Der Frontend Cache wurde erfolgreich geleert.]]></de>
+            <en><![CDATA[The frontend cache was successfully cleared.]]></en>
+        </locale>
+    </groups>
+
+    <groups name="quiqqer/cache" datatype="js">
+        <locale name="clear.cache.button">
+            <de><![CDATA[Frontend Cache leeren]]></de>
+            <en><![CDATA[Clear frontend cache]]></en>
+        </locale>
     </groups>
 </locales>

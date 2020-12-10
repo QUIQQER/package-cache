@@ -91,6 +91,8 @@
                                 <locale group="quiqqer/cache" var="settings.jscache.description"/>
                             </description>
                         </input>
+
+                        <input type="hidden" data-qui="package/quiqqer/cache/bin/backend/settings/ClearCache"></input>
                     </settings>
 
                     <settings>
