@@ -169,6 +169,47 @@
 
             </categories>
         </window>
-
     </settings>
+
+
+    <!-- Project Settings -->
+    <project>
+        <settings>
+
+            <config>
+                <section name="website">
+                    <conf name="nocache">
+                        <type><![CDATA[bool]]></type>
+                    </conf>
+                </section>
+            </config>
+
+            <window>
+                <categories>
+                    <category name="cache">
+                        <text>
+                            <locale group="quiqqer/cache" var="project.cache.setting"/>
+                        </text>
+                        <icon>fa fa-clone</icon>
+
+                        <settings title="settings.cache" name="settings.cache">
+                            <title>
+                                <locale group="quiqqer/cache" var="settings.project.setting"/>
+                            </title>
+                            <input conf="website.nocache" type="checkbox">
+                                <text>
+                                    <locale group="quiqqer/cache" var="project.nocache.setting.text"/>
+                                </text>
+                                <description>
+                                    <locale group="quiqqer/cache" var="project.nocache.setting.description"/>
+                                </description>
+                            </input>
+                        </settings>
+
+                    </category>
+                </categories>
+            </window>
+
+        </settings>
+    </project>
 </quiqqer>
