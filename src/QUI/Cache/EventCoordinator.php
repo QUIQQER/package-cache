@@ -164,7 +164,7 @@ class EventCoordinator
             \define('NO_INTERNAL_CACHE', true); // use only website cache, not the quiqqer internal cache
         }
 
-        
+
         try {
             $cacheEnabled = QUI::getPackage('quiqqer/cache')->getConfig()->get('settings', 'cache');
         } catch (QUI\Exception $Exception) {
@@ -267,6 +267,16 @@ class EventCoordinator
 
         if (!$cacheSetting) {
             return;
+        }
+
+        // check project setting
+        try {
+            $Project = QUI::getRewrite()->getProject();
+
+            if ((int)$Project->getConfig('website.nocache')) {
+                return;
+            }
+        } catch (QUI\Exception $Exception) {
         }
 
         try {

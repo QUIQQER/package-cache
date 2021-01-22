@@ -198,6 +198,23 @@
             <de><![CDATA[Der Frontend Cache wurde erfolgreich geleert.]]></de>
             <en><![CDATA[The frontend cache was successfully cleared.]]></en>
         </locale>
+
+        <locale name="project.cache.setting">
+            <de><![CDATA[Frontend Caching]]></de>
+            <en><![CDATA[Frontend Caching]]></en>
+        </locale>
+        <locale name="settings.project.setting">
+            <de><![CDATA[Frontend Caching]]></de>
+            <en><![CDATA[Frontend Caching]]></en>
+        </locale>
+        <locale name="project.nocache.setting.text">
+            <de><![CDATA[Frontend Caching deaktivieren]]></de>
+            <en><![CDATA[Disable frontend caching]]></en>
+        </locale>
+        <locale name="project.nocache.setting.description">
+            <de><![CDATA[Frontend Caching für dieses Projekt komplett deaktivieren.]]></de>
+            <en><![CDATA[Disable frontend caching for this project.]]></en>
+        </locale>
     </groups>
 
     <groups name="quiqqer/cache" datatype="js">
