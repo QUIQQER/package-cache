@@ -681,6 +681,10 @@ class Handler
                 }
             }
 
+            if (\strpos($entry[0], 'data-no-cache="1"') !== false) {
+                continue;
+            }
+
             if (\strpos($entry[0], 'src=') === false) {
                 $content   = \str_replace($entry, '', $content);
                 $jsContent .= $entry[1];
