@@ -11,6 +11,7 @@
     <event on="onSiteDelete" fire="\QUI\Cache\EventCoordinator::clearCache"/>
     <event on="onSiteActivate" fire="\QUI\Cache\EventCoordinator::clearCache"/>
     <event on="onSiteDeactivate" fire="\QUI\Cache\EventCoordinator::clearCache"/>
+    <event on="onQuiqqerBricksSave" fire="\QUI\Cache\EventCoordinator::clearCache"/>
 
     <event on="onMediaActivate" fire="\QUI\Cache\EventCoordinator::clearCache"/>
     <event on="onMediaDeactivate" fire="\QUI\Cache\EventCoordinator::clearCache"/>
