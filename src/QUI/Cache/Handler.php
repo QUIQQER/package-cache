@@ -235,6 +235,16 @@ class Handler
         }
 
         /**
+         * convert to webp -> data-image
+         */
+        $useWebP = Handler::init()->useWebP();
+
+        if ($useWebP) {
+            $content = $this->parseImagesToWebP($content);
+            \file_put_contents($cacheHtmlFile, $content);
+        }
+
+        /**
          * Bundle CSS
          */
         $content = $this->generateCSSCache($content);
@@ -825,13 +835,13 @@ class Handler
 
         // default amd files
         $amdCssFiles = [
-            'qui/controls/messages/Message.css' => true,
-            'qui/controls/windows/Popup.css' => true,
-            'qui/controls/buttons/Button.css' => true,
-            'qui/controls/Control.css' => true,
-            'qui/controls/loader/Loader.css' => true,
+            'qui/controls/messages/Message.css'         => true,
+            'qui/controls/windows/Popup.css'            => true,
+            'qui/controls/buttons/Button.css'           => true,
+            'qui/controls/Control.css'                  => true,
+            'qui/controls/loader/Loader.css'            => true,
             'qui/controls/loader/Loader.fa-spinner.css' => true,
-            'qui/controls/messages/Handler.css' => true
+            'qui/controls/messages/Handler.css'         => true
         ];
 
         foreach ($amdModules as $amdModule) {
@@ -874,5 +884,36 @@ class Handler
         }
 
         return $amdCssFiles;
+    }
+
+    /**
+     * Helper to parse the content for webo files not in <picture> or <img>
+     *
+     * @param $content
+     * @return array|string|string[]|null
+     */
+    protected function parseImagesToWebP($content)
+    {
+        $content = \preg_replace_callback(
+            '#(src|data\-image|data\-src)="([^"]*)"#',
+            function ($data) {
+                $src = $data[2];
+
+                if (strpos($src, 'media/cache') === false) {
+                    return $data[0];
+                }
+
+                $ext = pathinfo($src, \PATHINFO_EXTENSION);
+
+                if ($ext === 'png' || $ext === 'jpg' || $ext === 'jpeg') {
+                    return str_replace(['.png', '.jpg', 'jpeg'], '.webp', $data[0]);
+                }
+
+                return $data[0];
+            },
+            $content
+        );
+
+        return $content;
     }
 }
