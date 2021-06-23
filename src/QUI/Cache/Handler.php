@@ -24,7 +24,7 @@ class Handler
     /**
      * @return Handler
      */
-    public static function init()
+    public static function init(): Handler
     {
         return new self();
     }
