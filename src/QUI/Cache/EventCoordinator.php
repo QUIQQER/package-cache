@@ -505,8 +505,8 @@ class EventCoordinator
             return;
         }
 
-        if (strpos($src, '.jpg') !== false || strpos($src, '.png') !== false) {
-            $src = str_replace(['.jpg', '.png'], '.webp', $src);
+        if (strpos($src, '.jpg') !== false || strpos($src, '.jpeg') !== false || strpos($src, '.png') !== false) {
+            $src = str_replace(['.jpg', '.jpeg', '.png'], '.webp', $src);
         }
     }
 }
