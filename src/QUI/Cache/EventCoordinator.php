@@ -493,4 +493,20 @@ class EventCoordinator
     {
         self::clearCache();
     }
+
+    /**
+     * @param $smarty
+     * @param $src
+     * @param $params
+     */
+    public static function smartyImageOnlySource($smarty, &$src, &$params)
+    {
+        if (!Handler::init()->useWebP()) {
+            return;
+        }
+
+        if (strpos($src, '.jpg') !== false || strpos($src, '.png') !== false) {
+            $src = str_replace(['.jpg', '.png'], '.webp', $src);
+        }
+    }
 }

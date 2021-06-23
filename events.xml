@@ -5,6 +5,7 @@
     <event on="onRequestOutput" fire="\QUI\Cache\EventCoordinator::onRequestOutput" priority="1000"/>
     <event on="onTemplateGetHeader" fire="\QUI\Cache\EventCoordinator::onTemplateGetHeader"/>
     <event on="onPackageConfigSave" fire="\QUI\Cache\EventCoordinator::onPackageConfigSave"/>
+    <event on="onSmartyImageOnlySource" fire="\QUI\Cache\EventCoordinator::smartyImageOnlySource"/>
 
     <!-- clear cache -->
     <event on="onSiteSave" fire="\QUI\Cache\EventCoordinator::clearCache"/>
@@ -12,6 +13,7 @@
     <event on="onSiteActivate" fire="\QUI\Cache\EventCoordinator::clearCache"/>
     <event on="onSiteDeactivate" fire="\QUI\Cache\EventCoordinator::clearCache"/>
     <event on="onQuiqqerBricksSave" fire="\QUI\Cache\EventCoordinator::clearCache"/>
+
 
     <event on="onMediaActivate" fire="\QUI\Cache\EventCoordinator::clearCache"/>
     <event on="onMediaDeactivate" fire="\QUI\Cache\EventCoordinator::clearCache"/>
