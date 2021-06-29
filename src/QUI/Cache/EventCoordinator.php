@@ -442,6 +442,13 @@ class EventCoordinator
             return;
         }
 
+        if (stripos($picture, '.png') === false
+            && stripos($picture, '.jpg') === false
+            && stripos($picture, '.jpeg') === false
+        ) {
+            return;
+        }
+
         // rewrite image
         \preg_match_all(
             '#(<source[^>]*>)#i',
@@ -457,33 +464,14 @@ class EventCoordinator
             return;
         }
 
-        // <source media="(max-width: 100px)" srcset="/media/cache/Mainproject/temp1234/gif__100x84.gif">
-        $webPs      = [];
-        $sourceSets = $sourceSets[0];
+        // last sourceSet
+        $lastSourceSet = array_pop($sourceSets[0]);
 
-        foreach ($sourceSets as $sourceSet) {
-            \preg_match('#srcset="(.*?)"#i', $sourceSet, $src);
+        $picture = str_ireplace(['.png', '.jpeg', '.jpg'], '.webp', $picture);
+        $picture = str_ireplace(['image/png', 'image/jpeg', 'image/jpg'], 'image/webp', $picture);
 
-            if (!isset($src[1])) {
-                continue;
-            }
-
-            $parts = \pathinfo($src[1]);
-
-            if ($parts['extension'] === 'svg') {
-                return;
-            }
-
-            $webPFile = $parts['dirname'].DIRECTORY_SEPARATOR.$parts['filename'].'.webp';
-
-            $sourceSet = \preg_replace('#srcset="(.*?)"#i', 'srcset="'.$webPFile.'"', $sourceSet);
-            $sourceSet = \preg_replace('#type="(.*?)"#i', 'type="image/webp"', $sourceSet);
-
-            $webPs[] = $sourceSet;
-        }
-
-        $webPs   = \implode('', $webPs);
-        $picture = \preg_replace('#<picture([^>]*)>#i', '<picture\\1>'.$webPs, $picture);
+        // add fallback png / jpg
+        $picture = \preg_replace('#<picture([^>]*)>#i', '<picture\\1>'.$lastSourceSet, $picture);
     }
 
     /**
