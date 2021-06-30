@@ -472,6 +472,7 @@ class EventCoordinator
 
         // add fallback png / jpg
         $picture = \preg_replace('#<picture([^>]*)>#i', '<picture\\1>'.$lastSourceSet, $picture);
+        $picture = \preg_replace('#<img#i', $lastSourceSet.'<img', $picture);
     }
 
     /**
