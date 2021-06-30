@@ -471,7 +471,6 @@ class EventCoordinator
         $picture = str_ireplace(['image/png', 'image/jpeg', 'image/jpg'], 'image/webp', $picture);
 
         // add fallback png / jpg
-        $picture = \preg_replace('#<picture([^>]*)>#i', '<picture\\1>'.$lastSourceSet, $picture);
         $picture = \preg_replace('#<img#i', $lastSourceSet.'<img', $picture);
     }
 
