@@ -610,6 +610,15 @@ class Handler
             \PREG_SET_ORDER
         );
 
+        \preg_match_all(
+            '/data-qui-cache="([^"]*)"/Uis',
+            $content,
+            $cacheModules,
+            \PREG_SET_ORDER
+        );
+
+        $amdModules = \array_merge($cacheModules, $amdModules);
+
         foreach ($amdModules as $amdModule) {
             $path = \trim($amdModule[1]);
             $path = \trim($path, '"');
