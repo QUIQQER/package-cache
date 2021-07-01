@@ -34,7 +34,7 @@ class Handler
      *
      * @return string
      */
-    public function getCacheDir()
+    public function getCacheDir(): string
     {
         return VAR_DIR.'cache/packages/cache/';
     }
@@ -44,7 +44,7 @@ class Handler
      *
      * @return string
      */
-    public function getURLCacheDir()
+    public function getURLCacheDir(): string
     {
         return URL_VAR_DIR.'cache/packages/cache/';
     }
@@ -52,8 +52,12 @@ class Handler
     /**
      * @return bool
      */
-    public function useWebP()
+    public function useWebP(): ?bool
     {
+        if (defined('QUIQQER_CACHE_DISABLE_WEBP')) {
+            return false;
+        }
+
         if ($this->webP !== null) {
             return $this->webP;
         }
@@ -75,7 +79,7 @@ class Handler
      * @return string
      * @throws QUI\Exception
      */
-    public function getCacheFromRequest()
+    public function getCacheFromRequest(): string
     {
         // loged in users get no cache
         if (QUI::getUsers()->isAuth(QUI::getUserBySession())) {
@@ -148,7 +152,7 @@ class Handler
      * @param string $content - content to store
      * @throws QUI\Exception
      */
-    public function generateCacheFromRequest(&$content)
+    public function generateCacheFromRequest(string &$content)
     {
         // logged in users shouldn'tgenerate any cache
         if (QUI::getUsers()->isAuth(QUI::getUserBySession())) {
@@ -282,8 +286,12 @@ class Handler
      */
     public function clearCache()
     {
-        QUI::getTemp()->moveToTemp($this->getCacheDir());
-        QUI\Cache\Manager::clear('quiqqer/cache');
+        try {
+            QUI::getTemp()->moveToTemp($this->getCacheDir());
+            QUI\Cache\Manager::clear('quiqqer/cache');
+        } catch (\Exception $Exception) {
+            QUI\System\Log::writeException($Exception);
+        }
     }
 
     /**
@@ -833,7 +841,7 @@ class Handler
      * @param $content
      * @return array
      */
-    protected function getAmdCssFiles($content)
+    protected function getAmdCssFiles($content): array
     {
         \preg_match_all(
             '/data-qui="([^"]*)"/Uis',
