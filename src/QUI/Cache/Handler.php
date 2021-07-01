@@ -54,7 +54,7 @@ class Handler
      */
     public function useWebP(): ?bool
     {
-        if (defined('QUIQQER_CACHE_DISABLE_WEBP')) {
+        if (getenv('QUIQQER_CACHE_DISABLE_WEBP')) {
             return false;
         }
 
