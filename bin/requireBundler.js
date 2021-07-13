@@ -38,11 +38,11 @@
             return oldLoad.apply(requirejs, arguments);
         }
 
-        if (url.match('/packages//quiqqer/cache/bin/Storage.js')) {
+        if (url.match('/packages/quiqqer/cache/bin/Storage.js')) {
             return oldLoad.apply(requirejs, arguments);
         }
 
-        if (url.match('/packages/bin/dexie/dist/dexie.min.js')) {
+        if (url.match('/packages/bin/quiqqer-asset/dexie/dexie/dist/dexie.min.js')) {
             return oldLoad.apply(requirejs, arguments);
         }
 
