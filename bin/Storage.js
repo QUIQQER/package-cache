@@ -3,7 +3,7 @@
  *
  * Main Cache Storage
  *
- * @require URL_OPT_DIR + bin/dexie/dist/dexie.min.js
+ * @require URL_OPT_DIR + bin/quiqqer-asset/dexie/dexie/dist/dexie.min.js
  */
 
 var needled;
@@ -11,7 +11,7 @@ var needled;
 if (typeof window.QUIQQER_JS_IS_CACHED === 'undefined' || !window.QUIQQER_JS_IS_CACHED) {
     needled = [
         'qui/lib/polyfills/Promise',
-        URL_OPT_DIR + 'bin/dexie/dist/dexie.min.js'
+        URL_OPT_DIR + 'bin/quiqqer-asset/dexie/dexie/dist/dexie.min.js'
     ];
 } else {
     needled = ['placeholder'];
