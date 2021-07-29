@@ -254,6 +254,8 @@ class Handler
         $content = $this->generateCSSCache($content);
         \file_put_contents($cacheHtmlFile, $content);
 
+        $checkContent = $content;
+
         /**
          * HTML optimize
          */
@@ -274,6 +276,11 @@ class Handler
                 'id'        => $cacheId,
                 'minifyAll' => true
             ]);
+
+            // Workaround --> quiqqer/package-cache#46
+            if (\empty($result)) {
+                $result = $checkContent;
+            }
 
             \file_put_contents($cacheHtmlFile, $result);
 
