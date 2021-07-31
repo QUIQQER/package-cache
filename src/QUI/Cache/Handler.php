@@ -278,7 +278,7 @@ class Handler
             ]);
 
             // Workaround --> quiqqer/package-cache#46
-            if (\empty($result)) {
+            if (empty($result)) {
                 $result = $checkContent;
             }
 
