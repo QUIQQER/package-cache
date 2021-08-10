@@ -254,8 +254,6 @@ class Handler
         $content = $this->generateCSSCache($content);
         \file_put_contents($cacheHtmlFile, $content);
 
-        $checkContent = $content;
-
         /**
          * HTML optimize
          */
@@ -279,12 +277,12 @@ class Handler
 
             // Workaround --> quiqqer/package-cache#46
             if (empty($result)) {
-                $result = $checkContent;
+                \unlink($cacheHtmlFile);
+
+                return;
             }
 
             \file_put_contents($cacheHtmlFile, $result);
-
-            $content = $result;
         }
     }
 
