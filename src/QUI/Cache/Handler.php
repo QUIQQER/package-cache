@@ -275,9 +275,14 @@ class Handler
                 'minifyAll' => true
             ]);
 
-            \file_put_contents($cacheHtmlFile, $result);
+            // Workaround --> quiqqer/package-cache#46
+            if (empty($result)) {
+                \unlink($cacheHtmlFile);
 
-            $content = $result;
+                return;
+            }
+
+            \file_put_contents($cacheHtmlFile, $result);
         }
     }
 
