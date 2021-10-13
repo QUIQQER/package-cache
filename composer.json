@@ -3,6 +3,7 @@
   "type": "quiqqer-module",
   "description": "The Cache Module saves your page in an optimal version. Thus your page becomes faster, rises in the search engine rankings and lets also your visitors marvel.",
   "license": "PCSG QL-1.0, GPL-3.0+",
+  "version": "1.6.0",
   "authors": [
     {
       "name": "Henning Leutz",
