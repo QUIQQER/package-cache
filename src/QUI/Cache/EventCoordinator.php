@@ -355,8 +355,7 @@ class EventCoordinator
     public static function onMediaCreateSizeCache(
         QUI\Projects\Media\Item   $Image,
         \Intervention\Image\Image $Cache
-    )
-    {
+    ) {
         if (!($Image instanceof QUI\Projects\Media\Image)) {
             return;
         }
