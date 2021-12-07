@@ -58,6 +58,10 @@ class Handler
             return false;
         }
 
+        if (defined('QUIQQER_CACHE_DISABLE_WEBP')) {
+            return false;
+        }
+
         if ($this->webP !== null) {
             return $this->webP;
         }
