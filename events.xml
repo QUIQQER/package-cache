@@ -6,7 +6,7 @@
     <event on="onTemplateGetHeader" fire="\QUI\Cache\EventCoordinator::onTemplateGetHeader"/>
     <event on="onPackageConfigSave" fire="\QUI\Cache\EventCoordinator::onPackageConfigSave"/>
     <event on="onSmartyImageOnlySource" fire="\QUI\Cache\EventCoordinator::smartyImageOnlySource"/>
-    <event on="mailerSendInit" fire="\QUI\Cache\EventCoordinator::onMailerSendInit"/>
+    <event on="onMailerSendInit" fire="\QUI\Cache\EventCoordinator::onMailerSendInit"/>
 
     <!-- clear cache -->
     <event on="onSiteSave" fire="\QUI\Cache\EventCoordinator::clearCache"/>
