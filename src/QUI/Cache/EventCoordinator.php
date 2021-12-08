@@ -520,6 +520,8 @@ class EventCoordinator
     {
         // this solution is not optimal
         // if a mail is sent during the normal running system, the webp is off for everyone (smarty too)
-        define('QUIQQER_CACHE_DISABLE_WEBP', true);
+        if (!defined('QUIQQER_CACHE_DISABLE_WEBP')) {
+            define('QUIQQER_CACHE_DISABLE_WEBP', true);
+        }
     }
 }
