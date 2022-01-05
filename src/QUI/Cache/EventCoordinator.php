@@ -7,6 +7,7 @@
 namespace QUI\Cache;
 
 use QUI;
+use QUI\Utils\System\File;
 
 /**
  * Class Events
@@ -353,7 +354,7 @@ class EventCoordinator
      * @param \Intervention\Image\Image $Cache
      */
     public static function onMediaCreateSizeCache(
-        QUI\Projects\Media\Item   $Image,
+        QUI\Projects\Media\Item $Image,
         \Intervention\Image\Image $Cache
     ) {
         if (!($Image instanceof QUI\Projects\Media\Image)) {
@@ -411,6 +412,27 @@ class EventCoordinator
         }
 
         try {
+            // delete all webp cache files
+            $Media = $Item->getMedia();
+            $cdir = CMS_DIR . $Media->getCacheDir();
+            $file = $Item->getAttribute('file');
+
+            $cachefile = $cdir . $file;
+            $cacheData = \pathinfo($cachefile);
+
+            $fileData = File::getInfo($Item->getFullPath());
+            $files = File::readDir($cacheData['dirname'], true);
+            $filename = $fileData['filename'];
+
+            foreach ($files as $file) {
+                $len = \strlen($filename);
+
+                if (\substr($file, 0, $len + 2) == $filename . '__' && strpos($file, '.webp') !== false) {
+                    File::unlink($cacheData['dirname'] . '/' . $file);
+                }
+            }
+
+            // create the webp main cache
             $cacheFile = $Item->createCache();
         } catch (QUI\Exception $Exception) {
             return;
