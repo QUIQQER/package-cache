@@ -18,6 +18,6 @@ function package_quiqqer_cache_ajax_backend_clearCache()
 
 QUI::$Ajax->register(
     'package_quiqqer_cache_ajax_backend_clearCache',
-    ['cssfile', 'requireConfig'],
+    [],
     'Permission::checkAdminUser'
 );
