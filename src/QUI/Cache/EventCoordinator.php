@@ -173,6 +173,19 @@ class EventCoordinator
             $cacheEnabled = false;
         }
 
+        try {
+            if (QUI::getPackage('quiqqer/cache')->getConfig()->get('settings', 'webp')) {
+                if (strpos($_SERVER['HTTP_ACCEPT'], 'image/webp') !== false
+                    || strpos($_SERVER['HTTP_USER_AGENT'], ' Chrome/') !== false) {
+                    // webp is supported!
+                } else {
+                    // webp is not supported!
+                    $cacheEnabled = false;
+                    define('QUIQQER_CACHE_DISABLE_WEBP', true);
+                }
+            }
+        } catch (QUI\Exception $Exception) {
+        }
 
         if (!\boolval($cacheEnabled)) {
             return;
