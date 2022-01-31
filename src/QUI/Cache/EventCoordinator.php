@@ -357,6 +357,14 @@ class EventCoordinator
      */
     public static function clearCache()
     {
+        if (QUI::getUsers()->isSystemUser(QUI::getUserBySession())) {
+            return;
+        }
+
+        if (QUI::getUsers()->isNobodyUser(QUI::getUserBySession())) {
+            return;
+        }
+
         QUI\Cache\Handler::init()->clearCache();
     }
 
