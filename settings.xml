@@ -31,6 +31,10 @@
                     <type><![CDATA[bool]]></type>
                     <defaultvalue>0</defaultvalue>
                 </conf>
+                <conf name="ignoreWebPCheck">
+                    <type><![CDATA[bool]]></type>
+                    <defaultvalue>0</defaultvalue>
+                </conf>
             </section>
 
             <section name="css">
@@ -137,6 +141,14 @@
                             </text>
                             <description>
                                 <locale group="quiqqer/cache" var="settings.webp.description"/>
+                            </description>
+                        </input>
+                        <input conf="settings.ignoreWebPCheck" type="checkbox">
+                            <text>
+                                <locale group="quiqqer/cache" var="settings.ignoreWebPCheck"/>
+                            </text>
+                            <description>
+                                <locale group="quiqqer/cache" var="settings.ignoreWebPCheck.description"/>
                             </description>
                         </input>
 
