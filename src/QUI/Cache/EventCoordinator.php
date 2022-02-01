@@ -9,6 +9,22 @@ namespace QUI\Cache;
 use QUI;
 use QUI\Utils\System\File;
 
+use function boolval;
+use function count;
+use function define;
+use function defined;
+use function explode;
+use function file_exists;
+use function ltrim;
+use function pathinfo;
+use function preg_match_all;
+use function str_replace;
+use function strlen;
+use function substr;
+
+use const FILEINFO_EXTENSION;
+use const PATHINFO_FILENAME;
+
 /**
  * Class Events
  * Event handling for the cache
@@ -22,20 +38,20 @@ class EventCoordinator
      */
     public static function onRequestImageNotFound($url)
     {
-        $ext = \pathinfo($url, PATHINFO_EXTENSION);
+        $ext = pathinfo($url, PATHINFO_EXTENSION);
 
         if ($ext !== 'webp') {
             return;
         }
 
-        $project = \explode('/', $url)[2];
-        $file = CMS_DIR . $url;
-        $parts = \pathinfo($file);
+        $project = explode('/', $url)[2];
+        $file    = CMS_DIR . $url;
+        $parts   = pathinfo($file);
 
-        $filenameParts = \explode('__', $parts['filename']);
-        $filename = $filenameParts[0];
+        $filenameParts = explode('__', $parts['filename']);
+        $filename      = $filenameParts[0];
 
-        $filenameDir = \str_replace(
+        $filenameDir = str_replace(
             CMS_DIR . 'media/cache/' . $project,
             '',
             $parts['dirname']
@@ -45,14 +61,14 @@ class EventCoordinator
             $filenameDir = $filenameDir . DIRECTORY_SEPARATOR;
         }
 
-        $filenameDir = \ltrim($filenameDir, DIRECTORY_SEPARATOR);
+        $filenameDir = ltrim($filenameDir, DIRECTORY_SEPARATOR);
 
         // wanted sizes
         $height = false;
-        $width = false;
+        $width  = false;
 
         if (isset($filenameParts[1])) {
-            $sizeParts = \explode('x', $filenameParts[1]);
+            $sizeParts = explode('x', $filenameParts[1]);
 
             if (isset($sizeParts[0])) {
                 $width = $sizeParts[0];
@@ -81,29 +97,29 @@ class EventCoordinator
             return;
         }
 
-        if (!\count($result)) {
+        if (!count($result)) {
             return;
         }
 
-        $originalFile = CMS_DIR . 'media/sites/' . $project . '/' . $result[0]['file'];
+        $originalFile  = CMS_DIR . 'media/sites/' . $project . '/' . $result[0]['file'];
         $originalCache = CMS_DIR . 'media/cache/' . $project . '/' . $result[0]['file'];
 
         if (defined('FILEINFO_EXTENSION')) {
-            $originalExtension = \pathinfo($originalFile, \FILEINFO_EXTENSION);
+            $originalExtension = pathinfo($originalFile, FILEINFO_EXTENSION);
         } else {
             /* @deprecated */
-            $pathInfo = \pathinfo($originalFile);
+            $pathInfo          = pathinfo($originalFile);
             $originalExtension = $pathInfo['extension'];
         }
 
-        if (!\file_exists($originalFile)) {
+        if (!file_exists($originalFile)) {
             return;
         }
 
         // check if cache image with filesize exists
-        $cacheFile = \str_replace('.webp', '.' . $originalExtension, $file);
+        $cacheFile = str_replace('.webp', '.' . $originalExtension, $file);
 
-        if (\file_exists($cacheFile)) {
+        if (file_exists($cacheFile)) {
             $webPFile = Optimizer::convertToWebP($cacheFile);
             self::outputWebP($webPFile);
 
@@ -111,7 +127,7 @@ class EventCoordinator
         }
 
         // if original cache doesn't exists, and we need no sizes
-        if ($width === false && $height === false && \file_exists($originalCache)) {
+        if ($width === false && $height === false && file_exists($originalCache)) {
             $webPFile = Optimizer::convertToWebP($originalCache);
             self::outputWebP($webPFile);
 
@@ -121,8 +137,8 @@ class EventCoordinator
         // if original cache doesn't exists, create it
         try {
             $Project = QUI::getProject($project);
-            $Media = $Project->getMedia();
-            $Image = $Media->get($result[0]['id']);
+            $Media   = $Project->getMedia();
+            $Image   = $Media->get($result[0]['id']);
 
             if ($width === false && $height === false) {
                 $sizeCacheFile = $Image->createCache();
@@ -144,7 +160,7 @@ class EventCoordinator
      */
     public static function outputWebP($webPFile)
     {
-        if (\file_exists($webPFile)) {
+        if (file_exists($webPFile)) {
             try {
                 QUI\Utils\System\File::fileHeader($webPFile);
             } catch (QUI\Exception $Exception) {
@@ -159,10 +175,10 @@ class EventCoordinator
      * @param QUI\Rewrite $Rewrite
      * @param string $url
      */
-    public static function onRequest($Rewrite, $url)
+    public static function onRequest(QUI\Rewrite $Rewrite, string $url)
     {
-        if (!\defined('NO_INTERNAL_CACHE')) {
-            \define('NO_INTERNAL_CACHE', true); // use only website cache, not the quiqqer internal cache
+        if (!defined('NO_INTERNAL_CACHE')) {
+            define('NO_INTERNAL_CACHE', true); // use only website cache, not the quiqqer internal cache
         }
 
 
@@ -174,9 +190,15 @@ class EventCoordinator
         }
 
         try {
-            if (QUI::getPackage('quiqqer/cache')->getConfig()->get('settings', 'webp')) {
+            $ignoreWebpCheck = (bool)QUI::getPackage('quiqqer/cache')->getConfig()->get('settings', 'ignoreWebPCheck');
+
+            if (isset($_SERVER['HTTP_ACCEPT'])
+                && QUI::getPackage('quiqqer/cache')->getConfig()->get('settings', 'webp')) {
+                // if webp supported, use it
                 if (strpos($_SERVER['HTTP_ACCEPT'], 'image/webp') !== false
-                    || strpos($_SERVER['HTTP_USER_AGENT'], ' Chrome/') !== false) {
+                    || strpos($_SERVER['HTTP_USER_AGENT'], ' Chrome/') !== false
+                    || $ignoreWebpCheck
+                ) {
                     // webp is supported!
                 } else {
                     // webp is not supported!
@@ -187,11 +209,11 @@ class EventCoordinator
         } catch (QUI\Exception $Exception) {
         }
 
-        if (!\boolval($cacheEnabled)) {
+        if (!boolval($cacheEnabled)) {
             return;
         }
 
-        $getParams = $_GET;
+        $getParams  = $_GET;
         $postParams = $_POST;
 
         if (isset($getParams['_url'])) {
@@ -209,7 +231,7 @@ class EventCoordinator
         }
 
         try {
-            $content = QUI\Cache\Handler::init()->getCacheFromRequest();
+            $content  = QUI\Cache\Handler::init()->getCacheFromRequest();
             $Response = QUI::getGlobalResponse();
             $Response->setContent($content);
 
@@ -230,9 +252,9 @@ class EventCoordinator
      *
      * @param string $output
      */
-    public static function onRequestOutput(&$output)
+    public static function onRequestOutput(string &$output)
     {
-        $getParams = $_GET;
+        $getParams  = $_GET;
         $postParams = $_POST;
 
         if (isset($getParams['_url'])) {
@@ -271,7 +293,7 @@ class EventCoordinator
                 return;
             }
 
-            $Package = QUI::getPackage('quiqqer/cache');
+            $Package      = QUI::getPackage('quiqqer/cache');
             $cacheSetting = $Package->getConfig()->get('settings', 'cache');
         } catch (QUI\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
@@ -328,7 +350,7 @@ class EventCoordinator
     public static function onTemplateGetHeader(QUI\Template $Template)
     {
         try {
-            $Package = QUI::getPackage('quiqqer/cache');
+            $Package      = QUI::getPackage('quiqqer/cache');
             $cacheSetting = $Package->getConfig()->get('settings', 'cache');
         } catch (QUI\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
@@ -383,9 +405,9 @@ class EventCoordinator
         }
 
         try {
-            $Package = QUI::getPackage('quiqqer/cache');
+            $Package          = QUI::getPackage('quiqqer/cache');
             $optimizeOnResize = $Package->getConfig()->get('settings', 'optimize_on_resize');
-            $useWebP = Handler::init()->useWebP();
+            $useWebP          = Handler::init()->useWebP();
         } catch (QUI\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
 
@@ -435,20 +457,20 @@ class EventCoordinator
         try {
             // delete all webp cache files
             $Media = $Item->getMedia();
-            $cdir = CMS_DIR . $Media->getCacheDir();
-            $file = $Item->getAttribute('file');
+            $cdir  = CMS_DIR . $Media->getCacheDir();
+            $file  = $Item->getAttribute('file');
 
             $cachefile = $cdir . $file;
-            $cacheData = \pathinfo($cachefile);
+            $cacheData = pathinfo($cachefile);
 
             $fileData = File::getInfo($Item->getFullPath());
-            $files = File::readDir($cacheData['dirname'], true);
+            $files    = File::readDir($cacheData['dirname'], true);
             $filename = $fileData['filename'];
 
             foreach ($files as $file) {
-                $len = \strlen($filename);
+                $len = strlen($filename);
 
-                if (\substr($file, 0, $len + 2) == $filename . '__' && strpos($file, '.webp') !== false) {
+                if (substr($file, 0, $len + 2) == $filename . '__' && strpos($file, '.webp') !== false) {
                     File::unlink($cacheData['dirname'] . '/' . $file);
                 }
             }
@@ -463,11 +485,11 @@ class EventCoordinator
 
         // check if same file exists
         try {
-            $Folder = $Item->getParent();
-            $filename = $Item->getPathinfo(\PATHINFO_FILENAME);
+            $Folder   = $Item->getParent();
+            $filename = $Item->getPathinfo(PATHINFO_FILENAME);
             $children = $Folder->getChildrenByName($filename);
 
-            if (\count($children) >= 2) {
+            if (count($children) >= 2) {
                 QUI::getMessagesHandler()->addAttention(
                     QUI::getLocale()->get('quiqqer/cache', 'message.attention.webp.duplicate.file')
                 );
@@ -493,13 +515,13 @@ class EventCoordinator
         }
 
         // rewrite image
-        \preg_match_all(
+        preg_match_all(
             '#(<source[^>]*>)#i',
             $picture,
             $sourceSets
         );
 
-        if (!\count($sourceSets)) {
+        if (!count($sourceSets)) {
             return;
         }
 

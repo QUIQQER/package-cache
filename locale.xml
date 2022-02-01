@@ -124,11 +124,41 @@
         </locale>
         <locale name="settings.webp.description" html="true">
             <de><![CDATA[
-            Caching Bilder auch im WebP Format anbieten.<br />
+            Bilder im Cache auch im WebP Format anbieten.<br />
             QUIQQER versucht Bilder auch im WebP Format anzubieten.
             WebP ist ein Grafikformat für verlustbehaftet oder verlustfrei komprimierte statische oder animierte Bilder.
             ]]></de>
-            <en><![CDATA[WebP conversion]]></en>
+            <en><![CDATA[
+            Offer images in the cache also in WebP format.<br />
+            QUIQQER tries to offer images also in WebP format.
+            WebP is a graphic format for lossy or lossless compressed static or animated images.
+            ]]></en>
+        </locale>
+
+        <locale name="settings.ignoreWebPCheck">
+            <de><![CDATA[WebP Prüfung ignorieren]]></de>
+            <en><![CDATA[Ignore WebP conversion]]></en>
+        </locale>
+        <locale name="settings.ignoreWebPCheck.description" html="true">
+            <de><![CDATA[
+            Webp wird nicht von allen Browser unterstützt.
+            QUIQQER versucht durch eine Prüfung die Unterstützung herauszufinden.
+            Wenn QUIQQER entdeckt das WebP nicht unterstützt wird,
+            wird diesem Browser eine nicht optimierte Version der Webseite zur Verfügung gestellt.
+            <p>Beachte, das bei manchen Google Performance Tools unter Umständen eine nicht optimierte Version dadurch ausgeliefert werden kann.</p>
+            <p>
+                Möchtest du diese Prüfung deaktiveren, setze das Häckchen um die WebP Prüfung zu ignorieren
+                (kein Häckchen = Prüfung aktiv)
+            </p>
+            ]]></de>
+            <en><![CDATA[
+            Webp is not supported by all browsers.
+            QUIQQER tries to find out the support by a check.
+            If QUIQQER discovers that WebP is not supported,
+            a non-optimized version of the website will be provided to that browser.
+            <p>Be aware that Google Performance Tools may deliver a non-optimized version as a result.</p>
+            <p>If you want to disable this check, check the box to ignore the WebP check (no checkmark = check is active)</p>.
+            ]]></en>
         </locale>
 
         <locale name="message.console.description" html="true">
