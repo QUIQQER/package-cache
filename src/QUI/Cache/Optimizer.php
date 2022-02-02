@@ -682,7 +682,7 @@ class Optimizer
      */
     public static function isCommandAvailable(string $command): bool
     {
-        exec("command -v {$command}", $output, $returnCode);
+        exec("command -v $command", $output, $returnCode);
 
         return $returnCode == 0;
     }
