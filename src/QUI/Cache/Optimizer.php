@@ -553,9 +553,9 @@ class Optimizer
             $webP = 'gif2webp';
         }
 
-        $command = $webP . ' -q ' . escapeshellarg($quality) . ' ' . escapeshellarg($file) . ' -o ' . escapeshellarg(
-                $webPFile
-            );
+        $command = $webP . ' -q ' . escapeshellarg($quality)
+            . ' ' . escapeshellarg($file)
+            . ' -o ' . escapeshellarg($webPFile);
 
         shell_exec($command);
 
