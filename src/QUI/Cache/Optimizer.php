@@ -6,7 +6,28 @@
 
 namespace QUI\Cache;
 
+use Minify_CSS;
 use QUI;
+
+use function copy;
+use function dirname;
+use function escapeshellarg;
+use function exec;
+use function file_exists;
+use function file_get_contents;
+use function file_put_contents;
+use function json_encode;
+use function ltrim;
+use function md5;
+use function parse_url;
+use function pathinfo;
+use function rename;
+use function serialize;
+use function shell_exec;
+use function strpos;
+use function unlink;
+
+use const JSON_PRETTY_PRINT;
 
 /**
  * Class Optimizer
@@ -20,27 +41,31 @@ class Optimizer
      * Stores/Caches if Jpegoptim is installed.
      * @var bool
      */
-    protected static $isJpegoptimInstalled = null;
+    protected static ?bool $isJpegoptimInstalled = null;
 
     /**
      * Stores/Caches if OptiPNG is installed.
      * @var bool
      */
-    protected static $isOptiPngInstalled = null;
+    protected static ?bool $isOptiPngInstalled = null;
 
     /**
      * Stores/Caches if WebP is installed.
      * @var bool
      */
-    protected static $isWebPInstalled = null;
+    protected static ?bool $isWebPInstalled = null;
 
 
     /**
      * Stores/Caches if UglifyJS is installed.
      * @var bool
      */
-    protected static $isUglifyJsInstalled = null;
+    protected static ?bool $isUglifyJsInstalled = null;
 
+    /**
+     * @var bool|null
+     */
+    protected static ?bool $isUglifyTerserJsInstalled = null;
 
     // region Optimization Methods
 
@@ -48,11 +73,11 @@ class Optimizer
      * @param $project
      * @param int $mtime
      */
-    public static function optimizeProjectImages($project, $mtime = 2)
+    public static function optimizeProjectImages($project, int $mtime = 2)
     {
         $Console = new Console\Optimize();
         $Console->setArgument('project', $project);
-        $Console->setArgument('mtime', (int)$mtime);
+        $Console->setArgument('mtime', $mtime);
         $Console->execute();
     }
 
@@ -65,11 +90,11 @@ class Optimizer
      *
      * @throws QUI\Exception
      */
-    public static function optimizeAMD(array $needles, array $requireConf)
+    public static function optimizeAMD(array $needles, array $requireConf): string
     {
-        $rJsFile   = OPT_DIR.'quiqqer/cache/amd/r.js';
-        $cachehash = \md5(\serialize($needles).\serialize($requireConf));
-        $cacheName = 'quiqqer/cache/'.$cachehash;
+        $rJsFile   = OPT_DIR . 'quiqqer/cache/amd/r.js';
+        $cacheHash = md5(serialize($needles) . serialize($requireConf));
+        $cacheName = 'quiqqer/cache/' . $cacheHash;
 
         try {
             return QUI\Cache\Manager::get($cacheName);
@@ -78,18 +103,18 @@ class Optimizer
 
         // config params
         $CacheHandler = QUI\Cache\Handler::init();
-        $amdDir       = $CacheHandler->getCacheDir().'amd/';
-        $amdUrlDir    = $CacheHandler->getURLCacheDir().'amd/';
-        $buildFile    = $amdDir.$cachehash.'-build.js';
+        $amdDir       = $CacheHandler->getCacheDir() . 'amd/';
+        $amdUrlDir    = $CacheHandler->getURLCacheDir() . 'amd/';
+        $buildFile    = $amdDir . $cacheHash . '-build.js';
 
-        if (\file_exists($buildFile)) {
-            return \file_get_contents($buildFile);
+        if (file_exists($buildFile)) {
+            return file_get_contents($buildFile);
         }
 
 
-        $requireBuildConfig = $amdDir.$cachehash.'-build-require-config.js';
-        $moduleBuildConfig  = $amdDir.$cachehash.'-build-config.js';
-        $moduleCreation     = $amdDir.$cachehash.'.js';
+        $requireBuildConfig = $amdDir . $cacheHash . '-build-require-config.js';
+        $moduleBuildConfig  = $amdDir . $cacheHash . '-build-config.js';
+        $moduleCreation     = $amdDir . $cacheHash . '.js';
 
         if (isset($requireConf['pkgs'])) {
             unset($requireConf['pkgs']);
@@ -101,7 +126,7 @@ class Optimizer
 
         // set relativ paths to absolute
         $requireConf['baseUrl']           = CMS_DIR;
-        $requireConf['paths'][$cachehash] = $amdUrlDir.$cachehash;
+        $requireConf['paths'][$cacheHash] = $amdUrlDir . $cacheHash;
 
         // all paths relative
         foreach ($requireConf['paths'] as $entry => $path) {
@@ -109,47 +134,47 @@ class Optimizer
         }
 
         // require plugins
-        \copy(OPT_DIR.'quiqqer/cache/amd/css.js', $amdDir.'css-builder.js');
-        \copy(OPT_DIR.'quiqqer/cache/amd/image.js', $amdDir.'image.js');
-        \copy(OPT_DIR.'quiqqer/cache/amd/text.js', $amdDir.'text.js');
+        copy(OPT_DIR . 'quiqqer/cache/amd/css.js', $amdDir . 'css-builder.js');
+        copy(OPT_DIR . 'quiqqer/cache/amd/image.js', $amdDir . 'image.js');
+        copy(OPT_DIR . 'quiqqer/cache/amd/text.js', $amdDir . 'text.js');
 
-        $requireConf['map']["*"]["css"]   = \ltrim("{$amdUrlDir}css-builder", '/');
-        $requireConf['map']["*"]["image"] = \ltrim("{$amdUrlDir}image", '/');
-        $requireConf['map']["*"]["text"]  = \ltrim("{$amdUrlDir}text", '/');
+        $requireConf['map']["*"]["css"]   = ltrim("{$amdUrlDir}css-builder", '/');
+        $requireConf['map']["*"]["image"] = ltrim("{$amdUrlDir}image", '/');
+        $requireConf['map']["*"]["text"]  = ltrim("{$amdUrlDir}text", '/');
 
 
         // set main paths
-        $requireConf['paths']["locale"]        = \ltrim(URL_VAR_DIR."locale/bin", '/');
-        $requireConf['paths']["qui"]           = \ltrim(URL_OPT_DIR."quiqqer/qui/qui", '/');
-        $requireConf['paths']["classes"]       = \ltrim(URL_OPT_DIR."quiqqer/quiqqer/bin/QUI/classes", '/');
-        $requireConf['paths']["controls"]      = \ltrim(URL_OPT_DIR."quiqqer/quiqqer/bin/QUI/controls", '/');
-        $requireConf['paths']["utils"]         = \ltrim(URL_OPT_DIR."quiqqer/quiqqer/bin/QUI/utils", '/');
-        $requireConf['paths']["polyfills"]     = \ltrim(URL_OPT_DIR."quiqqer/quiqqer/bin/QUI/polyfills", '/');
-        $requireConf['paths']["Controls"]      = \ltrim(URL_OPT_DIR."quiqqer/quiqqer/bin/Controls", '/');
-        $requireConf['paths']["Ajax"]          = \ltrim(URL_OPT_DIR."quiqqer/quiqqer/bin/QUI/Ajax", '/');
-        $requireConf['paths']["Locale"]        = \ltrim(URL_OPT_DIR."quiqqer/quiqqer/bin/QUI/Locale", '/');
-        $requireConf['paths']["UploadManager"] = \ltrim(URL_OPT_DIR."quiqqer/quiqqer/bin/QUI/UploadManager", '/');
+        $requireConf['paths']["locale"]        = ltrim(URL_VAR_DIR . "locale/bin", '/');
+        $requireConf['paths']["qui"]           = ltrim(URL_OPT_DIR . "quiqqer/qui/qui", '/');
+        $requireConf['paths']["classes"]       = ltrim(URL_OPT_DIR . "quiqqer/quiqqer/bin/QUI/classes", '/');
+        $requireConf['paths']["controls"]      = ltrim(URL_OPT_DIR . "quiqqer/quiqqer/bin/QUI/controls", '/');
+        $requireConf['paths']["utils"]         = ltrim(URL_OPT_DIR . "quiqqer/quiqqer/bin/QUI/utils", '/');
+        $requireConf['paths']["polyfills"]     = ltrim(URL_OPT_DIR . "quiqqer/quiqqer/bin/QUI/polyfills", '/');
+        $requireConf['paths']["Controls"]      = ltrim(URL_OPT_DIR . "quiqqer/quiqqer/bin/Controls", '/');
+        $requireConf['paths']["Ajax"]          = ltrim(URL_OPT_DIR . "quiqqer/quiqqer/bin/QUI/Ajax", '/');
+        $requireConf['paths']["Locale"]        = ltrim(URL_OPT_DIR . "quiqqer/quiqqer/bin/QUI/Locale", '/');
+        $requireConf['paths']["UploadManager"] = ltrim(URL_OPT_DIR . "quiqqer/quiqqer/bin/QUI/UploadManager", '/');
 
 
         // create config files
         QUI\Utils\System\File::mkdir($amdDir);
 
-        \file_put_contents(
+        file_put_contents(
             $requireBuildConfig,
-            'requirejs.config('.\json_encode($requireConf, \JSON_PRETTY_PRINT).');'
+            'requirejs.config(' . json_encode($requireConf, JSON_PRETTY_PRINT) . ');'
         );
 
-        \file_put_contents(
+        file_put_contents(
             $moduleCreation,
-            'define("'.$cachehash.'", '.\json_encode($needles, \JSON_PRETTY_PRINT).');'
+            'define("' . $cacheHash . '", ' . json_encode($needles, JSON_PRETTY_PRINT) . ');'
         );
 
-        \file_put_contents(
+        file_put_contents(
             $moduleBuildConfig,
             "({
-                name: '{$cachehash}',
-                out: '{$cachehash}-build.js',
-                mainConfigFile: '{$cachehash}-build-require-config.js',
+                name: '$cacheHash',
+                out: '$cacheHash-build.js',
+                mainConfigFile: '$cacheHash-build-require-config.js',
                 optimizeCss: 'none',
                 keepAmdefine: true,
                 preserveLicenseComments: false
@@ -159,25 +184,25 @@ class Optimizer
 
         // compile
         $command = 'nodejs';
-        \exec("command -v {$command}", $output, $returnCode);
+        exec("command -v $command", $output, $returnCode);
 
         if ($returnCode != 0) {
             $command = 'node';
-            \exec("command -v {$command}", $output, $returnCode);
+            exec("command -v $command", $output, $returnCode);
         }
 
         if ($returnCode != 0) {
             throw new QUI\Exception('nodejs is not installed or is not callable');
         }
 
-        $exec   = "{$command} {$rJsFile} -o '{$moduleBuildConfig}' mainConfigFile='{$requireBuildConfig}'";
-        $result = \shell_exec($exec);
+        $exec   = "$command $rJsFile -o '$moduleBuildConfig' mainConfigFile='$requireBuildConfig'";
+        $result = shell_exec($exec);
 
         // optimize
         self::optimizeJavaScript($buildFile);
 
-        if (\file_exists($buildFile)) {
-            return \file_get_contents($buildFile);
+        if (file_exists($buildFile)) {
+            return file_get_contents($buildFile);
         }
 
         QUI\System\Log::addWarning($result);
@@ -188,28 +213,28 @@ class Optimizer
     /**
      * Optimize the content of a css file
      *
-     * @param string $cssfile - css file
+     * @param string $cssFile - css file
      * @return string
      * @throws QUI\Exception
      */
-    public static function optimizeCSS($cssfile)
+    public static function optimizeCSS(string $cssFile): string
     {
-        $cssfilePath = CMS_DIR.$cssfile;
+        $cssFilePath = CMS_DIR . $cssFile;
 
-        if (!\file_exists($cssfilePath)) {
-            $parse       = \parse_url($cssfilePath);
-            $cssfilePath = $parse['path'];
+        if (!file_exists($cssFilePath)) {
+            $parse       = parse_url($cssFilePath);
+            $cssFilePath = $parse['path'];
 
-            if (!\file_exists($cssfilePath)) {
+            if (!file_exists($cssFilePath)) {
                 // URL BIN DIR, we must use the real QUIQQER BIN DIR
-                if (\strpos($cssfile, URL_BIN_DIR) === 0) {
-                    $cssfilePath = OPT_DIR.'quiqqer/quiqqer'.$cssfile;
+                if (strpos($cssFile, URL_BIN_DIR) === 0) {
+                    $cssFilePath = OPT_DIR . 'quiqqer/quiqqer' . $cssFile;
 
-                    if (!\file_exists($cssfilePath)) {
-                        $parse       = \parse_url($cssfilePath);
-                        $cssfilePath = $parse['path'];
+                    if (!file_exists($cssFilePath)) {
+                        $parse       = parse_url($cssFilePath);
+                        $cssFilePath = $parse['path'];
 
-                        if (!\file_exists($cssfilePath)) {
+                        if (!file_exists($cssFilePath)) {
                             throw new QUI\Exception('File not found', 404);
                         }
                     }
@@ -219,12 +244,12 @@ class Optimizer
             }
         }
 
-        $CSSMinify  = new \Minify_CSS();
-        $cssContent = \file_get_contents($cssfilePath);
+        $CSSMinify  = new Minify_CSS();
+        $cssContent = file_get_contents($cssFilePath);
 
         $minified = $CSSMinify->minify($cssContent, [
             'docRoot'    => CMS_DIR,
-            'currentDir' => \dirname($cssfilePath).'/'
+            'currentDir' => dirname($cssFilePath) . '/'
         ]);
 
         return $minified;
@@ -233,34 +258,33 @@ class Optimizer
     /**
      * Optimize the content of a JavaScript file
      *
-     * @param string $jsfile - JavaScript file
+     * @param string $jsFile - JavaScript file
      * @throws QUI\Exception
      */
-    public static function optimizeJavaScript($jsfile)
+    public static function optimizeJavaScript(string $jsFile)
     {
-        $jsfilePath = $jsfile;
+        $jsFilePath = $jsFile;
 
-        if (!\file_exists($jsfilePath)) {
-            $parse      = \parse_url($jsfilePath);
-            $jsfilePath = $parse['path'];
+        if (!file_exists($jsFilePath)) {
+            $parse      = parse_url($jsFilePath);
+            $jsFilePath = $parse['path'];
 
-            if (!\file_exists($jsfilePath)) {
+            if (!file_exists($jsFilePath)) {
                 throw new QUI\Exception('File not found', 404);
             }
         }
 
-        self::checkUglifyJsInstalled();
+        $o = $jsFilePath . '_o';
+        $c = self::getUglifyCommand();
 
-        $o = $jsfilePath.'_o';
+        $exec = "$c $jsFilePath --screw-ie8 --compress --mangle > " . $o;
+        shell_exec($exec);
 
-        $exec  = "uglifyjs {$jsfilePath} --screw-ie8 --compress --mangle > ".$o;
-        \shell_exec($exec);
-
-        $oc = \file_get_contents($o);
+        $oc = file_get_contents($o);
 
         if (!empty($oc)) {
-            \unlink($jsfilePath);
-            \rename($o, $jsfilePath);
+            unlink($jsFilePath);
+            rename($o, $jsFilePath);
         }
     }
 
@@ -269,17 +293,17 @@ class Optimizer
      *
      * @throws QUI\Exception
      */
-    public static function optimizePNG($file)
+    public static function optimizePNG(string $file)
     {
         if (!self::isOptiPngInstalled()) {
             return;
         }
 
-        if (!\file_exists($file)) {
+        if (!file_exists($file)) {
             throw new QUI\Exception('File not exists', 404);
         }
 
-        \shell_exec('optipng -strip all "'.$file.'"');
+        shell_exec('optipng -strip all "' . $file . '"');
     }
 
     /**
@@ -289,18 +313,18 @@ class Optimizer
      *
      * @throws QUI\Exception
      */
-    public static function optimizeJPG($file)
+    public static function optimizeJPG(string $file)
     {
         if (!self::isJpegoptimInstalled()) {
             return;
         }
 
-        if (!\file_exists($file)) {
+        if (!file_exists($file)) {
             throw new QUI\Exception('File not exists', 404);
         }
 
         $quality = 70;
-        \shell_exec('jpegoptim -m'.$quality.' -o --strip-all "'.$file.'"');
+        shell_exec('jpegoptim -m' . $quality . ' -o --strip-all "' . $file . '"');
     }
 
     // endregion
@@ -311,10 +335,9 @@ class Optimizer
      *
      * @return array
      */
-    protected static function getbuildParams()
+    protected static function getbuildParams(): array
     {
-        $fileExclusionRegExp = '';
-        $fileExclusionRegExp .= '/\.git|^tests$|^build$|^coverage$|^doc$|^jsdoc$|^examples$|';
+        $fileExclusionRegExp = '/\.git|^tests$|^build$|^coverage$|^doc$|^jsdoc$|^examples$|';
         $fileExclusionRegExp .= '^r\.js|\.md|^package\.json|^composer\.json|^bower\.json|';
         $fileExclusionRegExp .= '^init\.js|^initDev\.js|^\.jshintrc|^\.flowconfig|';
         $fileExclusionRegExp .= '^build\.js|^build-jsdoc\.js|^build\-config\.js/';
@@ -371,7 +394,7 @@ class Optimizer
      *
      * @return bool
      */
-    public static function isJpegoptimInstalled()
+    public static function isJpegoptimInstalled(): ?bool
     {
         if (self::$isJpegoptimInstalled !== null) {
             return self::$isJpegoptimInstalled;
@@ -423,7 +446,7 @@ class Optimizer
      *
      * @return bool
      */
-    public static function isOptiPngInstalled()
+    public static function isOptiPngInstalled(): ?bool
     {
         if (self::$isOptiPngInstalled !== null) {
             return self::$isOptiPngInstalled;
@@ -473,7 +496,7 @@ class Optimizer
      *
      * @return bool
      */
-    public static function isWebPInstalled()
+    public static function isWebPInstalled(): ?bool
     {
         if (self::$isWebPInstalled !== null) {
             return self::$isWebPInstalled;
@@ -506,14 +529,14 @@ class Optimizer
      * @param string $file
      * @return string|false
      */
-    public static function convertToWebP($file)
+    public static function convertToWebP(string $file)
     {
-        if (!\file_exists($file)) {
+        if (!file_exists($file)) {
             return false;
         }
 
         $quality = 70;
-        $parts   = \pathinfo($file);
+        $parts   = pathinfo($file);
 
         if (!isset($parts['extension'])) {
             return false;
@@ -523,16 +546,18 @@ class Optimizer
             return false;
         }
 
-        $webPFile = $parts['dirname'].DIRECTORY_SEPARATOR.$parts['filename'].'.webp';
+        $webPFile = $parts['dirname'] . DIRECTORY_SEPARATOR . $parts['filename'] . '.webp';
         $webP     = self::webPCommand();
 
         if ($parts['extension'] === 'gif') {
             $webP = 'gif2webp';
         }
 
-        $command = $webP.' -q '.\escapeshellarg($quality).' '.\escapeshellarg($file).' -o '.\escapeshellarg($webPFile);
+        $command = $webP . ' -q ' . escapeshellarg($quality) . ' ' . escapeshellarg($file) . ' -o ' . escapeshellarg(
+                $webPFile
+            );
 
-        \shell_exec($command);
+        shell_exec($command);
 
         return $webPFile;
     }
@@ -540,6 +565,40 @@ class Optimizer
     // endregion
 
     // region UglifyJS installation state methods
+
+    /**
+     * @return string
+     * @throws QUI\Exception
+     */
+    public static function getUglifyCommand(): string
+    {
+        if (self::$isUglifyTerserJsInstalled) {
+            return 'uglifyjs.terser';
+        }
+
+        if (self::$isUglifyJsInstalled) {
+            return 'uglifyjs';
+        }
+
+        // check terser first
+        try {
+            if (self::$isUglifyTerserJsInstalled === null) {
+                self::checkUglifyTerserJsInstalled();
+                return 'uglifyjs.terser';
+            }
+        } catch (QUI\Exception $Exception) {
+        }
+
+        try {
+            if (self::$isUglifyJsInstalled === null) {
+                self::checkUglifyJsInstalled();
+                return 'uglifyjs';
+            }
+        } catch (QUI\Exception $Exception) {
+        }
+
+        throw new QUI\Exception('Please install uglifyjs or uglifyjs.terser');
+    }
 
     /**
      * Checks if UglifyJS is installed.
@@ -551,7 +610,7 @@ class Optimizer
     {
         if (self::$isUglifyJsInstalled !== null) {
             if (self::$isUglifyJsInstalled === false) {
-                throw new QUI\Exception('UglifyJS is not installed');
+                throw new QUI\Exception('uglifyjs is not installed');
             }
 
             return;
@@ -560,7 +619,7 @@ class Optimizer
         self::$isUglifyJsInstalled = false;
 
         if (!self::isCommandAvailable("uglifyjs")) {
-            throw new QUI\Exception('UglifyJS is not installed');
+            throw new QUI\Exception('uglifyjs is not installed');
         }
 
         // Only reached if no exception is thrown above
@@ -568,11 +627,37 @@ class Optimizer
     }
 
     /**
+     * Checks if UglifyJS is installed.
+     * Throws an exception if it's not installed.
+     *
+     * @throws QUI\Exception
+     */
+    public static function checkUglifyTerserJsInstalled()
+    {
+        if (self::$isUglifyTerserJsInstalled !== null) {
+            if (self::$isUglifyTerserJsInstalled === false) {
+                throw new QUI\Exception('uglifyjs.terser is not installed');
+            }
+
+            return;
+        }
+
+        self::$isUglifyTerserJsInstalled = false;
+
+        if (!self::isCommandAvailable("uglifyjs.terser")) {
+            throw new QUI\Exception('uglifyjs.terser is not installed');
+        }
+
+        // Only reached if no exception is thrown above
+        self::$isUglifyTerserJsInstalled = true;
+    }
+
+    /**
      * Returns if UglifyJS is installed.
      *
      * @return bool
      */
-    public static function isUglifyJsInstalled()
+    public static function isUglifyJsInstalled(): ?bool
     {
         if (self::$isUglifyJsInstalled !== null) {
             return self::$isUglifyJsInstalled;
@@ -589,16 +674,15 @@ class Optimizer
 
     // endregion
 
-
     /**
      * Checks if the given (system-)command is available on the system.
      *
      * @param string $command
      * @return bool
      */
-    public static function isCommandAvailable($command)
+    public static function isCommandAvailable(string $command): bool
     {
-        \exec("command -v {$command}", $output, $returnCode);
+        exec("command -v {$command}", $output, $returnCode);
 
         return $returnCode == 0;
     }
