@@ -203,7 +203,10 @@ class EventCoordinator
                 } else {
                     // webp is not supported!
                     $cacheEnabled = false;
-                    define('QUIQQER_CACHE_DISABLE_WEBP', true);
+
+                    if (!defined('QUIQQER_CACHE_DISABLE_WEBP')) {
+                        define('QUIQQER_CACHE_DISABLE_WEBP', true);
+                    }
                 }
             }
         } catch (QUI\Exception $Exception) {
