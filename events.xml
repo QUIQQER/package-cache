@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <events>
-    <event on="onRequestImageNotFound" fire="QUI\Cache\EventCoordinator::onRequestImageNotFound"/>
-    <event on="onRequest" fire="\QUI\Cache\EventCoordinator::onRequest"/>
+    <event on="onRequestImageNotFound" fire="QUI\Cache\EventCoordinator::onRequestImageNotFound" priority="1000"/>
+    <event on="onRequest" fire="\QUI\Cache\EventCoordinator::onRequest" priority="1000"/>
     <event on="onRequestOutput" fire="\QUI\Cache\EventCoordinator::onRequestOutput" priority="1000"/>
     <event on="onTemplateGetHeader" fire="\QUI\Cache\EventCoordinator::onTemplateGetHeader"/>
     <event on="onPackageConfigSave" fire="\QUI\Cache\EventCoordinator::onPackageConfigSave"/>
