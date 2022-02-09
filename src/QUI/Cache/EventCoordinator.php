@@ -196,7 +196,7 @@ class EventCoordinator
                 && QUI::getPackage('quiqqer/cache')->getConfig()->get('settings', 'webp')) {
                 // if webp supported, use it
                 if (strpos($_SERVER['HTTP_ACCEPT'], 'image/webp') !== false
-                    || strpos($_SERVER['HTTP_USER_AGENT'], ' Chrome/') !== false
+                    || isset($_SERVER['HTTP_USER_AGENT']) && strpos($_SERVER['HTTP_USER_AGENT'], ' Chrome/') !== false
                     || $ignoreWebpCheck
                 ) {
                     // webp is supported!
