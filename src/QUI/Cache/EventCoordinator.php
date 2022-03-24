@@ -45,6 +45,11 @@ class EventCoordinator
         }
 
         $project = explode('/', $url)[2];
+
+        if (!QUI::getProjectManager()::existsProject($project)) {
+            return;
+        }
+
         $file    = CMS_DIR . $url;
         $parts   = pathinfo($file);
 
