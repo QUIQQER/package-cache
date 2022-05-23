@@ -50,8 +50,8 @@ class EventCoordinator
             return;
         }
 
-        $file    = CMS_DIR . $url;
-        $parts   = pathinfo($file);
+        $file  = CMS_DIR . $url;
+        $parts = pathinfo($file);
 
         $filenameParts = explode('__', $parts['filename']);
         $filename      = $filenameParts[0];
@@ -596,5 +596,14 @@ class EventCoordinator
         if (!defined('QUIQQER_CACHE_DISABLE_WEBP')) {
             define('QUIQQER_CACHE_DISABLE_WEBP', true);
         }
+    }
+
+    /**
+     * @param $menuId
+     * @return void
+     */
+    public static function onQuiqqerMenuIndependentClear($menuId)
+    {
+        self::clearCache();
     }
 }
