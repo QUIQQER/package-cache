@@ -245,6 +245,36 @@
             <de><![CDATA[Frontend Caching für dieses Projekt komplett deaktivieren.]]></de>
             <en><![CDATA[Disable frontend caching for this project.]]></en>
         </locale>
+
+        <locale name="settings.jpg_quality">
+            <de><![CDATA[JPG Qualität]]></de>
+            <en><![CDATA[JPG Quality]]></en>
+        </locale>
+        <locale name="settings.jpg_quality.description">
+            <de><![CDATA[
+                Bestimme auf welche Qualität jedes JPG optimiert werden soll.
+                Die Angaben gibst du in % an. 80 = Auf 80% Qualität optimieren.
+                ]]></de>
+            <en><![CDATA[
+                Determine to which quality each JPG should be optimized.
+                You specify the quality in %. 80 = Optimize to 80% quality.
+            ]]></en>
+        </locale>
+
+        <locale name="settings.webp_quality">
+            <de><![CDATA[WebP Qualität]]></de>
+            <en><![CDATA[WebP Quality]]></en>
+        </locale>
+        <locale name="settings.webp_quality.description">
+            <de><![CDATA[
+                Bestimme auf welche Qualität jedes WebP optimiert werden soll.
+                Die Angaben gibst du in % an. 80 = Auf 80% Qualität optimieren.
+                ]]></de>
+            <en><![CDATA[
+                Determine to which quality each WebP should be optimized.
+                You specify the quality in %. 80 = Optimize to 80% quality.
+            ]]></en>
+        </locale>
     </groups>
 
     <groups name="quiqqer/cache" datatype="js">

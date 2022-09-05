@@ -27,9 +27,18 @@
                     <defaultvalue>1</defaultvalue>
                 </conf>
 
+                <conf name="jpg_quality">
+                    <type><![CDATA[integer]]></type>
+                    <defaultvalue>80</defaultvalue>
+                </conf>
+
                 <conf name="webp">
                     <type><![CDATA[bool]]></type>
                     <defaultvalue>0</defaultvalue>
+                </conf>
+                <conf name="webp_quality">
+                    <type><![CDATA[integer]]></type>
+                    <defaultvalue>80</defaultvalue>
                 </conf>
                 <conf name="ignoreWebPCheck">
                     <type><![CDATA[bool]]></type>
@@ -135,6 +144,21 @@
                             <locale group="quiqqer/cache" var="settings.category.image.title"/>
                         </title>
 
+                        <input conf="settings.jpg_quality"
+                               type="number"
+                               data-qui="qui/controls/input/Range"
+                               data-qui-options-min="0"
+                               data-qui-options-max="100"
+                               data-qui-options-start="[0]"
+                        >
+                            <text>
+                                <locale group="quiqqer/cache" var="settings.jpg_quality"/>
+                            </text>
+                            <description>
+                                <locale group="quiqqer/cache" var="settings.jpg_quality.description"/>
+                            </description>
+                        </input>
+
                         <input conf="settings.webp" type="checkbox">
                             <text>
                                 <locale group="quiqqer/cache" var="settings.webp"/>
@@ -143,6 +167,22 @@
                                 <locale group="quiqqer/cache" var="settings.webp.description"/>
                             </description>
                         </input>
+
+                        <input conf="settings.webp_quality"
+                               type="number"
+                               data-qui="qui/controls/input/Range"
+                               data-qui-options-min="0"
+                               data-qui-options-max="100"
+                               data-qui-options-start="[0]"
+                        >
+                            <text>
+                                <locale group="quiqqer/cache" var="settings.webp_quality"/>
+                            </text>
+                            <description>
+                                <locale group="quiqqer/cache" var="settings.webp_quality.description"/>
+                            </description>
+                        </input>
+
                         <input conf="settings.ignoreWebPCheck" type="checkbox">
                             <text>
                                 <locale group="quiqqer/cache" var="settings.ignoreWebPCheck"/>
