@@ -400,6 +400,11 @@ class Handler
                 continue;
             }
 
+            if (strpos($match[0], 'data-no-cache="1"') !== false) {
+                continue;
+            }
+
+
             $file = CMS_DIR . $match[1];
 
             if (!file_exists($file)) {
@@ -570,6 +575,10 @@ class Handler
             $cacheUrlInlineFile = $urlBinDir . $cssId . '.inline.cache.css';
 
             foreach ($matches as $match) {
+                if (strpos($match[0], 'data-no-cache="1"') !== false) {
+                    continue;
+                }
+
                 $inlineCSS .= $match[1];
                 $content   = str_replace($match[0], '', $content);
             }
