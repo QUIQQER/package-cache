@@ -131,7 +131,7 @@ class EventCoordinator
             return;
         }
 
-        // if original cache doesn't exists, and we need no sizes
+        // if original cache doesn't exist, and we need no sizes
         if ($width === false && $height === false && file_exists($originalCache)) {
             $webPFile = Optimizer::convertToWebP($originalCache);
             self::outputWebP($webPFile);

@@ -323,7 +323,15 @@ class Optimizer
             throw new QUI\Exception('File not exists', 404);
         }
 
-        $quality = 70;
+        $quality = 80;
+
+        try {
+            $quality = (int)QUI::getPackage('quiqqer/cache')
+                ->getConfig()
+                ->getValue('settings', 'jpg_quality');
+        } catch (QUI\Exception $Exception) {
+        }
+
         shell_exec('jpegoptim -m' . $quality . ' -o --strip-all "' . $file . '"');
     }
 
@@ -535,8 +543,15 @@ class Optimizer
             return false;
         }
 
-        $quality = 70;
+        $quality = 80;
         $parts   = pathinfo($file);
+
+        try {
+            $quality = (int)QUI::getPackage('quiqqer/cache')
+                ->getConfig()
+                ->getValue('settings', 'webp_quality');
+        } catch (QUI\Exception $Exception) {
+        }
 
         if (!isset($parts['extension'])) {
             return false;
