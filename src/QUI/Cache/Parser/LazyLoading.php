@@ -9,6 +9,10 @@ namespace QUI\Cache\Parser;
 use QUI;
 use QUI\Utils\StringHelper as StringUtils;
 
+use function htmlspecialchars;
+use function preg_replace_callback;
+use function strpos;
+
 /**
  * Class LazyLoading
  *
@@ -25,7 +29,7 @@ class LazyLoading extends QUI\Utils\Singleton
     public function parse($content)
     {
         // parse images
-        $content = \preg_replace_callback(
+        $content = preg_replace_callback(
             '#<img([^>]*)>#i',
             [&$this, "images"],
             $content
@@ -52,8 +56,8 @@ class LazyLoading extends QUI\Utils\Singleton
             return $img;
         }
 
-        if (\strpos($attributes['src'], '.svg') !== false
-            || \strpos($attributes['src'], 'data:') !== false) {
+        if (strpos($attributes['src'], '.svg') !== false
+            || strpos($attributes['src'], 'data:') !== false) {
             return $img;
         }
 
@@ -61,8 +65,8 @@ class LazyLoading extends QUI\Utils\Singleton
 
         if (!isset($attributes['class'])) {
             $attributes['class'] = 'lazyload';
-        } elseif (\strpos($attributes['class'], 'lazyload') === false) {
-            $attributes['class'] = $attributes['class'].' lazyload';
+        } elseif (strpos($attributes['class'], 'lazyload') === false) {
+            $attributes['class'] = $attributes['class'] . ' lazyload';
         }
 
         return $this->render($attributes);
@@ -78,7 +82,7 @@ class LazyLoading extends QUI\Utils\Singleton
         $img = '<img ';
 
         foreach ($attributes as $key => $value) {
-            $img .= \htmlspecialchars($key).'="'.\htmlspecialchars($value).'" ';
+            $img .= htmlspecialchars($key) . '="' . htmlspecialchars($value) . '" ';
         }
 
         $img .= '/>';
