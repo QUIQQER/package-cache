@@ -8,6 +8,9 @@ namespace QUI\Cache;
 
 use QUI;
 
+use function array_map;
+use function array_unique;
+
 /**
  * Class Cron
  * @package QUI\Cache
@@ -27,11 +30,11 @@ class Cron
 
         if ($params['project'] === '*') {
             $projects = QUI::getProjectManager()->getProjectList();
-            $projects = \array_map(function ($Project) {
+            $projects = array_map(function ($Project) {
                 return $Project->getName();
             }, $projects);
 
-            $projects = \array_unique($projects);
+            $projects = array_unique($projects);
         } else {
             $projects = [$params['project']];
         }
@@ -57,7 +60,7 @@ class Cron
     {
         QUI\System\Log::addWarning(
             '\QUI\Cache::clearTempFolder is deprecated. Please switch cron to quiqqer/cron by deleting this cron and'
-            .' setting it up again.'
+            . ' setting it up again.'
         );
 
         QUI\Cron\QuiqqerCrons::clearTempFolder();

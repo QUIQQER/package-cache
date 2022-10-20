@@ -30,4 +30,5 @@
     <event on="onPackageUninstall" fire="\QUI\Cache\EventCoordinator::clearCache"/>
 
     <event on="onQuiqqerTranslatorPublish" fire="\QUI\Cache\EventCoordinator::quiqqerTranslatorPublish"/>
+    <event on="onQuiqqerMenuIndependentClear" fire="\QUI\Cache\EventCoordinator::onQuiqqerMenuIndependentClear"/>
 </events>

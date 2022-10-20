@@ -3,6 +3,7 @@
 /**
  * This file contains QUI\Cache\Console\AMD
  */
+
 namespace QUI\Cache\Console;
 
 use QUI;

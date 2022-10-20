@@ -45,8 +45,13 @@ class EventCoordinator
         }
 
         $project = explode('/', $url)[2];
-        $file    = CMS_DIR . $url;
-        $parts   = pathinfo($file);
+
+        if (!QUI::getProjectManager()::existsProject($project)) {
+            return;
+        }
+
+        $file  = CMS_DIR . $url;
+        $parts = pathinfo($file);
 
         $filenameParts = explode('__', $parts['filename']);
         $filename      = $filenameParts[0];
@@ -126,7 +131,7 @@ class EventCoordinator
             return;
         }
 
-        // if original cache doesn't exists, and we need no sizes
+        // if original cache doesn't exist, and we need no sizes
         if ($width === false && $height === false && file_exists($originalCache)) {
             $webPFile = Optimizer::convertToWebP($originalCache);
             self::outputWebP($webPFile);
@@ -591,5 +596,14 @@ class EventCoordinator
         if (!defined('QUIQQER_CACHE_DISABLE_WEBP')) {
             define('QUIQQER_CACHE_DISABLE_WEBP', true);
         }
+    }
+
+    /**
+     * @param $menuId
+     * @return void
+     */
+    public static function onQuiqqerMenuIndependentClear($menuId)
+    {
+        self::clearCache();
     }
 }

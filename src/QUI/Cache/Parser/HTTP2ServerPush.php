@@ -48,7 +48,7 @@ class HTTP2ServerPush
 
             $Response->headers->set(
                 'link',
-                '<'.$src.'>; rel=preload; as=image',
+                '<' . $src . '>; rel=preload; as=image',
                 false
             );
         }
@@ -86,7 +86,7 @@ class HTTP2ServerPush
                 continue;
             }
 
-            $file = CMS_DIR.$match[1];
+            $file = CMS_DIR . $match[1];
             $file = \str_replace("\n", ' ', $file);
 
             if (!\file_exists($file)) {
@@ -100,7 +100,7 @@ class HTTP2ServerPush
 
             $Response->headers->set(
                 'link',
-                '<'.$file.'>; rel=preload; as=style',
+                '<' . $file . '>; rel=preload; as=style',
                 false
             );
         }
