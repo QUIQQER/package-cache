@@ -68,7 +68,7 @@ class Handler
      */
     public function getCacheDir(): string
     {
-        return VAR_DIR . 'cache/packages/cache/';
+        return VAR_DIR.'cache/packages/cache/';
     }
 
     /**
@@ -78,7 +78,7 @@ class Handler
      */
     public function getURLCacheDir(): string
     {
-        return URL_VAR_DIR . 'cache/packages/cache/';
+        return URL_VAR_DIR.'cache/packages/cache/';
     }
 
     /**
@@ -143,7 +143,7 @@ class Handler
         }
 
         $dir       = $this->getCacheDir();
-        $cacheFile = $dir . md5($uri) . QUI\Rewrite::getDefaultSuffix();
+        $cacheFile = $dir.md5($uri).QUI\Rewrite::getDefaultSuffix();
 
         if (file_exists($cacheFile) && !is_dir($cacheFile)) {
             $cache = file_get_contents($cacheFile);
@@ -171,7 +171,7 @@ class Handler
                         'country' => $countryCode
                     ];
 
-                    return '<script id="quiqqer-user-defined">var QUIQQER_USER= ' . \json_encode($user) . ';</script>';
+                    return '<script id="quiqqer-user-defined">var QUIQQER_USER= '.\json_encode($user).';</script>';
                 },
                 $cache
             );
@@ -238,8 +238,8 @@ class Handler
 
         $cacheId   = md5($uri);
         $dir       = $this->getCacheDir();
-        $binDir    = $this->getCacheDir() . 'bin/';
-        $urlBinDir = $this->getURLCacheDir() . 'bin/';
+        $binDir    = $this->getCacheDir().'bin/';
+        $urlBinDir = $this->getURLCacheDir().'bin/';
 
         QUI\Utils\System\File::mkdir($dir);
         QUI\Utils\System\File::mkdir($binDir);
@@ -251,7 +251,7 @@ class Handler
         /**
          * HTML
          */
-        $cacheHtmlFile = $dir . $cacheId . QUI\Rewrite::getDefaultSuffix();
+        $cacheHtmlFile = $dir.$cacheId.QUI\Rewrite::getDefaultSuffix();
         file_put_contents($cacheHtmlFile, $content);
 
 
@@ -348,19 +348,26 @@ class Handler
             return $content;
         }
 
-        $binDir    = $this->getCacheDir() . 'bin/';
-        $urlBinDir = $this->getURLCacheDir() . 'bin/';
+        $binDir    = $this->getCacheDir().'bin/';
+        $urlBinDir = $this->getURLCacheDir().'bin/';
 
         $templateFiles = [];
         $cssFiles      = [];
 
         $template     = QUI::getRewrite()->getProject()->getAttribute('template');
-        $customCss    = USR_DIR . QUI::getRewrite()->getProject()->getName() . '/bin/custom.css';
-        $templatePath = OPT_DIR . $template;
+        $customCss    = USR_DIR.QUI::getRewrite()->getProject()->getName().'/bin/custom.css';
+        $templatePath = OPT_DIR.$template;
 
         // if no template exists
         if (empty($template)) {
             return $content;
+        }
+
+        $Template       = QUI::getPackage($template);
+        $templateParent = $Template->getTemplateParent();
+
+        if ($templateParent) {
+            $templateParent = $templateParent->getName();
         }
 
         preg_match_all(
@@ -405,7 +412,7 @@ class Handler
             }
 
 
-            $file = CMS_DIR . $match[1];
+            $file = CMS_DIR.$match[1];
 
             if (!file_exists($file)) {
                 $parse = parse_url($file);
@@ -418,7 +425,9 @@ class Handler
 
             $file = QUI\Utils\StringHelper::replaceDblSlashes($file);
 
-            if (strpos($file, $templatePath) !== false || $file === $customCss) {
+            if (strpos($file, $templatePath) !== false || $file === $customCss
+                || $templateParent && strpos($file, $templateParent) !== false
+            ) {
                 $templateFiles[] = [
                     'file'  => $file,
                     'match' => $match
@@ -437,10 +446,10 @@ class Handler
         $amdCssFiles = $this->getAmdCssFiles($content);
 
         if (!empty($amdCssFiles)) {
-            $jsContent = '<script>var QUIQQER_CSS_PREFETCHED = ' . \json_encode($amdCssFiles) . '</script>';
+            $jsContent = '<script>var QUIQQER_CSS_PREFETCHED = '.\json_encode($amdCssFiles).'</script>';
             $content   = str_replace(
                 '<!-- quiqqer-js-defined -->',
-                '<!-- quiqqer-js-defined -->' . $jsContent,
+                '<!-- quiqqer-js-defined -->'.$jsContent,
                 $content
             );
 
@@ -449,7 +458,7 @@ class Handler
                 if (strpos($cssFile, 'qui/') === 0) {
                     $absPath = substr_replace(
                         $cssFile,
-                        OPT_DIR . 'bin/qui/qui/',
+                        OPT_DIR.'bin/qui/qui/',
                         0,
                         strlen('qui/')
                     );
@@ -457,7 +466,7 @@ class Handler
                     $cssFiles[] = [
                         'file'  => $absPath,
                         'match' => [
-                            '<link href="' . $cssFile . '" rel="stylesheet">',
+                            '<link href="'.$cssFile.'" rel="stylesheet">',
                             $cssFile
                         ]
                     ];
@@ -482,7 +491,7 @@ class Handler
                 $cssFiles[] = [
                     'file'  => $absPath,
                     'match' => [
-                        '<link href="' . $relPath . '" rel="stylesheet">',
+                        '<link href="'.$relPath.'" rel="stylesheet">',
                         $relPath
                     ]
                 ];
@@ -496,16 +505,16 @@ class Handler
         if (count($templateFiles)) {
             $cssContent      = '';
             $cssId           = md5(serialize($templateFiles));
-            $cacheTplFile    = $binDir . $cssId . '.tpl.cache.css';
-            $cacheUrlTplFile = $urlBinDir . $cssId . '.tpl.cache.css';
+            $cacheTplFile    = $binDir.$cssId.'.tpl.cache.css';
+            $cacheUrlTplFile = $urlBinDir.$cssId.'.tpl.cache.css';
 
             foreach ($templateFiles as $fileData) {
                 $file    = $fileData['file'];
                 $match   = $fileData['match'];
-                $cssFile = $binDir . md5($file) . '.css';
+                $cssFile = $binDir.md5($file).'.css';
 
                 if ($cssInline === 'inline') {
-                    $cssFile = CMS_DIR . md5($file) . '.css';
+                    $cssFile = CMS_DIR.md5($file).'.css';
                 }
 
                 $CSSMinify = new CSS();
@@ -513,7 +522,7 @@ class Handler
                 $CSSMinify->minify($cssFile);
 
                 $comment    = "\n/* File: {$match[1]} */\n";
-                $cssContent .= $comment . file_get_contents($cssFile) . "\n";
+                $cssContent .= $comment.file_get_contents($cssFile)."\n";
 
                 unlink($cssFile);
 
@@ -522,23 +531,23 @@ class Handler
 
             file_put_contents($cacheTplFile, $cssContent);
 
-            $replace .= '<link href="' . $cacheUrlTplFile . '" rel="stylesheet" type="text/css" />';
+            $replace .= '<link href="'.$cacheUrlTplFile.'" rel="stylesheet" type="text/css" />';
         }
 
         // generate sediment css files
         if (count($cssFiles)) {
             $cssContent      = '';
             $cssId           = md5(serialize($cssFiles));
-            $cacheSedFile    = $binDir . $cssId . '.sed.cache.css';
-            $cacheUrlSedFile = $urlBinDir . $cssId . '.sed.cache.css';
+            $cacheSedFile    = $binDir.$cssId.'.sed.cache.css';
+            $cacheUrlSedFile = $urlBinDir.$cssId.'.sed.cache.css';
 
             foreach ($cssFiles as $fileData) {
                 $file    = $fileData['file'];
                 $match   = $fileData['match'];
-                $cssFile = $binDir . md5($file) . '.css';
+                $cssFile = $binDir.md5($file).'.css';
 
                 if ($cssInline === 'inline') {
-                    $cssFile = CMS_DIR . md5($file) . '.css';
+                    $cssFile = CMS_DIR.md5($file).'.css';
                 }
 
                 $CSSMinify = new CSS();
@@ -546,7 +555,7 @@ class Handler
                 $CSSMinify->minify($cssFile);
 
                 $comment    = "\n/* File: {$match[1]} */\n";
-                $cssContent .= $comment . file_get_contents($cssFile) . "\n";
+                $cssContent .= $comment.file_get_contents($cssFile)."\n";
 
                 unlink($cssFile);
 
@@ -556,7 +565,7 @@ class Handler
 
             file_put_contents($cacheSedFile, $cssContent);
 
-            $replace .= '<link href="' . $cacheUrlSedFile . '" rel="stylesheet" type="text/css" />';
+            $replace .= '<link href="'.$cacheUrlSedFile.'" rel="stylesheet" type="text/css" />';
         }
 
         // inline css
@@ -571,8 +580,8 @@ class Handler
             $inlineCSS = '';
 
             $cssId              = md5(serialize($matches));
-            $cacheInlineFile    = $binDir . $cssId . '.inline.cache.css';
-            $cacheUrlInlineFile = $urlBinDir . $cssId . '.inline.cache.css';
+            $cacheInlineFile    = $binDir.$cssId.'.inline.cache.css';
+            $cacheUrlInlineFile = $urlBinDir.$cssId.'.inline.cache.css';
 
             foreach ($matches as $match) {
                 if (strpos($match[0], 'data-no-cache="1"') !== false) {
@@ -588,7 +597,7 @@ class Handler
 
             file_put_contents($cacheInlineFile, $CSSMinify->minify());
 
-            $replace .= '<link href="' . $cacheUrlInlineFile . '" rel="stylesheet" type="text/css" />';
+            $replace .= '<link href="'.$cacheUrlInlineFile.'" rel="stylesheet" type="text/css" />';
         } else {
             foreach ($matches as $match) {
                 $CSSMinify = new CSS();
@@ -596,7 +605,7 @@ class Handler
 
                 $content = str_replace(
                     $match[0],
-                    '<style>' . $CSSMinify->minify() . '</style>',
+                    '<style>'.$CSSMinify->minify().'</style>',
                     $content
                 );
             }
@@ -618,7 +627,7 @@ class Handler
             if (!empty($cssContent)) {
                 $content = str_replace(
                     '<!-- quiqqer css -->',
-                    '<style>' . $cssContent . '</style>',
+                    '<style>'.$cssContent.'</style>',
                     $content
                 );
             }
@@ -640,8 +649,8 @@ class Handler
      */
     public function generateJavaScriptCache($content)
     {
-        $binDir    = $this->getCacheDir() . 'bin/';
-        $urlBinDir = $this->getURLCacheDir() . 'bin/';
+        $binDir    = $this->getCacheDir().'bin/';
+        $urlBinDir = $this->getURLCacheDir().'bin/';
 
         preg_match_all(
             '/<script[^>]*>(.*)<\/script>/Uis',
@@ -653,8 +662,8 @@ class Handler
         $jsContent = 'var QUIQQER_JS_IS_CACHED = true;';
 
         // add own cache js
-        $matches[] = ['<script src="' . URL_OPT_DIR . 'quiqqer/cache/bin/Storage.js"></script>'];
-        $matches[] = ['<script src="' . URL_OPT_DIR . 'quiqqer/qui/qui/lib/polyfills/Promise.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'quiqqer/cache/bin/Storage.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'quiqqer/qui/qui/lib/polyfills/Promise.js"></script>'];
 
         /**
          * LOAD AMD
@@ -683,7 +692,7 @@ class Handler
                 continue;
             }
 
-            $path = $path . '.js';
+            $path = $path.'.js';
 
             $absPath = substr_replace(
                 $path,
@@ -701,45 +710,45 @@ class Handler
 
             if (file_exists($absPath)) {
                 $matches[] = [
-                    '<script src="' . $relPath . '"></script>'
+                    '<script src="'.$relPath.'"></script>'
                 ];
             }
         }
 
         // default qui stuff
-        $matches[] = ['<script src="' . URL_OPT_DIR . 'bin/qui/qui/QUI.js"></script>'];
-        $matches[] = ['<script src="' . URL_OPT_DIR . 'bin/qui/qui/Locale.js"></script>'];
-        $matches[] = ['<script src="' . URL_OPT_DIR . 'bin/qui/qui/classes/QUI.js"></script>'];
-        $matches[] = ['<script src="' . URL_OPT_DIR . 'bin/qui/qui/classes/request/Ajax.js"></script>'];
-        $matches[] = ['<script src="' . URL_OPT_DIR . 'bin/qui/qui/classes/Controls.js"></script>'];
-        $matches[] = ['<script src="' . URL_OPT_DIR . 'bin/qui/qui/classes/DOM.js"></script>'];
-        $matches[] = ['<script src="' . URL_OPT_DIR . 'bin/qui/qui/classes/Locale.js"></script>'];
-        $matches[] = ['<script src="' . URL_OPT_DIR . 'bin/qui/qui/classes/Windows.js"></script>'];
-        $matches[] = ['<script src="' . URL_OPT_DIR . 'bin/qui/qui/classes/utils/Push.js"></script>'];
-        $matches[] = ['<script src="' . URL_OPT_DIR . 'bin/qui/qui/utils/Object.js"></script>'];
-        $matches[] = ['<script src="' . URL_OPT_DIR . 'bin/qui/qui/utils/Elements.js"></script>'];
-        $matches[] = ['<script src="' . URL_OPT_DIR . 'bin/qui/qui/utils/Functions.js"></script>'];
-        $matches[] = ['<script src="' . URL_OPT_DIR . 'bin/qui/qui/utils/Controls.js"></script>'];
-        $matches[] = ['<script src="' . URL_OPT_DIR . 'bin/qui/qui/utils/System.js"></script>'];
-        $matches[] = ['<script src="' . URL_OPT_DIR . 'bin/qui/qui/classes/utils/Animate.js"></script>'];
-        $matches[] = ['<script src="' . URL_OPT_DIR . 'bin/qui/qui/classes/storage/Storage.js"></script>'];
-        $matches[] = ['<script src="' . URL_OPT_DIR . 'bin/qui/qui/lib/element-query/ResizeSensor.js"></script>'];
-        $matches[] = ['<script src="' . URL_OPT_DIR . 'bin/qui/qui/lib/element-query/ElementQuery.js"></script>'];
-        $matches[] = ['<script src="' . URL_OPT_DIR . 'bin/qui/qui/controls/Control.js"></script>'];
-        $matches[] = ['<script src="' . URL_OPT_DIR . 'bin/qui/qui/controls/messages/Handler.js"></script>'];
-        $matches[] = ['<script src="' . URL_OPT_DIR . 'bin/qui/qui/controls/messages/Message.js"></script>'];
-        $matches[] = ['<script src="' . URL_OPT_DIR . 'bin/qui/qui/controls/messages/Attention.js"></script>'];
-        $matches[] = ['<script src="' . URL_OPT_DIR . 'bin/qui/qui/controls/messages/Information.js"></script>'];
-        $matches[] = ['<script src="' . URL_OPT_DIR . 'bin/qui/qui/controls/messages/Success.js"></script>'];
-        $matches[] = ['<script src="' . URL_OPT_DIR . 'bin/qui/qui/controls/messages/Loading.js"></script>'];
-        $matches[] = ['<script src="' . URL_OPT_DIR . 'bin/qui/qui/controls/messages/Error.js"></script>'];
-        $matches[] = ['<script src="' . URL_OPT_DIR . 'bin/qui/qui/classes/utils/SimulateEvent.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/QUI.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/Locale.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/classes/QUI.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/classes/request/Ajax.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/classes/Controls.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/classes/DOM.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/classes/Locale.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/classes/Windows.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/classes/utils/Push.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/utils/Object.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/utils/Elements.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/utils/Functions.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/utils/Controls.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/utils/System.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/classes/utils/Animate.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/classes/storage/Storage.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/lib/element-query/ResizeSensor.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/lib/element-query/ElementQuery.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/controls/Control.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/controls/messages/Handler.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/controls/messages/Message.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/controls/messages/Attention.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/controls/messages/Information.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/controls/messages/Success.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/controls/messages/Loading.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/controls/messages/Error.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'bin/qui/qui/classes/utils/SimulateEvent.js"></script>'];
 
-        $matches[] = ['<script src="' . URL_OPT_DIR . 'quiqqer/quiqqer/bin/QUI/utils/Session.js"></script>'];
-        $matches[] = ['<script src="' . URL_OPT_DIR . 'quiqqer/quiqqer/bin/QUI/Ajax.js"></script>'];
-        $matches[] = ['<script src="' . URL_OPT_DIR . 'quiqqer/quiqqer/bin/QUI/Locale.js"></script>'];
-        $matches[] = ['<script src="' . URL_OPT_DIR . 'quiqqer/quiqqer/bin/QUI/classes/Locale.js"></script>'];
-        $matches[] = ['<script src="' . URL_OPT_DIR . 'quiqqer/quiqqer/bin/QUI/classes/request/Bundler.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'quiqqer/quiqqer/bin/QUI/utils/Session.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'quiqqer/quiqqer/bin/QUI/Ajax.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'quiqqer/quiqqer/bin/QUI/Locale.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'quiqqer/quiqqer/bin/QUI/classes/Locale.js"></script>'];
+        $matches[] = ['<script src="'.URL_OPT_DIR.'quiqqer/quiqqer/bin/QUI/classes/request/Bundler.js"></script>'];
 
 
         foreach ($matches as $entry) {
@@ -776,7 +785,7 @@ class Handler
                 continue;
             }
 
-            $file = CMS_DIR . ltrim($matches[1], '/');
+            $file = CMS_DIR.ltrim($matches[1], '/');
 
             if (!file_exists($file)) {
                 $parse = parse_url($file);
@@ -787,7 +796,7 @@ class Handler
                 continue;
             }
 
-            $jsContent .= file_get_contents($file) . ';';
+            $jsContent .= file_get_contents($file).';';
 
             $content = str_replace($entry[0], '', $content);
         }
@@ -796,8 +805,8 @@ class Handler
         // js id
         $jsId = md5($jsContent);
 
-        $cacheJSFile    = $binDir . $jsId . '.cache.js';
-        $cacheURLJSFile = $urlBinDir . $jsId . '.cache.js';
+        $cacheJSFile    = $binDir.$jsId.'.cache.js';
+        $cacheURLJSFile = $urlBinDir.$jsId.'.cache.js';
 
         // create javascript cache file
         if (!file_exists($cacheJSFile)) {
@@ -810,8 +819,8 @@ class Handler
             }
         }
 
-        $cached = '<script src="' . URL_OPT_DIR . 'bin/quiqqer-asset/dexie/dexie/dist/dexie.min.js" type="text/javascript"></script>' .
-            '<script src="' . $cacheURLJSFile . '" type="text/javascript"></script>' .
+        $cached = '<script src="'.URL_OPT_DIR.'bin/quiqqer-asset/dexie/dexie/dist/dexie.min.js" type="text/javascript"></script>'.
+            '<script src="'.$cacheURLJSFile.'" type="text/javascript"></script>'.
             '</body>';
 
         // insert quiqqer.cache.js
@@ -851,19 +860,19 @@ class Handler
             $file = trim(substr_replace($require, OPT_DIR, 0, strlen('package/')));
 
             if (!file_exists($file)) {
-                $file = $file . '.js';
+                $file = $file.'.js';
             }
 
             if (!file_exists($file)) {
                 continue;
             }
 
-            $jsContent .= file_get_contents($file) . ';';
+            $jsContent .= file_get_contents($file).';';
         }
 
         $jsId           = md5(serialize($requirePackages));
-        $cacheJSFile    = $binDir . $jsId . '.cache.pkg.js';
-        $cacheURLJSFile = $urlBinDir . $jsId . '.cache.pkg.js';
+        $cacheJSFile    = $binDir.$jsId.'.cache.pkg.js';
+        $cacheURLJSFile = $urlBinDir.$jsId.'.cache.pkg.js';
 
         if (!file_exists($cacheJSFile)) {
             file_put_contents($cacheJSFile, $jsContent);
@@ -876,7 +885,7 @@ class Handler
 
         return str_replace(
             '</body>',
-            '<script async src="' . $cacheURLJSFile . '" type="text/javascript"></script></body>',
+            '<script async src="'.$cacheURLJSFile.'" type="text/javascript"></script></body>',
             $content
         );
     }
@@ -915,7 +924,7 @@ class Handler
                 continue;
             }
 
-            $path = $path . '.js';
+            $path = $path.'.js';
 
             $absPath = substr_replace(
                 $path,
@@ -942,7 +951,7 @@ class Handler
             );
 
             foreach ($amdCssFileMatches as $cssFile) {
-                $amdCssFiles[$cssFile[1] . '.css'] = true;
+                $amdCssFiles[$cssFile[1].'.css'] = true;
             }
         }
 
