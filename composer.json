@@ -18,7 +18,7 @@
   "require": {
     "php": ">=7.2",
     "quiqqer\/quiqqer": "^1.6|dev-master|dev-dev",
-    "quiqqer/mobile-detection": "*",
+    "quiqqer/mobile-detection": "^1.0.0|dev-master|dev-dev",
     "mrclay\/minify": "2.3.0",
     "matthiasmullie/minify": "1.3.*",
     "quiqqer-asset\/dexie": "1.5.*",
