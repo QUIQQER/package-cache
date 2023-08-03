@@ -33,7 +33,7 @@ class HTTP2ServerPush
         $images = $images[1];
 
         foreach ($images as $image) {
-            $image      = \str_replace("\n", ' ', $image);
+            $image = \str_replace("\n", ' ', $image);
             $attributes = StringUtils::getHTMLAttributes($image);
 
             if (empty($attributes['src'])) {
@@ -68,7 +68,8 @@ class HTTP2ServerPush
         \preg_match_all('/<link[^>]+href="([^"]*)"[^>]*>/Uis', $output, $matches);
 
         foreach ($matches as $match) {
-            if (\strpos($match[0], 'rel') !== false
+            if (
+                \strpos($match[0], 'rel') !== false
                 && \strpos($match[0], 'rel="stylesheet"') === false
             ) {
                 continue;
@@ -91,7 +92,7 @@ class HTTP2ServerPush
 
             if (!\file_exists($file)) {
                 $parse = \parse_url($file);
-                $file  = $parse['path'];
+                $file = $parse['path'];
             }
 
             if (!\file_exists($file)) {

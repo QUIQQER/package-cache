@@ -12,18 +12,16 @@
  *
  * @return string
  */
-function package_quiqqer_cache_ajax_requirejs($packages, $requireConfig)
+function package_quiqqer_cache_ajax_requirejs($packages, $requireConfig): string
 {
-    $packages      = json_decode($packages, true);
+    $packages = json_decode($packages, true);
     $requireConfig = json_decode($requireConfig, true);
 
-    try
-    {
+    try {
         return QUI\Cache\Optimizer::optimizeAMD(
             $packages,
             $requireConfig
         );
-
     } catch (QUI\Exception $Exception) {
         return '';
     }
@@ -31,5 +29,5 @@ function package_quiqqer_cache_ajax_requirejs($packages, $requireConfig)
 
 QUI::$Ajax->register(
     'package_quiqqer_cache_ajax_requirejs',
-    array('packages', 'requireConfig')
+    ['packages', 'requireConfig']
 );

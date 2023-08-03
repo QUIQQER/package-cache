@@ -44,8 +44,8 @@ class LazyLoading extends QUI\Utils\Singleton
      */
     public function images($output)
     {
-        $img        = $output[0];
-        $imgData    = $output[1];
+        $img = $output[0];
+        $imgData = $output[1];
         $attributes = StringUtils::getHTMLAttributes($img);
 
         if (!isset($attributes['src'])) {
@@ -56,8 +56,10 @@ class LazyLoading extends QUI\Utils\Singleton
             return $img;
         }
 
-        if (strpos($attributes['src'], '.svg') !== false
-            || strpos($attributes['src'], 'data:') !== false) {
+        if (
+            strpos($attributes['src'], '.svg') !== false
+            || strpos($attributes['src'], 'data:') !== false
+        ) {
             return $img;
         }
 

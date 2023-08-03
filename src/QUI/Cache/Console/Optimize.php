@@ -44,7 +44,7 @@ class Optimize extends QUI\System\Console\Tool
     public function execute()
     {
         $project = $this->getArgument('project');
-        $mtime   = $this->getArgument('mtime');
+        $mtime = $this->getArgument('mtime');
 
         if ($project === '' || $project === '*') {
             $projects = QUI::getProjectManager()->getProjectList();
@@ -62,8 +62,8 @@ class Optimize extends QUI\System\Console\Tool
             $project = QUI::getProjectManager()->getStandard()->getName();
         }
 
-        $Project  = QUI::getProjectManager()->getProject($project);
-        $Media    = $Project->getMedia();
+        $Project = QUI::getProjectManager()->getProject($project);
+        $Media = $Project->getMedia();
         $cacheDir = $Media->getCacheDir();
 
         if (!$mtime) {
@@ -74,8 +74,8 @@ class Optimize extends QUI\System\Console\Tool
             // find all pngs
             $this->writeLn('Optimize PNG files', 'green');
 
-            $list  = shell_exec('find "' . $cacheDir . '" -iname \*.png -type f -mtime -' . $mtime);
-            $list  = explode("\n", trim($list));
+            $list = shell_exec('find "' . $cacheDir . '" -iname \*.png -type f -mtime -' . $mtime);
+            $list = explode("\n", trim($list));
             $count = count($list);
 
             $this->resetColor();
@@ -109,8 +109,8 @@ class Optimize extends QUI\System\Console\Tool
             // find all jpgs
             $this->writeLn('Optimize JPG files ...', 'green');
 
-            $list  = shell_exec('find "' . $cacheDir . '" -iname \*.jp*g -type f -mtime -' . $mtime);
-            $list  = explode("\n", trim($list));
+            $list = shell_exec('find "' . $cacheDir . '" -iname \*.jp*g -type f -mtime -' . $mtime);
+            $list = explode("\n", trim($list));
             $count = count($list);
 
             $this->resetColor();
@@ -144,10 +144,10 @@ class Optimize extends QUI\System\Console\Tool
             // find all jpgs
             $this->writeLn('Optimize images to webp files ...', 'green');
 
-            $list  = shell_exec(
+            $list = shell_exec(
                 'find "' . $cacheDir . '" -name \'*\' -exec file {} \; | grep -o -P \'^.+: \w+ image\''
             );
-            $list  = explode("\n", trim($list));
+            $list = explode("\n", trim($list));
             $count = count($list);
 
             $this->resetColor();
@@ -158,7 +158,7 @@ class Optimize extends QUI\System\Console\Tool
                 $image = $image[0];
 
                 // check if webp exists
-                $parts    = pathinfo(CMS_DIR . $image);
+                $parts = pathinfo(CMS_DIR . $image);
                 $webPFile = $parts['dirname'] . DIRECTORY_SEPARATOR . $parts['filename'] . '.webp';
 
                 if (!file_exists($webPFile)) {
