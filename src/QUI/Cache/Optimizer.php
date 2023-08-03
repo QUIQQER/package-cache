@@ -92,7 +92,7 @@ class Optimizer
      */
     public static function optimizeAMD(array $needles, array $requireConf): string
     {
-        $rJsFile   = OPT_DIR . 'quiqqer/cache/amd/r.js';
+        $rJsFile = OPT_DIR . 'quiqqer/cache/amd/r.js';
         $cacheHash = md5(serialize($needles) . serialize($requireConf));
         $cacheName = 'quiqqer/cache/' . $cacheHash;
 
@@ -103,9 +103,9 @@ class Optimizer
 
         // config params
         $CacheHandler = QUI\Cache\Handler::init();
-        $amdDir       = $CacheHandler->getCacheDir() . 'amd/';
-        $amdUrlDir    = $CacheHandler->getURLCacheDir() . 'amd/';
-        $buildFile    = $amdDir . $cacheHash . '-build.js';
+        $amdDir = $CacheHandler->getCacheDir() . 'amd/';
+        $amdUrlDir = $CacheHandler->getURLCacheDir() . 'amd/';
+        $buildFile = $amdDir . $cacheHash . '-build.js';
 
         if (file_exists($buildFile)) {
             return file_get_contents($buildFile);
@@ -113,8 +113,8 @@ class Optimizer
 
 
         $requireBuildConfig = $amdDir . $cacheHash . '-build-require-config.js';
-        $moduleBuildConfig  = $amdDir . $cacheHash . '-build-config.js';
-        $moduleCreation     = $amdDir . $cacheHash . '.js';
+        $moduleBuildConfig = $amdDir . $cacheHash . '-build-config.js';
+        $moduleCreation = $amdDir . $cacheHash . '.js';
 
         if (isset($requireConf['pkgs'])) {
             unset($requireConf['pkgs']);
@@ -125,7 +125,7 @@ class Optimizer
         }
 
         // set relativ paths to absolute
-        $requireConf['baseUrl']           = CMS_DIR;
+        $requireConf['baseUrl'] = CMS_DIR;
         $requireConf['paths'][$cacheHash] = $amdUrlDir . $cacheHash;
 
         // all paths relative
@@ -138,21 +138,21 @@ class Optimizer
         copy(OPT_DIR . 'quiqqer/cache/amd/image.js', $amdDir . 'image.js');
         copy(OPT_DIR . 'quiqqer/cache/amd/text.js', $amdDir . 'text.js');
 
-        $requireConf['map']["*"]["css"]   = ltrim("{$amdUrlDir}css-builder", '/');
+        $requireConf['map']["*"]["css"] = ltrim("{$amdUrlDir}css-builder", '/');
         $requireConf['map']["*"]["image"] = ltrim("{$amdUrlDir}image", '/');
-        $requireConf['map']["*"]["text"]  = ltrim("{$amdUrlDir}text", '/');
+        $requireConf['map']["*"]["text"] = ltrim("{$amdUrlDir}text", '/');
 
 
         // set main paths
-        $requireConf['paths']["locale"]        = ltrim(URL_VAR_DIR . "locale/bin", '/');
-        $requireConf['paths']["qui"]           = ltrim(URL_OPT_DIR . "quiqqer/qui/qui", '/');
-        $requireConf['paths']["classes"]       = ltrim(URL_OPT_DIR . "quiqqer/quiqqer/bin/QUI/classes", '/');
-        $requireConf['paths']["controls"]      = ltrim(URL_OPT_DIR . "quiqqer/quiqqer/bin/QUI/controls", '/');
-        $requireConf['paths']["utils"]         = ltrim(URL_OPT_DIR . "quiqqer/quiqqer/bin/QUI/utils", '/');
-        $requireConf['paths']["polyfills"]     = ltrim(URL_OPT_DIR . "quiqqer/quiqqer/bin/QUI/polyfills", '/');
-        $requireConf['paths']["Controls"]      = ltrim(URL_OPT_DIR . "quiqqer/quiqqer/bin/Controls", '/');
-        $requireConf['paths']["Ajax"]          = ltrim(URL_OPT_DIR . "quiqqer/quiqqer/bin/QUI/Ajax", '/');
-        $requireConf['paths']["Locale"]        = ltrim(URL_OPT_DIR . "quiqqer/quiqqer/bin/QUI/Locale", '/');
+        $requireConf['paths']["locale"] = ltrim(URL_VAR_DIR . "locale/bin", '/');
+        $requireConf['paths']["qui"] = ltrim(URL_OPT_DIR . "quiqqer/qui/qui", '/');
+        $requireConf['paths']["classes"] = ltrim(URL_OPT_DIR . "quiqqer/quiqqer/bin/QUI/classes", '/');
+        $requireConf['paths']["controls"] = ltrim(URL_OPT_DIR . "quiqqer/quiqqer/bin/QUI/controls", '/');
+        $requireConf['paths']["utils"] = ltrim(URL_OPT_DIR . "quiqqer/quiqqer/bin/QUI/utils", '/');
+        $requireConf['paths']["polyfills"] = ltrim(URL_OPT_DIR . "quiqqer/quiqqer/bin/QUI/polyfills", '/');
+        $requireConf['paths']["Controls"] = ltrim(URL_OPT_DIR . "quiqqer/quiqqer/bin/Controls", '/');
+        $requireConf['paths']["Ajax"] = ltrim(URL_OPT_DIR . "quiqqer/quiqqer/bin/QUI/Ajax", '/');
+        $requireConf['paths']["Locale"] = ltrim(URL_OPT_DIR . "quiqqer/quiqqer/bin/QUI/Locale", '/');
         $requireConf['paths']["UploadManager"] = ltrim(URL_OPT_DIR . "quiqqer/quiqqer/bin/QUI/UploadManager", '/');
 
 
@@ -195,7 +195,7 @@ class Optimizer
             throw new QUI\Exception('nodejs is not installed or is not callable');
         }
 
-        $exec   = "$command $rJsFile -o '$moduleBuildConfig' mainConfigFile='$requireBuildConfig'";
+        $exec = "$command $rJsFile -o '$moduleBuildConfig' mainConfigFile='$requireBuildConfig'";
         $result = shell_exec($exec);
 
         // optimize
@@ -222,7 +222,7 @@ class Optimizer
         $cssFilePath = CMS_DIR . $cssFile;
 
         if (!file_exists($cssFilePath)) {
-            $parse       = parse_url($cssFilePath);
+            $parse = parse_url($cssFilePath);
             $cssFilePath = $parse['path'];
 
             if (!file_exists($cssFilePath)) {
@@ -231,7 +231,7 @@ class Optimizer
                     $cssFilePath = OPT_DIR . 'quiqqer/quiqqer' . $cssFile;
 
                     if (!file_exists($cssFilePath)) {
-                        $parse       = parse_url($cssFilePath);
+                        $parse = parse_url($cssFilePath);
                         $cssFilePath = $parse['path'];
 
                         if (!file_exists($cssFilePath)) {
@@ -244,11 +244,11 @@ class Optimizer
             }
         }
 
-        $CSSMinify  = new Minify_CSS();
+        $CSSMinify = new Minify_CSS();
         $cssContent = file_get_contents($cssFilePath);
 
         $minified = $CSSMinify->minify($cssContent, [
-            'docRoot'    => CMS_DIR,
+            'docRoot' => CMS_DIR,
             'currentDir' => dirname($cssFilePath) . '/'
         ]);
 
@@ -266,7 +266,7 @@ class Optimizer
         $jsFilePath = $jsFile;
 
         if (!file_exists($jsFilePath)) {
-            $parse      = parse_url($jsFilePath);
+            $parse = parse_url($jsFilePath);
             $jsFilePath = $parse['path'];
 
             if (!file_exists($jsFilePath)) {
@@ -351,19 +351,19 @@ class Optimizer
         $fileExclusionRegExp .= '^build\.js|^build-jsdoc\.js|^build\-config\.js/';
 
         return [
-            'appDir'                 => ".",
-            'baseUrl'                => ".",
-            'dir'                    => "./bin",
-            'useStrict'              => true,
-            'mainConfigFile'         => "build-config.js",
-            'keepBuildDir'           => false,
-            'optimizeCss'            => 'standard',
-            'wrapShim'               => false,
+            'appDir' => ".",
+            'baseUrl' => ".",
+            'dir' => "./bin",
+            'useStrict' => true,
+            'mainConfigFile' => "build-config.js",
+            'keepBuildDir' => false,
+            'optimizeCss' => 'standard',
+            'wrapShim' => false,
             "findNestedDependencies" => true,
-            "normalizeDirDefines"    => true,
-            'fileExclusionRegExp'    => $fileExclusionRegExp,
-            'modules'                => [],
-            'paths'                  => [
+            "normalizeDirDefines" => true,
+            'fileExclusionRegExp' => $fileExclusionRegExp,
+            'modules' => [],
+            'paths' => [
                 'qui' => 'quiqqer/qui/qui'
             ]
         ];
@@ -544,7 +544,7 @@ class Optimizer
         }
 
         $quality = 80;
-        $parts   = pathinfo($file);
+        $parts = pathinfo($file);
 
         try {
             $quality = (int)QUI::getPackage('quiqqer/cache')
@@ -562,7 +562,7 @@ class Optimizer
         }
 
         $webPFile = $parts['dirname'] . DIRECTORY_SEPARATOR . $parts['filename'] . '.webp';
-        $webP     = self::webPCommand();
+        $webP = self::webPCommand();
 
         if ($parts['extension'] === 'gif') {
             $webP = 'gif2webp';
