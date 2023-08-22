@@ -32,5 +32,8 @@
             <license><![CDATA[GPL-3.0+]]></license>
         </copyright>
 
+        <provider>
+            <cookie src="\QUI\Cache\CookieProvider"/>
+        </provider>
     </package>
 </quiqqer>
