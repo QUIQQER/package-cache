@@ -623,4 +623,9 @@ class EventCoordinator
     ): void {
         Handler::setLoggedInCookieIfEnabled();
     }
+
+    public static function onUserLogout(User $User): void
+    {
+        Handler::removeLoggedInCookie();
+    }
 }

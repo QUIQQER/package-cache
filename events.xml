@@ -9,6 +9,7 @@
     <event on="onMailerSendInit" fire="\QUI\Cache\EventCoordinator::onMailerSendInit"/>
     <event on="onUserLogin" fire="\QUI\Cache\EventCoordinator::onUserLogin"/>
     <event on="onQuiqqerFrontendUsersUserAutoLogin" fire="\QUI\Cache\EventCoordinator::onQuiqqerFrontendUsersUserAutoLogin"/>
+    <event on="onUserLogout" fire="\QUI\Cache\EventCoordinator::onUserLogout"/>
 
     <!-- clear cache -->
     <event on="onSiteSave" fire="\QUI\Cache\EventCoordinator::clearCache"/>
