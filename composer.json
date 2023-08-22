@@ -24,6 +24,9 @@
     "quiqqer-asset\/dexie": "1.5.*",
     "quiqqer-asset\/lazysizes": "4.*"
   },
+  "suggest": {
+    "quiqqer/gdpr": "Makes the setting of the cookie to mark the user as logged in GDPR compliant"
+  },
   "autoload": {
     "psr-4": {
       "QUI\\Cache\\": "src\/QUI\/Cache"

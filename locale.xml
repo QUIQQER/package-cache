@@ -22,6 +22,15 @@
             ]]></en>
         </locale>
 
+        <locale name="cookie.logged_in.lifetime">
+            <de><![CDATA[1 Jahr]]></de>
+            <en><![CDATA[1 year]]></en>
+        </locale>
+        <locale name="cookie.logged_in.purpose">
+            <de><![CDATA[Speichert, dass der Benutzer eingeloggt ist/war.]]></de>
+            <en><![CDATA[Saves that the user is/was logged in.]]></en>
+        </locale>
+
         <locale name="settings.title">
             <de><![CDATA[Cache Einstellungen]]></de>
             <en><![CDATA[Cache settings]]></en>
@@ -82,6 +91,16 @@
             The JavaScript cache optimizes and create the JavaScript cache. <br />
             Also the AMD JavaScript modules will be optimized.
             ]]></en>
+        </locale>
+
+        <locale name="settings.login_cookie_is_enabled">
+            <de><![CDATA[Eingeloggte Nutzer per Cookie markieren]]></de>
+            <en><![CDATA[Mark logged-in users with a cookie]]></en>
+        </locale>
+
+        <locale name="settings.login_cookie_name">
+            <de><![CDATA[Name des Cookies zur Markierung]]></de>
+            <en><![CDATA[Name of the cookie for marking]]></en>
         </locale>
 
         <locale name="settings.lazyloading">

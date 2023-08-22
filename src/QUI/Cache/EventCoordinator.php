@@ -7,6 +7,7 @@
 namespace QUI\Cache;
 
 use QUI;
+use QUI\Users\User;
 use QUI\Utils\System\File;
 
 use function boolval;
@@ -609,5 +610,17 @@ class EventCoordinator
     public static function onQuiqqerMenuIndependentClear($menuId)
     {
         self::clearCache();
+    }
+
+    public static function onUserLogin(User $User): void
+    {
+        Handler::setLoggedInCookieIfEnabled();
+    }
+
+    public static function onQuiqqerFrontendUsersUserAutoLogin(
+        User $User,
+        ?QUI\FrontendUsers\RegistrarInterface $Registrar
+    ): void {
+        Handler::setLoggedInCookieIfEnabled();
     }
 }

@@ -10,6 +10,7 @@ use MatthiasMullie\Minify\CSS;
 use Minify;
 use Minify_Source;
 use QUI;
+use QUI\Cache\Cookie\LoggedInCookie;
 
 use function array_merge;
 use function array_unique;
@@ -986,6 +987,25 @@ class Handler
                 return $data[0];
             },
             $content
+        );
+    }
+
+    public static function setLoggedInCookieIfEnabled(): void
+    {
+        if (!Config::isLoggedInCookieEnabled()) {
+            return;
+        }
+
+        $LoggedInCookie = new LoggedInCookie(Config::getLoggedInCookieName());
+
+        setcookie(
+            $LoggedInCookie->getName(),
+            true,
+            time() + $LoggedInCookie->getLifetimeInSeconds(),
+            null,
+            null,
+            true,
+            true
         );
     }
 }
