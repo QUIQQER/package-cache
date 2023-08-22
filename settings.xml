@@ -9,6 +9,16 @@
                     <defaultvalue>1</defaultvalue>
                 </conf>
 
+                <conf name="login_cookie_is_enabled">
+                    <type><![CDATA[bool]]></type>
+                    <defaultvalue>0</defaultvalue>
+                </conf>
+
+                <conf name="login_cookie_name">
+                    <type><![CDATA[string]]></type>
+                    <defaultvalue>user-is-logged-in</defaultvalue>
+                </conf>
+
                 <conf name="htmlcache">
                     <type><![CDATA[bool]]></type>
                     <defaultvalue>1</defaultvalue>
@@ -103,6 +113,18 @@
                             <description>
                                 <locale group="quiqqer/cache" var="settings.jscache.description"/>
                             </description>
+                        </input>
+
+                        <input conf="settings.login_cookie_is_enabled" type="checkbox">
+                            <text>
+                                <locale group="quiqqer/cache" var="settings.login_cookie_is_enabled"/>
+                            </text>
+                        </input>
+
+                        <input conf="settings.login_cookie_name" type="text">
+                            <text>
+                                <locale group="quiqqer/cache" var="settings.login_cookie_name"/>
+                            </text>
                         </input>
 
                         <input type="hidden" data-qui="package/quiqqer/cache/bin/backend/settings/ClearCache"></input>
