@@ -1008,4 +1008,19 @@ class Handler
             true
         );
     }
+
+    public static function removeLoggedInCookie(): void
+    {
+        $LoggedInCookie = new LoggedInCookie(Config::getLoggedInCookieName());
+
+        setcookie(
+            $LoggedInCookie->getName(),
+            '',
+            1,
+            null,
+            null,
+            true,
+            true
+        );
+    }
 }
