@@ -16,6 +16,7 @@ use function define;
 use function defined;
 use function explode;
 use function file_exists;
+use function header_remove;
 use function ltrim;
 use function pathinfo;
 use function preg_match_all;
@@ -256,6 +257,9 @@ class EventCoordinator
                 'public' => true,
                 'must_revalidate' => true
             ]);
+
+            // Remove session cookie from cached responses as the response is not unique (see quiqqer/quiqqer#1290)
+            header_remove('Set-Cookie');
 
             $Response->send();
             exit;
