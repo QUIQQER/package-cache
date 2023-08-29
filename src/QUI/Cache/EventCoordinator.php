@@ -251,10 +251,10 @@ class EventCoordinator
             QUI\Cache\Parser\HTTP2ServerPush::parseImages($content, $Response);
 
             $Response->headers->remove('Cache-Control');
-            $Response->headers->set('Cache-Control', [
-                'max-age' => Config::getHtmlCacheMaxAgeHeaderValue(),
-                'public',
-                'must-revalidate'
+            $Response->setCache([
+                'max_age' => Config::getHtmlCacheMaxAgeHeaderValue(),
+                'public' => true,
+                'must_revalidate' => true
             ]);
 
             $Response->send();
