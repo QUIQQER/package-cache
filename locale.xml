@@ -93,6 +93,15 @@
             ]]></en>
         </locale>
 
+        <locale name="settings.html_cache_max_age_header">
+            <de><![CDATA[Anzahl Sekunden für die Browser eine Seite cachen sollen]]></de>
+            <en><![CDATA[Number of seconds for browsers to cache a page]]></en>
+        </locale>
+        <locale name="settings.html_cache_max_age_header.description">
+            <de><![CDATA[QUIQQER setzt den 'Cache-Control'-Header mit diesem 'max-age'-Wert beim Aufruf von gecachten/optimierten Seiten]]></de>
+            <en><![CDATA[QUIQQER sets the 'Cache-Control' header with this 'max-age' value when calling cached/optimized pages]]></en>
+        </locale>
+
         <locale name="settings.login_cookie_is_enabled">
             <de><![CDATA[Eingeloggte Nutzer per Cookie markieren]]></de>
             <en><![CDATA[Mark logged-in users with a cookie]]></en>
