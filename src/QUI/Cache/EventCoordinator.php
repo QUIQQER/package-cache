@@ -10,7 +10,6 @@ use QUI;
 use QUI\Users\User;
 use QUI\Utils\System\File;
 
-use function boolval;
 use function count;
 use function define;
 use function defined;
@@ -214,6 +213,9 @@ class EventCoordinator
                     // webp is not supported!
                     $cacheEnabled = false;
 
+                    // no cache generating for this version
+                    QUI::getRewrite()->getSite()->setAttribute('nocache', true);
+
                     if (!defined('QUIQQER_CACHE_DISABLE_WEBP')) {
                         define('QUIQQER_CACHE_DISABLE_WEBP', true);
                     }
@@ -222,7 +224,7 @@ class EventCoordinator
         } catch (QUI\Exception $Exception) {
         }
 
-        if (!boolval($cacheEnabled)) {
+        if (!$cacheEnabled) {
             return;
         }
 
