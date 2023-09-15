@@ -504,39 +504,6 @@ class Handler
 
         $replace = '';
 
-        // generate template files
-        if (count($templateFiles)) {
-            $cssContent = '';
-            $cssId = md5(serialize($templateFiles));
-            $cacheTplFile = $binDir . $cssId . '.tpl.cache.css';
-            $cacheUrlTplFile = $urlBinDir . $cssId . '.tpl.cache.css';
-
-            foreach ($templateFiles as $fileData) {
-                $file = $fileData['file'];
-                $match = $fileData['match'];
-                $cssFile = $binDir . md5($file) . '.css';
-
-                if ($cssInline === 'inline') {
-                    $cssFile = CMS_DIR . md5($file) . '.css';
-                }
-
-                $CSSMinify = new CSS();
-                $CSSMinify->add($file);
-                $CSSMinify->minify($cssFile);
-
-                $comment = "\n/* File: {$match[1]} */\n";
-                $cssContent .= $comment . file_get_contents($cssFile) . "\n";
-
-                unlink($cssFile);
-
-                $content = str_replace($match[0], '', $content);
-            }
-
-            file_put_contents($cacheTplFile, $cssContent);
-
-            $replace .= '<link href="' . $cacheUrlTplFile . '" rel="stylesheet" type="text/css" />';
-        }
-
         // generate sediment css files
         if (count($cssFiles)) {
             $cssContent = '';
@@ -569,6 +536,39 @@ class Handler
             file_put_contents($cacheSedFile, $cssContent);
 
             $replace .= '<link href="' . $cacheUrlSedFile . '" rel="stylesheet" type="text/css" />';
+        }
+
+        // generate template files
+        if (count($templateFiles)) {
+            $cssContent = '';
+            $cssId = md5(serialize($templateFiles));
+            $cacheTplFile = $binDir . $cssId . '.tpl.cache.css';
+            $cacheUrlTplFile = $urlBinDir . $cssId . '.tpl.cache.css';
+
+            foreach ($templateFiles as $fileData) {
+                $file = $fileData['file'];
+                $match = $fileData['match'];
+                $cssFile = $binDir . md5($file) . '.css';
+
+                if ($cssInline === 'inline') {
+                    $cssFile = CMS_DIR . md5($file) . '.css';
+                }
+
+                $CSSMinify = new CSS();
+                $CSSMinify->add($file);
+                $CSSMinify->minify($cssFile);
+
+                $comment = "\n/* File: {$match[1]} */\n";
+                $cssContent .= $comment . file_get_contents($cssFile) . "\n";
+
+                unlink($cssFile);
+
+                $content = str_replace($match[0], '', $content);
+            }
+
+            file_put_contents($cacheTplFile, $cssContent);
+
+            $replace .= '<link href="' . $cacheUrlTplFile . '" rel="stylesheet" type="text/css" />';
         }
 
         // inline css
