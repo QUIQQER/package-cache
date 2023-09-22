@@ -641,4 +641,9 @@ class EventCoordinator
     {
         Handler::removeLoggedInCookie();
     }
+
+    public static function onUpdateEnd()
+    {
+        QUI\Cache\Handler::init()->clearCache();
+    }
 }
