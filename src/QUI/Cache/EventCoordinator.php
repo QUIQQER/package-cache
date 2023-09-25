@@ -466,6 +466,20 @@ class EventCoordinator
         $Cache->save(null, 70);
     }
 
+    public static function onMediaReplace(QUI\Projects\Media $Media, QUI\Projects\Media\Item $Item)
+    {
+        if (!Handler::init()->useWebP()) {
+            return;
+        }
+
+        if ($Item instanceof QUI\Projects\Media\Image) {
+            try {
+                $Item->deleteCache();
+            } catch (QUI\Exception $exception) {
+            }
+        }
+    }
+
     /**
      * @param QUI\Projects\Media\Item $Item
      */
