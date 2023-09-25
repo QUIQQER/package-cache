@@ -26,6 +26,7 @@
     <event on="onMediaDelete" fire="\QUI\Cache\EventCoordinator::clearCache"/>
 
     <event on="onMediaSave" fire="\QUI\Cache\EventCoordinator::onMediaSave"/>
+    <event on="onMediaReplace" fire="\QUI\Cache\EventCoordinator::onMediaReplace"/>
     <event on="onMediaCreateSizeCache" fire="\QUI\Cache\EventCoordinator::onMediaCreateSizeCache"/>
     <event on="onMediaCreateImageHtml" fire="\QUI\Cache\EventCoordinator::onMediaCreateImageHtml"/>
 
