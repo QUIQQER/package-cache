@@ -27,6 +27,7 @@ use function shell_exec;
 use function strpos;
 use function unlink;
 
+use const DIRECTORY_SEPARATOR;
 use const JSON_PRETTY_PRINT;
 
 /**
@@ -535,9 +536,11 @@ class Optimizer
      * Convert a file to a webP file
      *
      * @param string $file
+     * @param bool $cmykConvert
+     *
      * @return string|false
      */
-    public static function convertToWebP(string $file)
+    public static function convertToWebP(string $file, bool $cmykConvert = true)
     {
         if (!file_exists($file)) {
             return false;
@@ -572,7 +575,47 @@ class Optimizer
             . ' ' . escapeshellarg($file)
             . ' -o ' . escapeshellarg($webPFile);
 
-        shell_exec($command);
+        $output = shell_exec($command);
+
+        if (empty($output)) {
+            $output = shell_exec($command . ' 2>&1');
+        }
+
+
+        // if a cmyk error occurs, this can happen with jpgs, pngs
+        // e.g. when users upload images for printing.
+        // then we temporarily convert this image to a rgb image.
+        // this only works if convert is available on the server.
+        if (
+            $cmykConvert
+            && strpos($output, 'libjpeg error: Unsupported color conversion request') !== false
+            && !file_exists($webPFile)
+        ) {
+            if (QUI\Utils\System::isSystemFunctionCallable('convert')) {
+                // image is probably CMYK
+                // we create a copy for it
+                $copy = $parts['dirname'] . DIRECTORY_SEPARATOR . $parts['filename'] . '_____c.' . $parts['extension'];
+                copy($file, $copy);
+                shell_exec('convert -colorspace RGB ' . $copy . ' ' . $copy . '  2>&1');
+                $copyWebPFile = self::convertToWebP($copy, false);
+
+                if (file_exists($copy)) {
+                    unlink($copy);
+                }
+
+                if (file_exists($copyWebPFile)) {
+                    rename($copyWebPFile, $webPFile);
+                }
+            } else {
+                QUI\System\Log::addError(
+                    'The following image has CMYK colors, but convert is not available on the server and 
+                    therefore no webp version could be created. please install convert',
+                    [
+                        'imageFile' => $file
+                    ]
+                );
+            }
+        }
 
         return $webPFile;
     }
