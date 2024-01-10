@@ -218,7 +218,11 @@ class Handler
         $urlHost = $urlParams['host'];
 
         if (!isset($vhosts[$urlHost])) {
-            QUI\System\Log::addError('Missing vhost for cache generation');
+            QUI\System\Log::addError('Missing vhost for cache generation', [
+                'urlParams' => $urlParams,
+                'uri' => $uri
+            ]);
+
             return;
         }
 
