@@ -4,6 +4,8 @@
  * This file contains package_quiqqer_cache_ajax_requirecss
  */
 
+use Symfony\Component\HttpFoundation\Response;
+
 /**
  * Returns the optimized css
  *
@@ -12,17 +14,17 @@
  *
  * @return string
  */
-function package_quiqqer_cache_ajax_requirecss($cssfile, $requireConfig): string
+function package_quiqqer_cache_ajax_requirecss($cssfile, string $requireConfig): string
 {
     try {
         $minified = QUI\Cache\Optimizer::optimizeCSS($cssfile);
 
         echo $minified;
         exit;
-    } catch (QUI\Exception $Exception) {
+    } catch (QUI\Exception) {
         $Response = QUI::getGlobalResponse();
         $Response->setStatusCode(
-            \Symfony\Component\HttpFoundation\Response::HTTP_NOT_FOUND
+            Response::HTTP_NOT_FOUND
         );
 
         echo '';

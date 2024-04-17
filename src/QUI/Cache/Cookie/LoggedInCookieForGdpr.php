@@ -5,6 +5,8 @@ namespace QUI\Cache\Cookie;
 use QUI;
 use QUI\GDPR\CookieInterface;
 
+use function sprintf;
+
 /**
  * A class that implements quiqqer/gdpr CookieInterface and wraps the LoggedInCookie class
  *
@@ -42,7 +44,7 @@ final class LoggedInCookieForGdpr implements CookieInterface
 
     public function getLifetime(): string
     {
-        return \sprintf(
+        return sprintf(
             '%d %s',
             $this->loggedInCookie->getLifetimeInSeconds(),
             QUI::getLocale()->get('quiqqer/quiqqer', 'seconds')

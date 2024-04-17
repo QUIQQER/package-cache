@@ -12,7 +12,7 @@
  *
  * @return string
  */
-function package_quiqqer_cache_ajax_requirejs($packages, $requireConfig): string
+function package_quiqqer_cache_ajax_requirejs(string $packages, string $requireConfig): string
 {
     $packages = json_decode($packages, true);
     $requireConfig = json_decode($requireConfig, true);
@@ -22,7 +22,7 @@ function package_quiqqer_cache_ajax_requirejs($packages, $requireConfig): string
             $packages,
             $requireConfig
         );
-    } catch (QUI\Exception $Exception) {
+    } catch (QUI\Exception) {
         return '';
     }
 }

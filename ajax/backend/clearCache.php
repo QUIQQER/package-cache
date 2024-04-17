@@ -7,7 +7,7 @@
 /**
  * Clears the website cache
  */
-function package_quiqqer_cache_ajax_backend_clearCache()
+function package_quiqqer_cache_ajax_backend_clearCache(): void
 {
     QUI\Cache\EventCoordinator::clearCache();
 

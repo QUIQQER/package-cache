@@ -41,7 +41,7 @@ class Optimize extends QUI\System\Console\Tool
      *
      * @see \QUI\System\Console\Tool::execute()
      */
-    public function execute()
+    public function execute(): void
     {
         $project = $this->getArgument('project');
         $mtime = $this->getArgument('mtime');

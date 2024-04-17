@@ -22,7 +22,7 @@ class Cron
      * @param $CronManager
      * @throws QUI\Exception
      */
-    public static function optimizeProjectImages($params, $CronManager)
+    public static function optimizeProjectImages($params, $CronManager): void
     {
         if (!isset($params['project'])) {
             throw new QUI\Exception('Need a project parameter');
@@ -56,7 +56,7 @@ class Cron
      *
      * Clear the temp folder
      */
-    public static function clearTempFolder()
+    public static function clearTempFolder(): void
     {
         QUI\System\Log::addWarning(
             '\QUI\Cache::clearTempFolder is deprecated. Please switch cron to quiqqer/cron by deleting this cron and'
