@@ -84,7 +84,7 @@ class Optimize extends QUI\System\Console\Tool
             foreach ($list as $image) {
                 try {
                     QUI\Cache\Optimizer::optimizePNG(CMS_DIR . $image);
-                } catch (QUI\Exception $Exception) {
+                } catch (QUI\Exception) {
                     continue;
                 }
             }
@@ -119,7 +119,7 @@ class Optimize extends QUI\System\Console\Tool
             foreach ($list as $image) {
                 try {
                     QUI\Cache\Optimizer::optimizeJPG(CMS_DIR . $image);
-                } catch (QUI\Exception $Exception) {
+                } catch (QUI\Exception) {
                     continue;
                 }
             }
