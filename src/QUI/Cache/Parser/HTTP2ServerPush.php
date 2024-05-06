@@ -9,6 +9,8 @@ namespace QUI\Cache\Parser;
 use QUI;
 use QUI\Utils\StringHelper as StringUtils;
 
+use function strpos;
+
 /**
  * Class HTTP2ServerPush
  * EXPERIMENTAL
@@ -21,7 +23,7 @@ class HTTP2ServerPush
      * @param string $output
      * @param null $Response
      */
-    public static function parseImages($output, $Response = null)
+    public static function parseImages($output, $Response = null): void
     {
         if ($Response === null) {
             $Response = QUI::getGlobalResponse();
@@ -42,7 +44,7 @@ class HTTP2ServerPush
 
             $src = $attributes['src'];
 
-            if (\strpos($src, 'data:') !== false) {
+            if (str_contains($src, 'data:')) {
                 continue;
             }
 
@@ -69,21 +71,21 @@ class HTTP2ServerPush
 
         foreach ($matches as $match) {
             if (
-                \strpos($match[0], 'rel') !== false
-                && \strpos($match[0], 'rel="stylesheet"') === false
+                strpos($match[0], 'rel') !== false
+                && strpos($match[0], 'rel="stylesheet"') === false
             ) {
                 continue;
             }
 
-            if (\strpos($match[0], 'alternate') !== false) {
+            if (strpos($match[0], 'alternate') !== false) {
                 continue;
             }
 
-            if (\strpos($match[0], 'next') !== false) {
+            if (strpos($match[0], 'next') !== false) {
                 continue;
             }
 
-            if (\strpos($match[0], 'prev') !== false) {
+            if (strpos($match[0], 'prev') !== false) {
                 continue;
             }
 

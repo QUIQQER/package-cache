@@ -11,7 +11,6 @@ use QUI\Utils\StringHelper as StringUtils;
 
 use function htmlspecialchars;
 use function preg_replace_callback;
-use function strpos;
 
 /**
  * Class LazyLoading
@@ -24,25 +23,23 @@ class LazyLoading extends QUI\Utils\Singleton
      * Add lazy loading part to html
      *
      * @param $content
-     * @return mixed
+     * @return string|array|null
      */
-    public function parse($content)
+    public function parse($content): string|array|null
     {
         // parse images
-        $content = preg_replace_callback(
+        return preg_replace_callback(
             '#<img([^>]*)>#i',
             [&$this, "images"],
             $content
         );
-
-        return $content;
     }
 
     /**
      * @param $output
      * @return string
      */
-    public function images($output)
+    public function images($output): string
     {
         $img = $output[0];
         $imgData = $output[1];
@@ -57,8 +54,8 @@ class LazyLoading extends QUI\Utils\Singleton
         }
 
         if (
-            strpos($attributes['src'], '.svg') !== false
-            || strpos($attributes['src'], 'data:') !== false
+            str_contains($attributes['src'], '.svg')
+            || str_contains($attributes['src'], 'data:')
         ) {
             return $img;
         }
@@ -67,7 +64,7 @@ class LazyLoading extends QUI\Utils\Singleton
 
         if (!isset($attributes['class'])) {
             $attributes['class'] = 'lazyload';
-        } elseif (strpos($attributes['class'], 'lazyload') === false) {
+        } elseif (!str_contains($attributes['class'], 'lazyload')) {
             $attributes['class'] = $attributes['class'] . ' lazyload';
         }
 
@@ -78,7 +75,7 @@ class LazyLoading extends QUI\Utils\Singleton
      * @param $attributes
      * @return string
      */
-    protected function render($attributes)
+    protected function render($attributes): string
     {
         // image string
         $img = '<img ';

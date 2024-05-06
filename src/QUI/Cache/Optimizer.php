@@ -24,7 +24,6 @@ use function pathinfo;
 use function rename;
 use function serialize;
 use function shell_exec;
-use function strpos;
 use function unlink;
 
 use const DIRECTORY_SEPARATOR;
@@ -74,7 +73,7 @@ class Optimizer
      * @param $project
      * @param int $mtime
      */
-    public static function optimizeProjectImages($project, int $mtime = 2)
+    public static function optimizeProjectImages($project, int $mtime = 2): void
     {
         $Console = new Console\Optimize();
         $Console->setArgument('project', $project);
@@ -99,7 +98,7 @@ class Optimizer
 
         try {
             return QUI\Cache\Manager::get($cacheName);
-        } catch (QUI\Exception $Exception) {
+        } catch (QUI\Exception) {
         }
 
         // config params
@@ -228,7 +227,7 @@ class Optimizer
 
             if (!file_exists($cssFilePath)) {
                 // URL BIN DIR, we must use the real QUIQQER BIN DIR
-                if (strpos($cssFile, URL_BIN_DIR) === 0) {
+                if (str_starts_with($cssFile, URL_BIN_DIR)) {
                     $cssFilePath = OPT_DIR . 'quiqqer/quiqqer' . $cssFile;
 
                     if (!file_exists($cssFilePath)) {
@@ -248,12 +247,10 @@ class Optimizer
         $CSSMinify = new Minify_CSS();
         $cssContent = file_get_contents($cssFilePath);
 
-        $minified = $CSSMinify->minify($cssContent, [
+        return $CSSMinify->minify($cssContent, [
             'docRoot' => CMS_DIR,
             'currentDir' => dirname($cssFilePath) . '/'
         ]);
-
-        return $minified;
     }
 
     /**
@@ -262,7 +259,7 @@ class Optimizer
      * @param string $jsFile - JavaScript file
      * @throws QUI\Exception
      */
-    public static function optimizeJavaScript(string $jsFile)
+    public static function optimizeJavaScript(string $jsFile): void
     {
         $jsFilePath = $jsFile;
 
@@ -294,7 +291,7 @@ class Optimizer
      *
      * @throws QUI\Exception
      */
-    public static function optimizePNG(string $file)
+    public static function optimizePNG(string $file): void
     {
         if (!self::isOptiPngInstalled()) {
             return;
@@ -314,7 +311,7 @@ class Optimizer
      *
      * @throws QUI\Exception
      */
-    public static function optimizeJPG(string $file)
+    public static function optimizeJPG(string $file): void
     {
         if (!self::isJpegoptimInstalled()) {
             return;
@@ -330,7 +327,7 @@ class Optimizer
             $quality = (int)QUI::getPackage('quiqqer/cache')
                 ->getConfig()
                 ->getValue('settings', 'jpg_quality');
-        } catch (QUI\Exception $Exception) {
+        } catch (QUI\Exception) {
         }
 
         shell_exec('jpegoptim -m' . $quality . ' -o --strip-all "' . $file . '"');
@@ -378,7 +375,7 @@ class Optimizer
      *
      * @throws QUI\Exception
      */
-    public static function checkJpegoptimInstalled()
+    public static function checkJpegoptimInstalled(): void
     {
         if (self::$isJpegoptimInstalled !== null) {
             if (self::$isJpegoptimInstalled === false) {
@@ -401,7 +398,7 @@ class Optimizer
     /**
      * Returns if Jpegoptim is installed.
      *
-     * @return bool
+     * @return bool|null
      */
     public static function isJpegoptimInstalled(): ?bool
     {
@@ -411,7 +408,7 @@ class Optimizer
 
         try {
             self::checkJpegoptimInstalled();
-        } catch (QUI\Exception $Exception) {
+        } catch (QUI\Exception) {
             return false;
         }
 
@@ -429,7 +426,7 @@ class Optimizer
      *
      * @throws QUI\Exception
      */
-    public static function checkOptiPngInstalled()
+    public static function checkOptiPngInstalled(): void
     {
         if (self::$isOptiPngInstalled !== null) {
             if (self::$isOptiPngInstalled === false) {
@@ -453,7 +450,7 @@ class Optimizer
     /**
      * Returns if OptiPNG is installed.
      *
-     * @return bool
+     * @return bool|null
      */
     public static function isOptiPngInstalled(): ?bool
     {
@@ -463,7 +460,7 @@ class Optimizer
 
         try {
             self::checkOptiPngInstalled();
-        } catch (QUI\Exception $Exception) {
+        } catch (QUI\Exception) {
             return false;
         }
 
@@ -480,7 +477,7 @@ class Optimizer
      *
      * @throws QUI\Exception
      */
-    public static function checkWebPInstalled()
+    public static function checkWebPInstalled(): void
     {
         if (self::$isWebPInstalled !== null) {
             if (self::$isWebPInstalled === false) {
@@ -503,7 +500,7 @@ class Optimizer
     /**
      * Returns if webP is installed.
      *
-     * @return bool
+     * @return bool|null
      */
     public static function isWebPInstalled(): ?bool
     {
@@ -513,7 +510,7 @@ class Optimizer
 
         try {
             self::checkWebPInstalled();
-        } catch (QUI\Exception $Exception) {
+        } catch (QUI\Exception) {
             return false;
         }
 
@@ -523,7 +520,7 @@ class Optimizer
     /**
      * @return bool|string
      */
-    public static function webPCommand()
+    public static function webPCommand(): bool|string
     {
         if (self::isCommandAvailable("cwebp")) {
             return 'cwebp';
@@ -540,7 +537,7 @@ class Optimizer
      *
      * @return string|false
      */
-    public static function convertToWebP(string $file, bool $cmykConvert = true)
+    public static function convertToWebP(string $file, bool $cmykConvert = true): bool|string
     {
         if (!file_exists($file)) {
             return false;
@@ -553,7 +550,7 @@ class Optimizer
             $quality = (int)QUI::getPackage('quiqqer/cache')
                 ->getConfig()
                 ->getValue('settings', 'webp_quality');
-        } catch (QUI\Exception $Exception) {
+        } catch (QUI\Exception) {
         }
 
         if (!isset($parts['extension'])) {
@@ -588,7 +585,7 @@ class Optimizer
         // this only works if convert is available on the server.
         if (
             $cmykConvert
-            && strpos($output, 'libjpeg error: Unsupported color conversion request') !== false
+            && str_contains($output, 'libjpeg error: Unsupported color conversion request')
             && !file_exists($webPFile)
         ) {
             if (QUI\Utils\System::isSystemFunctionCallable('convert')) {
@@ -644,7 +641,7 @@ class Optimizer
                 self::checkUglifyTerserJsInstalled();
                 return 'uglifyjs.terser';
             }
-        } catch (QUI\Exception $Exception) {
+        } catch (QUI\Exception) {
         }
 
         try {
@@ -652,7 +649,7 @@ class Optimizer
                 self::checkUglifyJsInstalled();
                 return 'uglifyjs';
             }
-        } catch (QUI\Exception $Exception) {
+        } catch (QUI\Exception) {
         }
 
         throw new QUI\Exception('Please install uglifyjs or uglifyjs.terser');
@@ -664,7 +661,7 @@ class Optimizer
      *
      * @throws QUI\Exception
      */
-    public static function checkUglifyJsInstalled()
+    public static function checkUglifyJsInstalled(): void
     {
         if (self::$isUglifyJsInstalled !== null) {
             if (self::$isUglifyJsInstalled === false) {
@@ -690,7 +687,7 @@ class Optimizer
      *
      * @throws QUI\Exception
      */
-    public static function checkUglifyTerserJsInstalled()
+    public static function checkUglifyTerserJsInstalled(): void
     {
         if (self::$isUglifyTerserJsInstalled !== null) {
             if (self::$isUglifyTerserJsInstalled === false) {
@@ -713,7 +710,7 @@ class Optimizer
     /**
      * Returns if UglifyJS is installed.
      *
-     * @return bool
+     * @return bool|null
      */
     public static function isUglifyJsInstalled(): ?bool
     {
@@ -723,7 +720,7 @@ class Optimizer
 
         try {
             self::checkUglifyJsInstalled();
-        } catch (QUI\Exception $Exception) {
+        } catch (QUI\Exception) {
             return false;
         }
 
