@@ -6,6 +6,7 @@
 
 namespace QUI\Cache;
 
+use Intervention\Image\Image;
 use QUI;
 use QUI\Users\User;
 use QUI\Utils\System\File;
@@ -19,6 +20,7 @@ use function header_remove;
 use function ltrim;
 use function pathinfo;
 use function preg_match_all;
+use function preg_replace;
 use function str_replace;
 use function strlen;
 use function substr;
@@ -37,7 +39,7 @@ class EventCoordinator
     /**
      * @param $url
      */
-    public static function onRequestImageNotFound($url)
+    public static function onRequestImageNotFound($url): void
     {
         $ext = pathinfo($url, PATHINFO_EXTENSION);
 
@@ -164,7 +166,7 @@ class EventCoordinator
     /**
      * @param $webPFile
      */
-    public static function outputWebP($webPFile)
+    public static function outputWebP($webPFile): void
     {
         if (file_exists($webPFile)) {
             try {
@@ -181,7 +183,7 @@ class EventCoordinator
      * @param QUI\Rewrite $Rewrite
      * @param string $url
      */
-    public static function onRequest(QUI\Rewrite $Rewrite, string $url)
+    public static function onRequest(QUI\Rewrite $Rewrite, string $url): void
     {
         if (!defined('NO_INTERNAL_CACHE')) {
             define('NO_INTERNAL_CACHE', true); // use only website cache, not the quiqqer internal cache
@@ -204,8 +206,8 @@ class EventCoordinator
             ) {
                 // if webp supported, use it
                 if (
-                    strpos($_SERVER['HTTP_ACCEPT'], 'image/webp') !== false
-                    || isset($_SERVER['HTTP_USER_AGENT']) && strpos($_SERVER['HTTP_USER_AGENT'], ' Chrome/') !== false
+                    str_contains($_SERVER['HTTP_ACCEPT'], 'image/webp')
+                    || isset($_SERVER['HTTP_USER_AGENT']) && str_contains($_SERVER['HTTP_USER_AGENT'], ' Chrome/')
                     || $ignoreWebpCheck
                 ) {
                     // webp is supported!
@@ -221,7 +223,7 @@ class EventCoordinator
                     }
                 }
             }
-        } catch (QUI\Exception $Exception) {
+        } catch (QUI\Exception) {
         }
 
         if (!$cacheEnabled) {
@@ -277,7 +279,7 @@ class EventCoordinator
      *
      * @param string $output
      */
-    public static function onRequestOutput(string &$output)
+    public static function onRequestOutput(string &$output): void
     {
         $getParams = $_GET;
         $postParams = $_POST;
@@ -356,7 +358,7 @@ class EventCoordinator
      *
      * @param QUI\Package\Package $Package
      */
-    public static function onPackageConfigSave(QUI\Package\Package $Package)
+    public static function onPackageConfigSave(QUI\Package\Package $Package): void
     {
         if ($Package->getName() !== 'quiqqer/cache') {
             return;
@@ -372,7 +374,7 @@ class EventCoordinator
      *
      * @param QUI\Template $Template
      */
-    public static function onTemplateGetHeader(QUI\Template $Template)
+    public static function onTemplateGetHeader(QUI\Template $Template): void
     {
         try {
             $Package = QUI::getPackage('quiqqer/cache');
@@ -385,13 +387,9 @@ class EventCoordinator
 
         $Template->extendHeader(
             "<script>
-                var QUIQQER_CACHE_CACHESETTING = {$cacheSetting};
+                window.QUIQQER_CACHE_CACHESETTING = $cacheSetting;
             </script>"
         );
-
-//        $Template->extendHeaderWithJavaScriptFile(
-//            URL_OPT_DIR . 'quiqqer/cache/bin/sw/html/init.js'
-//        );
 
         $Template->extendHeaderWithJavaScriptFile(
             URL_OPT_DIR . 'quiqqer/cache/bin/requireBundler.js'
@@ -402,7 +400,7 @@ class EventCoordinator
      * Clear the cache -> onSiteSave ...
      * look at <!-- clear cache --> in events.xml
      */
-    public static function clearCache()
+    public static function clearCache(): void
     {
         if (QUI::getUsers()->isSystemUser(QUI::getUserBySession())) {
             return;
@@ -419,12 +417,12 @@ class EventCoordinator
      * event : on image create size cache
      *
      * @param QUI\Projects\Media\Item $Image
-     * @param \Intervention\Image\Image $Cache
+     * @param Image $Cache
      */
     public static function onMediaCreateSizeCache(
         QUI\Projects\Media\Item $Image,
-        \Intervention\Image\Image $Cache
-    ) {
+        Image $Cache
+    ): void {
         if (!($Image instanceof QUI\Projects\Media\Image)) {
             return;
         }
@@ -466,7 +464,7 @@ class EventCoordinator
         $Cache->save(null, 70);
     }
 
-    public static function onMediaReplace(QUI\Projects\Media $Media, QUI\Projects\Media\Item $Item)
+    public static function onMediaReplace(QUI\Projects\Media $Media, QUI\Projects\Media\Item $Item): void
     {
         if (!Handler::init()->useWebP()) {
             return;
@@ -475,7 +473,7 @@ class EventCoordinator
         if ($Item instanceof QUI\Projects\Media\Image) {
             try {
                 $Item->deleteCache();
-            } catch (QUI\Exception $exception) {
+            } catch (QUI\Exception) {
             }
         }
     }
@@ -483,7 +481,7 @@ class EventCoordinator
     /**
      * @param QUI\Projects\Media\Item $Item
      */
-    public static function onMediaSave(QUI\Projects\Media\Item $Item)
+    public static function onMediaSave(QUI\Projects\Media\Item $Item): void
     {
         if (!Handler::init()->useWebP()) {
             return;
@@ -509,14 +507,14 @@ class EventCoordinator
             foreach ($files as $file) {
                 $len = strlen($filename);
 
-                if (substr($file, 0, $len + 2) == $filename . '__' && strpos($file, '.webp') !== false) {
+                if (substr($file, 0, $len + 2) == $filename . '__' && str_contains($file, '.webp')) {
                     File::unlink($cacheData['dirname'] . '/' . $file);
                 }
             }
 
             // create the webp main cache
             $cacheFile = $Item->createCache();
-        } catch (QUI\Exception $Exception) {
+        } catch (QUI\Exception) {
             return;
         }
 
@@ -533,14 +531,14 @@ class EventCoordinator
                     QUI::getLocale()->get('quiqqer/cache', 'message.attention.webp.duplicate.file')
                 );
             }
-        } catch (QUI\Exception $Exception) {
+        } catch (QUI\Exception) {
         }
     }
 
     /**
      * @param $picture
      */
-    public static function onMediaCreateImageHtml(&$picture)
+    public static function onMediaCreateImageHtml(&$picture): void
     {
         if (Handler::init()->useWebP() === false) {
             return;
@@ -585,13 +583,13 @@ class EventCoordinator
         ], 'image/webp', $picture);
 
         // add fallback png / jpg
-        $picture = \preg_replace('#<img#i', $lastSourceSet . '<img', $picture);
+        $picture = preg_replace('#<img#i', $lastSourceSet . '<img', $picture);
     }
 
     /**
      * event: on quiqqer translator publish
      */
-    public static function quiqqerTranslatorPublish()
+    public static function quiqqerTranslatorPublish(): void
     {
         self::clearCache();
     }
@@ -601,13 +599,13 @@ class EventCoordinator
      * @param $src
      * @param $params
      */
-    public static function smartyImageOnlySource($smarty, &$src, &$params)
+    public static function smartyImageOnlySource($smarty, &$src, &$params): void
     {
         if (!Handler::init()->useWebP()) {
             return;
         }
 
-        if (strpos($src, '.jpg') !== false || strpos($src, '.jpeg') !== false || strpos($src, '.png') !== false) {
+        if (str_contains($src, '.jpg') || str_contains($src, '.jpeg') || str_contains($src, '.png')) {
             $src = str_replace([
                 '.jpg',
                 '.jpeg',
@@ -621,7 +619,7 @@ class EventCoordinator
      *
      * @return void
      */
-    public static function onMailerSendInit()
+    public static function onMailerSendInit(): void
     {
         // this solution is not optimal
         // if a mail is sent during the normal running system, the webp is off for everyone (smarty too)
@@ -634,7 +632,7 @@ class EventCoordinator
      * @param $menuId
      * @return void
      */
-    public static function onQuiqqerMenuIndependentClear($menuId)
+    public static function onQuiqqerMenuIndependentClear($menuId): void
     {
         self::clearCache();
     }
@@ -656,7 +654,7 @@ class EventCoordinator
         Handler::removeLoggedInCookie();
     }
 
-    public static function onUpdateEnd()
+    public static function onUpdateEnd(): void
     {
         QUI\Cache\Handler::init()->clearCache();
     }

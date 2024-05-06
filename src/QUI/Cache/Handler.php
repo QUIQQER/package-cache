@@ -22,6 +22,7 @@ use function file_put_contents;
 use function is_array;
 use function is_dir;
 use function is_string;
+use function json_encode;
 use function ltrim;
 use function mb_strpos;
 use function md5;
@@ -39,6 +40,7 @@ use function substr_replace;
 use function trim;
 use function unlink;
 
+use const PATHINFO_EXTENSION;
 use const PREG_SET_ORDER;
 
 /**
@@ -83,7 +85,7 @@ class Handler
     }
 
     /**
-     * @return bool
+     * @return bool|null
      */
     public function useWebP(): ?bool
     {
@@ -172,7 +174,8 @@ class Handler
                         'country' => $countryCode
                     ];
 
-                    return '<script id="quiqqer-user-defined">var QUIQQER_USER= ' . \json_encode($user) . ';</script>';
+                    return '<script id="quiqqer-user-defined">window.QUIQQER_USER = ' .
+                        json_encode($user) . ';</script>';
                 },
                 $cache
             );
@@ -187,9 +190,9 @@ class Handler
      * @param string $content - content to store
      * @throws QUI\Exception
      */
-    public function generateCacheFromRequest(string &$content)
+    public function generateCacheFromRequest(string &$content): void
     {
-        // logged in users shouldn'tgenerate any cache
+        // logged-in users shouldn't generate any cache
         if (QUI::getUsers()->isAuth(QUI::getUserBySession())) {
             return;
         }
@@ -329,7 +332,7 @@ class Handler
     /**
      * Clear the complete cache
      */
-    public function clearCache()
+    public function clearCache(): void
     {
         try {
             QUI::getTemp()->moveToTemp($this->getCacheDir());
@@ -344,7 +347,7 @@ class Handler
      * @return string|string[]
      * @throws QUI\Exception
      */
-    public function generateCSSCache($content)
+    public function generateCSSCache($content): array|string
     {
         $Package = QUI::getPackage('quiqqer/cache');
         $cssEnabled = $Package->getConfig()->get('css', 'status');
@@ -385,7 +388,7 @@ class Handler
 
         // filter files
         foreach ($matches as $match) {
-            if (strpos($match[0], 'rel') !== false && strpos($match[0], 'rel="stylesheet"') === false) {
+            if (str_contains($match[0], 'rel') && !str_contains($match[0], 'rel="stylesheet"')) {
                 continue;
             }
 
@@ -401,19 +404,19 @@ class Handler
                 continue;
             }
 
-            if (strpos($match[0], 'alternate') !== false) {
+            if (str_contains($match[0], 'alternate')) {
                 continue;
             }
 
-            if (strpos($match[0], 'next') !== false) {
+            if (str_contains($match[0], 'next')) {
                 continue;
             }
 
-            if (strpos($match[0], 'prev') !== false) {
+            if (str_contains($match[0], 'prev')) {
                 continue;
             }
 
-            if (strpos($match[0], 'data-no-cache="1"') !== false) {
+            if (str_contains($match[0], 'data-no-cache="1"')) {
                 continue;
             }
 
@@ -432,8 +435,9 @@ class Handler
             $file = QUI\Utils\StringHelper::replaceDblSlashes($file);
 
             if (
-                strpos($file, $templatePath) !== false || $file === $customCss
-                || $templateParent && strpos($file, $templateParent) !== false
+                str_contains($file, $templatePath)
+                || $file === $customCss
+                || $templateParent && str_contains($file, $templateParent)
             ) {
                 $templateFiles[] = [
                     'file' => $file,
@@ -453,7 +457,7 @@ class Handler
         $amdCssFiles = $this->getAmdCssFiles($content);
 
         if (!empty($amdCssFiles)) {
-            $jsContent = '<script>var QUIQQER_CSS_PREFETCHED = ' . \json_encode($amdCssFiles) . '</script>';
+            $jsContent = '<script>window.QUIQQER_CSS_PREFETCHED = ' . json_encode($amdCssFiles) . '</script>';
             $content = str_replace(
                 '<!-- quiqqer-js-defined -->',
                 '<!-- quiqqer-js-defined -->' . $jsContent,
@@ -462,7 +466,7 @@ class Handler
 
             // add css files
             foreach ($amdCssFiles as $cssFile => $v) {
-                if (strpos($cssFile, 'qui/') === 0) {
+                if (str_starts_with($cssFile, 'qui/')) {
                     $absPath = substr_replace(
                         $cssFile,
                         OPT_DIR . 'bin/qui/qui/',
@@ -528,7 +532,7 @@ class Handler
                 $CSSMinify->add($file);
                 $CSSMinify->minify($cssFile);
 
-                $comment = "\n/* File: {$match[1]} */\n";
+                $comment = "\n/* File: $match[1] */\n";
                 $cssContent .= $comment . file_get_contents($cssFile) . "\n";
 
                 unlink($cssFile);
@@ -562,7 +566,7 @@ class Handler
                 $CSSMinify->add($file);
                 $CSSMinify->minify($cssFile);
 
-                $comment = "\n/* File: {$match[1]} */\n";
+                $comment = "\n/* File: $match[1] */\n";
                 $cssContent .= $comment . file_get_contents($cssFile) . "\n";
 
                 unlink($cssFile);
@@ -591,7 +595,7 @@ class Handler
             $cacheUrlInlineFile = $urlBinDir . $cssId . '.inline.cache.css';
 
             foreach ($matches as $match) {
-                if (strpos($match[0], 'data-no-cache="1"') !== false) {
+                if (str_contains($match[0], 'data-no-cache="1"')) {
                     continue;
                 }
 
@@ -654,7 +658,7 @@ class Handler
      * @param $content
      * @return string|string[]
      */
-    public function generateJavaScriptCache($content)
+    public function generateJavaScriptCache($content): array|string
     {
         $binDir = $this->getCacheDir() . 'bin/';
         $urlBinDir = $this->getURLCacheDir() . 'bin/';
@@ -695,7 +699,7 @@ class Handler
             $path = trim($amdModule[1]);
             $path = trim($path, '"');
 
-            if (strpos($path, 'package/') !== 0) {
+            if (!str_starts_with($path, 'package/')) {
                 continue;
             }
 
@@ -759,25 +763,25 @@ class Handler
 
 
         foreach ($matches as $entry) {
-            if (strpos($entry[0], 'id="quiqqer-user-defined"') !== false) {
+            if (str_contains($entry[0], 'id="quiqqer-user-defined"')) {
                 continue;
             }
 
             // quiqqer/package-cache/issues/7
-            if (strpos($entry[0], 'type=') !== false) {
+            if (str_contains($entry[0], 'type=')) {
                 if (
-                    strpos($entry[0], 'type="application/javascript"') === false &&
-                    strpos($entry[0], 'type="text/javascript"') === false
+                    !str_contains($entry[0], 'type="application/javascript"') &&
+                    !str_contains($entry[0], 'type="text/javascript"')
                 ) {
                     continue;
                 }
             }
 
-            if (strpos($entry[0], 'data-no-cache="1"') !== false) {
+            if (str_contains($entry[0], 'data-no-cache="1"')) {
                 continue;
             }
 
-            if (strpos($entry[0], 'src=') === false) {
+            if (!str_contains($entry[0], 'src=')) {
                 $content = str_replace($entry, '', $content);
                 $jsContent .= $entry[1];
                 continue;
@@ -822,7 +826,7 @@ class Handler
 
             try {
                 Optimizer::optimizeJavaScript($cacheJSFile);
-            } catch (QUI\Exception $Exception) {
+            } catch (QUI\Exception) {
                 // could not optimize javascript
             }
         }
@@ -887,7 +891,7 @@ class Handler
 
             try {
                 Optimizer::optimizeJavaScript($cacheJSFile);
-            } catch (QUI\Exception $Exception) {
+            } catch (QUI\Exception) {
             }
         }
 
@@ -928,7 +932,7 @@ class Handler
             $path = trim($amdModule[1]);
             $path = trim($path, '"');
 
-            if (strpos($path, 'package/') !== 0) {
+            if (!str_starts_with($path, 'package/')) {
                 continue;
             }
 
@@ -947,7 +951,7 @@ class Handler
 
             $moduleContent = file_get_contents($absPath);
 
-            if (strpos($moduleContent, 'css!') === false) {
+            if (!str_contains($moduleContent, 'css!')) {
                 continue;
             }
 
@@ -972,18 +976,18 @@ class Handler
      * @param $content
      * @return array|string|string[]|null
      */
-    protected function parseImagesToWebP($content)
+    protected function parseImagesToWebP($content): array|string|null
     {
         return preg_replace_callback(
             '#(src|data\-image|data\-src)="([^"]*)"#',
             function ($data) {
                 $src = $data[2];
 
-                if (strpos($src, 'media/cache') === false) {
+                if (!str_contains($src, 'media/cache')) {
                     return $data[0];
                 }
 
-                $ext = pathinfo($src, \PATHINFO_EXTENSION);
+                $ext = pathinfo($src, PATHINFO_EXTENSION);
 
                 if ($ext === 'png' || $ext === 'jpg' || $ext === 'jpeg') {
                     return str_replace(['.png', '.jpg', 'jpeg'], '.webp', $data[0]);
