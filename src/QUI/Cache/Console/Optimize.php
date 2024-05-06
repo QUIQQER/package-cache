@@ -41,7 +41,7 @@ class Optimize extends QUI\System\Console\Tool
      *
      * @see \QUI\System\Console\Tool::execute()
      */
-    public function execute()
+    public function execute(): void
     {
         $project = $this->getArgument('project');
         $mtime = $this->getArgument('mtime');
@@ -84,7 +84,7 @@ class Optimize extends QUI\System\Console\Tool
             foreach ($list as $image) {
                 try {
                     QUI\Cache\Optimizer::optimizePNG(CMS_DIR . $image);
-                } catch (QUI\Exception $Exception) {
+                } catch (QUI\Exception) {
                     continue;
                 }
             }
@@ -119,7 +119,7 @@ class Optimize extends QUI\System\Console\Tool
             foreach ($list as $image) {
                 try {
                     QUI\Cache\Optimizer::optimizeJPG(CMS_DIR . $image);
-                } catch (QUI\Exception $Exception) {
+                } catch (QUI\Exception) {
                     continue;
                 }
             }
