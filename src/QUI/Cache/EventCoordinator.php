@@ -262,7 +262,7 @@ class EventCoordinator
                 'must_revalidate' => true
             ]);
 
-            // Remove session cookie from cached responses as the response is not unique (see quiqqer/quiqqer#1290)
+            // Remove session cookie from cached responses as the response is not unique (see quiqqer/core#1290)
             header_remove('Set-Cookie');
 
             $Response->send();

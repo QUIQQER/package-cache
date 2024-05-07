@@ -146,14 +146,14 @@ class Optimizer
         // set main paths
         $requireConf['paths']["locale"] = ltrim(URL_VAR_DIR . "locale/bin", '/');
         $requireConf['paths']["qui"] = ltrim(URL_OPT_DIR . "quiqqer/qui/qui", '/');
-        $requireConf['paths']["classes"] = ltrim(URL_OPT_DIR . "quiqqer/quiqqer/bin/QUI/classes", '/');
-        $requireConf['paths']["controls"] = ltrim(URL_OPT_DIR . "quiqqer/quiqqer/bin/QUI/controls", '/');
-        $requireConf['paths']["utils"] = ltrim(URL_OPT_DIR . "quiqqer/quiqqer/bin/QUI/utils", '/');
-        $requireConf['paths']["polyfills"] = ltrim(URL_OPT_DIR . "quiqqer/quiqqer/bin/QUI/polyfills", '/');
-        $requireConf['paths']["Controls"] = ltrim(URL_OPT_DIR . "quiqqer/quiqqer/bin/Controls", '/');
-        $requireConf['paths']["Ajax"] = ltrim(URL_OPT_DIR . "quiqqer/quiqqer/bin/QUI/Ajax", '/');
-        $requireConf['paths']["Locale"] = ltrim(URL_OPT_DIR . "quiqqer/quiqqer/bin/QUI/Locale", '/');
-        $requireConf['paths']["UploadManager"] = ltrim(URL_OPT_DIR . "quiqqer/quiqqer/bin/QUI/UploadManager", '/');
+        $requireConf['paths']["classes"] = ltrim(URL_OPT_DIR . "quiqqer/core/bin/QUI/classes", '/');
+        $requireConf['paths']["controls"] = ltrim(URL_OPT_DIR . "quiqqer/core/bin/QUI/controls", '/');
+        $requireConf['paths']["utils"] = ltrim(URL_OPT_DIR . "quiqqer/core/bin/QUI/utils", '/');
+        $requireConf['paths']["polyfills"] = ltrim(URL_OPT_DIR . "quiqqer/core/bin/QUI/polyfills", '/');
+        $requireConf['paths']["Controls"] = ltrim(URL_OPT_DIR . "quiqqer/core/bin/Controls", '/');
+        $requireConf['paths']["Ajax"] = ltrim(URL_OPT_DIR . "quiqqer/core/bin/QUI/Ajax", '/');
+        $requireConf['paths']["Locale"] = ltrim(URL_OPT_DIR . "quiqqer/core/bin/QUI/Locale", '/');
+        $requireConf['paths']["UploadManager"] = ltrim(URL_OPT_DIR . "quiqqer/core/bin/QUI/UploadManager", '/');
 
 
         // create config files
@@ -228,7 +228,7 @@ class Optimizer
             if (!file_exists($cssFilePath)) {
                 // URL BIN DIR, we must use the real QUIQQER BIN DIR
                 if (str_starts_with($cssFile, URL_BIN_DIR)) {
-                    $cssFilePath = OPT_DIR . 'quiqqer/quiqqer' . $cssFile;
+                    $cssFilePath = OPT_DIR . 'quiqqer/core' . $cssFile;
 
                     if (!file_exists($cssFilePath)) {
                         $parse = parse_url($cssFilePath);
