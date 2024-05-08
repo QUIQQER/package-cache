@@ -47,7 +47,7 @@ final class LoggedInCookieForGdpr implements CookieInterface
         return sprintf(
             '%d %s',
             $this->loggedInCookie->getLifetimeInSeconds(),
-            QUI::getLocale()->get('quiqqer/quiqqer', 'seconds')
+            QUI::getLocale()->get('quiqqer/core', 'seconds')
         );
     }
 
