@@ -755,11 +755,11 @@ class Handler
         $matches[] = ['<script src="' . URL_OPT_DIR . 'bin/qui/qui/controls/messages/Error.js"></script>'];
         $matches[] = ['<script src="' . URL_OPT_DIR . 'bin/qui/qui/classes/utils/SimulateEvent.js"></script>'];
 
-        $matches[] = ['<script src="' . URL_OPT_DIR . 'quiqqer/quiqqer/bin/QUI/utils/Session.js"></script>'];
-        $matches[] = ['<script src="' . URL_OPT_DIR . 'quiqqer/quiqqer/bin/QUI/Ajax.js"></script>'];
-        $matches[] = ['<script src="' . URL_OPT_DIR . 'quiqqer/quiqqer/bin/QUI/Locale.js"></script>'];
-        $matches[] = ['<script src="' . URL_OPT_DIR . 'quiqqer/quiqqer/bin/QUI/classes/Locale.js"></script>'];
-        $matches[] = ['<script src="' . URL_OPT_DIR . 'quiqqer/quiqqer/bin/QUI/classes/request/Bundler.js"></script>'];
+        $matches[] = ['<script src="' . URL_OPT_DIR . 'quiqqer/core/bin/QUI/utils/Session.js"></script>'];
+        $matches[] = ['<script src="' . URL_OPT_DIR . 'quiqqer/core/bin/QUI/Ajax.js"></script>'];
+        $matches[] = ['<script src="' . URL_OPT_DIR . 'quiqqer/core/bin/QUI/Locale.js"></script>'];
+        $matches[] = ['<script src="' . URL_OPT_DIR . 'quiqqer/core/bin/QUI/classes/Locale.js"></script>'];
+        $matches[] = ['<script src="' . URL_OPT_DIR . 'quiqqer/core/bin/QUI/classes/request/Bundler.js"></script>'];
 
 
         foreach ($matches as $entry) {
