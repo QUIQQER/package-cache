@@ -695,6 +695,15 @@ class Handler
             $path = trim($amdModule[1]);
             $path = trim($path, '"');
 
+            // consider relative path url to the js file
+            if (file_exists(CMS_DIR . $path)) {
+                $matches[] = [
+                    '<script src="' .  $path . '"></script>'
+                ];
+
+                continue;
+            }
+
             if (strpos($path, 'package/') !== 0) {
                 continue;
             }
