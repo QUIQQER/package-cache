@@ -6,6 +6,11 @@ parameters:
     paths:
         - src
         - ajax
+    excludePaths:
+        # Implements 'QUI\GDPR\CookieInterface' which is part of optional package 'quiqqer/gdpr'
+        - src/QUI/Cache/Cookie/LoggedInCookieForGdpr.php
+        # Uses 'QUI\GDPR\CookieInterface' which is part of optional package 'quiqqer/gdpr'
+        - src/QUI/Cache/CookieProvider.php
     bootstrapFiles:
         - tests/phpstan-bootstrap.php
 
