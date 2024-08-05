@@ -1,0 +1,56 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Call to an undefined method QUI\\\\Interfaces\\\\Projects\\\\Media\\\\File\\:\\:createResizeCache\\(\\)\\.$#"
+			count: 1
+			path: src/QUI/Cache/EventCoordinator.php
+
+		-
+			message: "#^Parameter \\#1 \\$options of method QUI\\\\Projects\\\\Media\\\\Item\\:\\:getPathinfo\\(\\) expects array\\|bool, int given\\.$#"
+			count: 1
+			path: src/QUI/Cache/EventCoordinator.php
+
+		-
+			message: "#^Parameter \\#2 \\$Response of static method QUI\\\\Cache\\\\Parser\\\\HTTP2ServerPush\\:\\:parseCSS\\(\\) expects null, Symfony\\\\Component\\\\HttpFoundation\\\\Response given\\.$#"
+			count: 1
+			path: src/QUI/Cache/EventCoordinator.php
+
+		-
+			message: "#^Parameter \\#2 \\$Response of static method QUI\\\\Cache\\\\Parser\\\\HTTP2ServerPush\\:\\:parseImages\\(\\) expects null, Symfony\\\\Component\\\\HttpFoundation\\\\Response given\\.$#"
+			count: 1
+			path: src/QUI/Cache/EventCoordinator.php
+
+		-
+			message: "#^Parameter \\$Registrar of method QUI\\\\Cache\\\\EventCoordinator\\:\\:onQuiqqerFrontendUsersUserAutoLogin\\(\\) has invalid type QUI\\\\FrontendUsers\\\\RegistrarInterface\\.$#"
+			count: 1
+			path: src/QUI/Cache/EventCoordinator.php
+
+		-
+			message: "#^Parameter \\#2 \\$value of function setcookie expects string, true given\\.$#"
+			count: 1
+			path: src/QUI/Cache/Handler.php
+
+		-
+			message: "#^Parameter \\#4 \\$path of function setcookie expects string, null given\\.$#"
+			count: 2
+			path: src/QUI/Cache/Handler.php
+
+		-
+			message: "#^Parameter \\#5 \\$domain of function setcookie expects string, null given\\.$#"
+			count: 2
+			path: src/QUI/Cache/Handler.php
+
+		-
+			message: "#^Parameter \\#1 \\$arg of function escapeshellarg expects string, int given\\.$#"
+			count: 1
+			path: src/QUI/Cache/Optimizer.php
+
+		-
+			message: "#^Parameter \\#2 \\$value of method QUI\\\\System\\\\Console\\\\Tool\\:\\:setArgument\\(\\) expects bool\\|string, int given\\.$#"
+			count: 1
+			path: src/QUI/Cache/Optimizer.php
+
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 2
+			path: src/QUI/Cache/Parser/HTTP2ServerPush.php
