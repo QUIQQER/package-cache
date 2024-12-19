@@ -21,11 +21,6 @@ parameters:
 			path: src/QUI/Cache/EventCoordinator.php
 
 		-
-			message: "#^Parameter \\$Registrar of method QUI\\\\Cache\\\\EventCoordinator\\:\\:onQuiqqerFrontendUsersUserAutoLogin\\(\\) has invalid type QUI\\\\FrontendUsers\\\\RegistrarInterface\\.$#"
-			count: 1
-			path: src/QUI/Cache/EventCoordinator.php
-
-		-
 			message: "#^Parameter \\#2 \\$value of function setcookie expects string, true given\\.$#"
 			count: 1
 			path: src/QUI/Cache/Handler.php
