@@ -223,7 +223,8 @@ class Handler
         if (!isset($vhosts[$urlHost])) {
             QUI\System\Log::addError('Missing vhost for cache generation', [
                 'urlParams' => $urlParams,
-                'uri' => $uri
+                'uri' => $uri,
+                '$urlHost' => $urlHost
             ]);
 
             return;
@@ -698,6 +699,15 @@ class Handler
         foreach ($amdModules as $amdModule) {
             $path = trim($amdModule[1]);
             $path = trim($path, '"');
+
+            // consider relative path url to the js file
+            if (file_exists(CMS_DIR . $path)) {
+                $matches[] = [
+                    '<script src="' .  $path . '"></script>'
+                ];
+
+                continue;
+            }
 
             if (!str_starts_with($path, 'package/')) {
                 continue;
