@@ -644,7 +644,7 @@ class EventCoordinator
 
     public static function onQuiqqerFrontendUsersUserAutoLogin(
         User $User,
-        ?QUI\FrontendUsers\RegistrarInterface $Registrar
+        mixed $Registrar
     ): void {
         Handler::setLoggedInCookieIfEnabled();
     }
