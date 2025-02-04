@@ -8,7 +8,6 @@ namespace QUI\Cache\Parser;
 
 use QUI;
 use QUI\Utils\StringHelper as StringUtils;
-
 use Symfony\Component\HttpFoundation\Response;
 
 use function strpos;
