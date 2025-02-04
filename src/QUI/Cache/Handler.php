@@ -1019,10 +1019,10 @@ class Handler
 
         setcookie(
             $LoggedInCookie->getName(),
-            true,
+            '',
             time() + $LoggedInCookie->getLifetimeInSeconds(),
-            null,
-            null,
+            '',
+            '',
             true,
             true
         );
@@ -1036,8 +1036,8 @@ class Handler
             $LoggedInCookie->getName(),
             '',
             1,
-            null,
-            null,
+            '',
+            '',
             true,
             true
         );
