@@ -44,7 +44,7 @@ class Optimize extends QUI\System\Console\Tool
     public function execute(): void
     {
         $project = $this->getArgument('project');
-        $mtime = $this->getArgument('mtime');
+        $mtime = (int)$this->getArgument('mtime');
 
         if ($project === '' || $project === '*') {
             $projects = QUI::getProjectManager()->getProjectList();

@@ -8,6 +8,7 @@ namespace QUI\Cache\Parser;
 
 use QUI;
 use QUI\Utils\StringHelper as StringUtils;
+use Symfony\Component\HttpFoundation\Response;
 
 use function strpos;
 
@@ -21,10 +22,11 @@ class HTTP2ServerPush
 {
     /**
      * @param string $output
-     * @param null $Response
+     * @param Response|null $Response
      */
-    public static function parseImages($output, $Response = null): void
+    public static function parseImages(string $output, null|Response $Response = null): void
     {
+        /*
         if ($Response === null) {
             $Response = QUI::getGlobalResponse();
         }
@@ -54,14 +56,16 @@ class HTTP2ServerPush
                 false
             );
         }
+        */
     }
 
     /**
      * @param string $output
-     * @param null $Response
+     * @param Response|null $Response
      */
-    public static function parseCSS($output, $Response = null)
+    public static function parseCSS(string $output, null|Response $Response = null): void
     {
+        /*
         if ($Response === null) {
             $Response = QUI::getGlobalResponse();
         }
@@ -107,5 +111,6 @@ class HTTP2ServerPush
                 false
             );
         }
+        */
     }
 }

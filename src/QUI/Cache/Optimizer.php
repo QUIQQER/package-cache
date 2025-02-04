@@ -70,14 +70,14 @@ class Optimizer
     // region Optimization Methods
 
     /**
-     * @param $project
+     * @param string $project
      * @param int $mtime
      */
-    public static function optimizeProjectImages($project, int $mtime = 2): void
+    public static function optimizeProjectImages(string $project, int $mtime = 2): void
     {
         $Console = new Console\Optimize();
         $Console->setArgument('project', $project);
-        $Console->setArgument('mtime', $mtime);
+        $Console->setArgument('mtime', (string)$mtime);
         $Console->execute();
     }
 
@@ -563,6 +563,7 @@ class Optimizer
 
         $webPFile = $parts['dirname'] . DIRECTORY_SEPARATOR . $parts['filename'] . '.webp';
         $webP = self::webPCommand();
+        $quality = (string)$quality;
 
         if ($parts['extension'] === 'gif') {
             $webP = 'gif2webp';
