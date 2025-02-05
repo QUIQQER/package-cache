@@ -142,7 +142,7 @@ class EventCoordinator
             return;
         }
 
-        // if original cache doesn't exists, create it
+        // if original cache doesn't exist, create it
         try {
             $Project = QUI::getProject($project);
             $Media = $Project->getMedia();
@@ -150,13 +150,14 @@ class EventCoordinator
 
             if ($width === false && $height === false) {
                 $sizeCacheFile = $Image->createCache();
-            } else {
+            } elseif (method_exists($Image, 'createResizeCache')) {
                 $sizeCacheFile = $Image->createResizeCache($width, $height);
+            } else {
+                return;
             }
 
             $webPFile = Optimizer::convertToWebP($sizeCacheFile);
             self::outputWebP($webPFile);
-
             return;
         } catch (QUI\Exception $Exception) {
             QUI\System\Log::addDebug($Exception->getMessage());
@@ -559,11 +560,7 @@ class EventCoordinator
             $sourceSets
         );
 
-        if (!count($sourceSets)) {
-            return;
-        }
-
-        if (!isset($sourceSets[0])) {
+        if (!is_array($sourceSets)) {
             return;
         }
 
@@ -644,7 +641,7 @@ class EventCoordinator
 
     public static function onQuiqqerFrontendUsersUserAutoLogin(
         User $User,
-        ?QUI\FrontendUsers\RegistrarInterface $Registrar
+        mixed $Registrar
     ): void {
         Handler::setLoggedInCookieIfEnabled();
     }

@@ -223,7 +223,8 @@ class Handler
         if (!isset($vhosts[$urlHost])) {
             QUI\System\Log::addError('Missing vhost for cache generation', [
                 'urlParams' => $urlParams,
-                'uri' => $uri
+                'uri' => $uri,
+                '$urlHost' => $urlHost
             ]);
 
             return;
@@ -699,6 +700,15 @@ class Handler
             $path = trim($amdModule[1]);
             $path = trim($path, '"');
 
+            // consider relative path url to the js file
+            if (file_exists(CMS_DIR . $path)) {
+                $matches[] = [
+                    '<script src="' .  $path . '"></script>'
+                ];
+
+                continue;
+            }
+
             if (!str_starts_with($path, 'package/')) {
                 continue;
             }
@@ -1009,10 +1019,10 @@ class Handler
 
         setcookie(
             $LoggedInCookie->getName(),
-            true,
+            '',
             time() + $LoggedInCookie->getLifetimeInSeconds(),
-            null,
-            null,
+            '',
+            '',
             true,
             true
         );
@@ -1026,8 +1036,8 @@ class Handler
             $LoggedInCookie->getName(),
             '',
             1,
-            null,
-            null,
+            '',
+            '',
             true,
             true
         );
