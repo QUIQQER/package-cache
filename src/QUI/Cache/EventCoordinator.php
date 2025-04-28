@@ -391,10 +391,6 @@ class EventCoordinator
                 window.QUIQQER_CACHE_CACHESETTING = $cacheSetting;
             </script>"
         );
-
-        $Template->extendHeaderWithJavaScriptFile(
-            URL_OPT_DIR . 'quiqqer/cache/bin/requireBundler.js'
-        );
     }
 
     /**

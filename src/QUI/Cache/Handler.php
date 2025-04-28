@@ -841,8 +841,7 @@ class Handler
             }
         }
 
-        $cached = '<script src="' . URL_OPT_DIR . 'bin/quiqqer-asset/dexie/dexie/dist/dexie.min.js" type="text/javascript"></script>' .
-            '<script src="' . $cacheURLJSFile . '" type="text/javascript"></script>' .
+        $cached = '<script src="' . $cacheURLJSFile . '" type="text/javascript"></script>' .
             '</body>';
 
         // insert quiqqer.cache.js
