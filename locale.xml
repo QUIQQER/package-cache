@@ -49,6 +49,51 @@
             <en><![CDATA[Image optimizations]]></en>
         </locale>
 
+        <locale name="settings.category.quiqqer_js_optimizer.title">
+            <de><![CDATA[QUIQQER JS Optimizer]]></de>
+            <en><![CDATA[QUIQQER JS Optimizer]]></en>
+        </locale>
+        <locale name="settings.quiqqer_js_optimizer.status">
+            <de><![CDATA[QJS aktivieren]]></de>
+            <en><![CDATA[QJS activate]]></en>
+        </locale>
+        <locale name="settings.quiqqer_js_optimizer.status.description" html="true">
+            <de><![CDATA[
+            <p>Wenn dieses Häkchen aktiviert ist, wird der QUIQQER JS Optimizer (QJO) verwendet.
+            QJO verbessert das JavaScript auf deiner Website und entfernt aus dem Cache nur solche alten JavaScript-APIs,
+            die weltweit von modernen Browsern nicht mehr unterstützt werden.
+            Dadurch kann es passieren, dass sehr alte Browser (z. B. Internet Explorer) deine Seite nicht mehr richtig anzeigen können.
+            Moderne Browser sind davon nicht betroffen.</p>
+
+            <p style="font-weight: bold">Kurz: Es werden nur veraltete JavaScript-Funktionen entfernt,
+            die in aktuellen Browsern ohnehin nicht mehr funktionieren.</p>
+            ]]></de>
+            <en><![CDATA[
+            <p>When this checkbox is enabled, the QUIQQER JS Optimizer (QJO) is used.
+            QJO improves the JavaScript on your website and removes only those old JavaScript APIs
+            from the cache that are no longer supported by any modern browser.
+            As a result, very old browsers (such as Internet Explorer) may no longer display your site correctly.
+            Modern browsers are not affected.</p>
+
+            <p style="font-weight: bold">In short: Only outdated JavaScript functions that are no longer supported globally are removed.</p>
+            ]]></en>
+        </locale>
+
+        <locale name="settings.quiqqer_js_optimizer.license">
+            <de><![CDATA[Lizenz]]></de>
+            <en><![CDATA[License]]></en>
+        </locale>
+        <locale name="settings.quiqqer_js_optimizer.url">
+            <de><![CDATA[Optimizer URL]]></de>
+            <en><![CDATA[Optimizer URL]]></en>
+        </locale>
+        <locale name="settings.quiqqer_js_optimizer.url.description">
+            <de><![CDATA[Die Optimizer-URL ermöglicht es dir, eine eigene QJO-Instanz (QUIQQER JS Optimizer)
+            für die JavaScript-Optimierung anzugeben.]]></de>
+            <en><![CDATA[The Optimizer URL allows you to specify a custom QJO (QUIQQER JS Optimizer)
+            instance for JavaScript optimization.]]></en>
+        </locale>
+
         <locale name="settings.cache">
             <de><![CDATA[Frontend Cache aktivieren]]></de>
             <en><![CDATA[Enable frontend cache]]></en>
@@ -98,8 +143,10 @@
             <en><![CDATA[Number of seconds for browsers to cache a page]]></en>
         </locale>
         <locale name="settings.html_cache_max_age_header.description">
-            <de><![CDATA[QUIQQER setzt den 'Cache-Control'-Header mit diesem 'max-age'-Wert beim Aufruf von gecachten/optimierten Seiten]]></de>
-            <en><![CDATA[QUIQQER sets the 'Cache-Control' header with this 'max-age' value when calling cached/optimized pages]]></en>
+            <de>
+                <![CDATA[QUIQQER setzt den 'Cache-Control'-Header mit diesem 'max-age'-Wert beim Aufruf von gecachten/optimierten Seiten]]></de>
+            <en>
+                <![CDATA[QUIQQER sets the 'Cache-Control' header with this 'max-age' value when calling cached/optimized pages]]></en>
         </locale>
 
         <locale name="settings.login_cookie_is_enabled">

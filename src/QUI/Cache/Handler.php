@@ -231,7 +231,8 @@ class Handler
         }
 
         if (is_string($query)) {
-            parse_str($query, $query);
+            parse_str($query, $parseStr);
+            $query = $parseStr;
         }
 
         if (!is_array($query)) {
@@ -348,7 +349,7 @@ class Handler
      * @return string|string[]
      * @throws QUI\Exception
      */
-    public function generateCSSCache($content): array|string
+    public function generateCSSCache($content): array | string
     {
         $Package = QUI::getPackage('quiqqer/cache');
         $cssEnabled = $Package->getConfig()->get('css', 'status');
@@ -659,7 +660,7 @@ class Handler
      * @param $content
      * @return string|string[]
      */
-    public function generateJavaScriptCache($content): array|string
+    public function generateJavaScriptCache($content): array | string
     {
         $binDir = $this->getCacheDir() . 'bin/';
         $urlBinDir = $this->getURLCacheDir() . 'bin/';
@@ -703,7 +704,7 @@ class Handler
             // consider relative path url to the js file
             if (file_exists(CMS_DIR . $path)) {
                 $matches[] = [
-                    '<script src="' .  $path . '"></script>'
+                    '<script src="' . $path . '"></script>'
                 ];
 
                 continue;
@@ -834,11 +835,7 @@ class Handler
         if (!file_exists($cacheJSFile)) {
             file_put_contents($cacheJSFile, $jsContent);
 
-            try {
-                Optimizer::optimizeJavaScript($cacheJSFile);
-            } catch (QUI\Exception) {
-                // could not optimize javascript
-            }
+            Optimizer::optimizeJavaScriptViaQuiqqerJO($cacheJSFile);
         }
 
         $cached = '<script src="' . $cacheURLJSFile . '" type="text/javascript"></script>' .
@@ -898,10 +895,7 @@ class Handler
         if (!file_exists($cacheJSFile)) {
             file_put_contents($cacheJSFile, $jsContent);
 
-            try {
-                Optimizer::optimizeJavaScript($cacheJSFile);
-            } catch (QUI\Exception) {
-            }
+            Optimizer::optimizeJavaScriptViaQuiqqerJO($cacheJSFile);
         }
 
         return str_replace(
@@ -985,7 +979,7 @@ class Handler
      * @param $content
      * @return array|string|string[]|null
      */
-    protected function parseImagesToWebP($content): array|string|null
+    protected function parseImagesToWebP($content): array | string | null
     {
         return preg_replace_callback(
             '#(src|data\-image|data\-src)="([^"]*)"#',

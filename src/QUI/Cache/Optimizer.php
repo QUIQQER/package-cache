@@ -199,7 +199,7 @@ class Optimizer
         $result = shell_exec($exec);
 
         // optimize
-        self::optimizeJavaScript($buildFile);
+        self::optimizeJavaScriptViaQuiqqerJO($buildFile);
 
         if (file_exists($buildFile)) {
             return file_get_contents($buildFile);
@@ -255,35 +255,46 @@ class Optimizer
 
     /**
      * Optimize the content of a JavaScript file
+     * - uses the quiqqer optimizer service
      *
      * @param string $jsFile - JavaScript file
-     * @throws QUI\Exception
      */
-    public static function optimizeJavaScript(string $jsFile): void
+    public static function optimizeJavaScriptViaQuiqqerJO(string $jsFile): void
     {
-        $jsFilePath = $jsFile;
-
-        if (!file_exists($jsFilePath)) {
-            $parse = parse_url($jsFilePath);
-            $jsFilePath = $parse['path'];
-
-            if (!file_exists($jsFilePath)) {
-                throw new QUI\Exception('File not found', 404);
-            }
+        // is activated?
+        try {
+            $Config = QUI::getPackage('quiqqer/cache')->getConfig();
+            $qjo = $Config->get('quiqqer_js_optimizer', 'status');
+        } catch (QUI\Exception) {
+            return;
         }
 
-        $o = $jsFilePath . '_o';
-        $c = self::getUglifyCommand();
-
-        $exec = "$c $jsFilePath --screw-ie8 --compress --mangle > " . $o;
-        shell_exec($exec);
-
-        $oc = file_get_contents($o);
-
-        if (!empty($oc)) {
-            unlink($jsFilePath);
-            rename($o, $jsFilePath);
+        if (empty($qjo)) {
+            return;
         }
+
+        $code = file_get_contents($jsFile);
+
+        if (empty($code)) {
+            return;
+        }
+
+        $key = $Config->get('quiqqer_js_optimizer', 'license');
+        $optimizerUrl = $Config->get('quiqqer_js_optimizer', 'server_url');
+
+        if (empty($optimizerUrl)) {
+            $optimizerUrl = 'https://js-optimizer.quiqqer.com';
+        }
+
+        $result = file_get_contents($optimizerUrl . '/optimize', false, stream_context_create([
+            'http' => [
+                'method' => 'POST',
+                'header' => "Content-Type: text/plain\r\nX-License-Key: $key\r\n",
+                'content' => $code
+            ]
+        ]));
+
+        file_put_contents($jsFile, $result);
     }
 
     /**
@@ -520,7 +531,7 @@ class Optimizer
     /**
      * @return bool|string
      */
-    public static function webPCommand(): bool|string
+    public static function webPCommand(): bool | string
     {
         if (self::isCommandAvailable("cwebp")) {
             return 'cwebp';
@@ -537,7 +548,7 @@ class Optimizer
      *
      * @return string|false
      */
-    public static function convertToWebP(string $file, bool $cmykConvert = true): bool|string
+    public static function convertToWebP(string $file, bool $cmykConvert = true): bool | string
     {
         if (!file_exists($file)) {
             return false;

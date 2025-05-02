@@ -61,6 +61,20 @@
                 </conf>
             </section>
 
+            <section name="quiqqer_js_optimizer">
+                <conf name="status">
+                    <type><![CDATA[bool]]></type>
+                    <defaultvalue>0</defaultvalue>
+                </conf>
+                <conf name="license">
+                    <type><![CDATA[string]]></type>
+                </conf>
+                <conf name="url">
+                    <type><![CDATA[string]]></type>
+                    <defaultvalue>https://js-optimizer.quiqqer.com</defaultvalue>
+                </conf>
+            </section>
+
             <section name="css">
                 <conf name="status">
                     <type><![CDATA[bool]]></type>
@@ -68,7 +82,6 @@
                 </conf>
                 <conf name="css_inline">
                     <type><![CDATA[string]]></type>
-                    <defaultvalue></defaultvalue>
                 </conf>
             </section>
         </config>
@@ -142,6 +155,36 @@
                         </input>
 
                         <input type="hidden" data-qui="package/quiqqer/cache/bin/backend/settings/ClearCache"></input>
+                    </settings>
+
+
+                    <settings>
+                        <title>
+                            <locale group="quiqqer/cache" var="settings.category.quiqqer_js_optimizer.title"/>
+                        </title>
+
+                        <input conf="quiqqer_js_optimizer.status" type="checkbox">
+                            <text>
+                                <locale group="quiqqer/cache" var="settings.quiqqer_js_optimizer.status"/>
+                            </text>
+                            <description>
+                                <locale group="quiqqer/cache" var="settings.quiqqer_js_optimizer.status.description"/>
+                            </description>
+                        </input>
+                        <input conf="quiqqer_js_optimizer.license">
+                            <text>
+                                <locale group="quiqqer/cache" var="settings.quiqqer_js_optimizer.license"/>
+                            </text>
+                        </input>
+                        <input conf="quiqqer_js_optimizer.url">
+                            <text>
+                                <locale group="quiqqer/cache" var="settings.quiqqer_js_optimizer.url"/>
+                            </text>
+                            <description>
+                                <locale group="quiqqer/cache" var="settings.quiqqer_js_optimizer.url.description"/>
+                            </description>
+                        </input>
+
                     </settings>
 
                     <settings>
