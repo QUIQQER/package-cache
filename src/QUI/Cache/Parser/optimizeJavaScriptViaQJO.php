@@ -30,7 +30,6 @@ try {
 }
 
 $jsFile = $argv[1] ?? null;
-$jsFile = CMS_DIR . 'var/cache/packages/cache/bin/77a0a570ca7b8160a501cfc71c2e0bb2.cache.js';
 
 if ($debug) {
     QUI\System\Log::addError('QJO: Checking jsFile', [
