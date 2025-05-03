@@ -37,7 +37,7 @@ if ($debug) {
     ]);
 }
 
-if (!$jsFile) { // @phpstan-ignore-line
+if (!$jsFile) {
     if ($debug) {
         QUI\System\Log::addError('QJO: No jsFile parameter');
     }
