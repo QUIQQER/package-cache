@@ -835,7 +835,7 @@ class Handler
         if (!file_exists($cacheJSFile)) {
             file_put_contents($cacheJSFile, $jsContent);
 
-            Optimizer::optimizeJavaScriptViaQuiqqerJO($cacheJSFile);
+            Optimizer::optimizeJavaScriptViaQJO($cacheJSFile);
         }
 
         $cached = '<script src="' . $cacheURLJSFile . '" type="text/javascript"></script>' .
@@ -895,7 +895,7 @@ class Handler
         if (!file_exists($cacheJSFile)) {
             file_put_contents($cacheJSFile, $jsContent);
 
-            Optimizer::optimizeJavaScriptViaQuiqqerJO($cacheJSFile);
+            Optimizer::optimizeJavaScriptViaQJO($cacheJSFile);
         }
 
         return str_replace(

@@ -24,6 +24,10 @@ use function pathinfo;
 use function rename;
 use function serialize;
 use function shell_exec;
+use function stream_context_create;
+use function stream_get_contents;
+use function stream_get_meta_data;
+use function stripos;
 use function unlink;
 
 use const DIRECTORY_SEPARATOR;
@@ -199,7 +203,7 @@ class Optimizer
         $result = shell_exec($exec);
 
         // optimize
-        self::optimizeJavaScriptViaQuiqqerJO($buildFile);
+        self::optimizeJavaScriptViaQJO($buildFile);
 
         if (file_exists($buildFile)) {
             return file_get_contents($buildFile);
@@ -255,11 +259,13 @@ class Optimizer
 
     /**
      * Optimize the content of a JavaScript file
-     * - uses the quiqqer optimizer service
+     * - uses the quiqqer optimizer service (QJO)
+     * - QJO is a free service provided by quiqqer
+     * - https://js-optimizer.quiqqer.com
      *
      * @param string $jsFile - JavaScript file
      */
-    public static function optimizeJavaScriptViaQuiqqerJO(string $jsFile): void
+    public static function optimizeJavaScriptViaQJO(string $jsFile): void
     {
         // is activated?
         try {
@@ -273,28 +279,17 @@ class Optimizer
             return;
         }
 
-        $code = file_get_contents($jsFile);
+        $php = QUI::conf('globals', 'phpCommand');
 
-        if (empty($code)) {
-            return;
+        if (empty($php)) {
+            $php = 'php';
         }
 
-        $key = $Config->get('quiqqer_js_optimizer', 'license');
-        $optimizerUrl = $Config->get('quiqqer_js_optimizer', 'server_url');
-
-        if (empty($optimizerUrl)) {
-            $optimizerUrl = 'https://js-optimizer.quiqqer.com';
-        }
-
-        $result = file_get_contents($optimizerUrl . '/optimize', false, stream_context_create([
-            'http' => [
-                'method' => 'POST',
-                'header' => "Content-Type: text/plain\r\nX-License-Key: $key\r\n",
-                'content' => $code
-            ]
-        ]));
-
-        file_put_contents($jsFile, $result);
+        $command = $php;
+        $command .= ' ' . dirname(__FILE__) . '/Parser/optimizeJavaScriptViaQJO.php';
+        $command .= ' ' . escapeshellarg($jsFile);
+        $command .= ' > /dev/null 2>&1 &'; // asynchrone
+        exec($command);
     }
 
     /**

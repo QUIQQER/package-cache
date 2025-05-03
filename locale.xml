@@ -59,6 +59,7 @@
         </locale>
         <locale name="settings.quiqqer_js_optimizer.status.description" html="true">
             <de><![CDATA[
+            <p>Hinweis: Diese Funktion ist in der Testphase</p>
             <p>Wenn dieses Häkchen aktiviert ist, wird der QUIQQER JS Optimizer (QJO) verwendet.
             QJO verbessert das JavaScript auf deiner Website und entfernt aus dem Cache nur solche alten JavaScript-APIs,
             die weltweit von modernen Browsern nicht mehr unterstützt werden.
@@ -69,6 +70,7 @@
             die in aktuellen Browsern ohnehin nicht mehr funktionieren.</p>
             ]]></de>
             <en><![CDATA[
+            <p> Hinweis: Diese Funktion ist in der Testphase</p>
             <p>When this checkbox is enabled, the QUIQQER JS Optimizer (QJO) is used.
             QJO improves the JavaScript on your website and removes only those old JavaScript APIs
             from the cache that are no longer supported by any modern browser.
