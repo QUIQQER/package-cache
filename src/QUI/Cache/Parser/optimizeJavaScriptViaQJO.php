@@ -4,7 +4,7 @@ define('QUIQQER_SYSTEM', true);
 require dirname(__FILE__, 7) . '/header.php';
 
 /** @var true|false $debug */
-$debug = true;
+$debug = false;
 
 if ($debug) {
     QUI\System\Log::addError('QJO: Script started', [
