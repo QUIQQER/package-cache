@@ -3,6 +3,7 @@
 define('QUIQQER_SYSTEM', true);
 require dirname(__FILE__, 7) . '/header.php';
 
+/** @var true|false $debug */
 $debug = true;
 
 if ($debug) {
@@ -37,7 +38,7 @@ if ($debug) {
     ]);
 }
 
-if (!$jsFile) {
+if (!$jsFile) { // @phpstan-ignore-line
     if ($debug) {
         QUI\System\Log::addError('QJO: No jsFile parameter');
     }
@@ -164,7 +165,7 @@ if ($debug) {
     ]);
 }
 
-if (file_exists($jsFile)) {
+if (file_exists($jsFile)) { // @phpstan-ignore-line
     file_put_contents($jsFile, $result);
 }
 
