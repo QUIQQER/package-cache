@@ -24,6 +24,10 @@ use function pathinfo;
 use function rename;
 use function serialize;
 use function shell_exec;
+use function stream_context_create;
+use function stream_get_contents;
+use function stream_get_meta_data;
+use function stripos;
 use function unlink;
 
 use const DIRECTORY_SEPARATOR;
@@ -199,7 +203,7 @@ class Optimizer
         $result = shell_exec($exec);
 
         // optimize
-        self::optimizeJavaScript($buildFile);
+        self::optimizeJavaScriptViaQJO($buildFile);
 
         if (file_exists($buildFile)) {
             return file_get_contents($buildFile);
@@ -255,35 +259,37 @@ class Optimizer
 
     /**
      * Optimize the content of a JavaScript file
+     * - uses the quiqqer optimizer service (QJO)
+     * - QJO is a free service provided by quiqqer
+     * - https://js-optimizer.quiqqer.com
      *
      * @param string $jsFile - JavaScript file
-     * @throws QUI\Exception
      */
-    public static function optimizeJavaScript(string $jsFile): void
+    public static function optimizeJavaScriptViaQJO(string $jsFile): void
     {
-        $jsFilePath = $jsFile;
-
-        if (!file_exists($jsFilePath)) {
-            $parse = parse_url($jsFilePath);
-            $jsFilePath = $parse['path'];
-
-            if (!file_exists($jsFilePath)) {
-                throw new QUI\Exception('File not found', 404);
-            }
+        // is activated?
+        try {
+            $Config = QUI::getPackage('quiqqer/cache')->getConfig();
+            $qjo = $Config->get('quiqqer_js_optimizer', 'status');
+        } catch (QUI\Exception) {
+            return;
         }
 
-        $o = $jsFilePath . '_o';
-        $c = self::getUglifyCommand();
-
-        $exec = "$c $jsFilePath --screw-ie8 --compress --mangle > " . $o;
-        shell_exec($exec);
-
-        $oc = file_get_contents($o);
-
-        if (!empty($oc)) {
-            unlink($jsFilePath);
-            rename($o, $jsFilePath);
+        if (empty($qjo)) {
+            return;
         }
+
+        $php = QUI::conf('globals', 'phpCommand');
+
+        if (empty($php)) {
+            $php = 'php';
+        }
+
+        $command = $php;
+        $command .= ' ' . dirname(__FILE__) . '/Parser/optimizeJavaScriptViaQJO.php';
+        $command .= ' ' . escapeshellarg($jsFile);
+        $command .= ' > /dev/null 2>&1 &'; // asynchrone
+        exec($command);
     }
 
     /**
@@ -520,7 +526,7 @@ class Optimizer
     /**
      * @return bool|string
      */
-    public static function webPCommand(): bool|string
+    public static function webPCommand(): bool | string
     {
         if (self::isCommandAvailable("cwebp")) {
             return 'cwebp';
@@ -537,7 +543,7 @@ class Optimizer
      *
      * @return string|false
      */
-    public static function convertToWebP(string $file, bool $cmykConvert = true): bool|string
+    public static function convertToWebP(string $file, bool $cmykConvert = true): bool | string
     {
         if (!file_exists($file)) {
             return false;

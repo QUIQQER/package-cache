@@ -243,7 +243,7 @@ class EventCoordinator
             return;
         }
 
-        // loged in users get no cache
+        // logged-in users get no cache
         if (QUI::getUsers()->isAuth(QUI::getUserBySession())) {
             return;
         }
@@ -253,8 +253,8 @@ class EventCoordinator
             $Response = QUI::getGlobalResponse();
             $Response->setContent($content);
 
-            QUI\Cache\Parser\HTTP2ServerPush::parseCSS($content, $Response);
-            QUI\Cache\Parser\HTTP2ServerPush::parseImages($content, $Response);
+            //QUI\Cache\Parser\HTTP2ServerPush::parseCSS($content, $Response);
+            //QUI\Cache\Parser\HTTP2ServerPush::parseImages($content, $Response);
 
             $Response->headers->remove('Cache-Control');
             $Response->setCache([
@@ -294,7 +294,7 @@ class EventCoordinator
             return;
         }
 
-        // logged in users get no cache
+        // logged-in users get no cache
         if (QUI::getUsers()->isAuth(QUI::getUserBySession())) {
             $output = QUI\Cache\Parser\LazyLoading::getInstance()->parse($output);
 
@@ -340,7 +340,7 @@ class EventCoordinator
             if ((int)$Project->getConfig('website.nocache')) {
                 return;
             }
-        } catch (QUI\Exception $Exception) {
+        } catch (QUI\Exception) {
         }
 
         try {
