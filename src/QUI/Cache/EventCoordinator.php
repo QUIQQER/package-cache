@@ -6,6 +6,8 @@
 
 namespace QUI\Cache;
 
+use DOMDocument;
+use DOMElement;
 use Intervention\Image\Image;
 use QUI;
 use QUI\Users\User;
@@ -541,42 +543,91 @@ class EventCoordinator
             return;
         }
 
-        if (
-            stripos($picture, '.png') === false
-            && stripos($picture, '.jpg') === false
-            && stripos($picture, '.jpeg') === false
-        ) {
-            return;
+        if (stripos($picture, '<picture') !== false) {
+            libxml_use_internal_errors(true);
+            $dom = new DOMDocument();
+            $dom->loadHTML('<?xml encoding="utf-8" ?>' . $picture, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+            $pictures = $dom->getElementsByTagName('picture');
+
+            foreach ($pictures as $pic) {
+                $sources = [];
+
+                foreach ($pic->childNodes as $node) {
+                    if ($node instanceof DOMElement && $node->tagName === 'source') {
+                        $sources[] = $node;
+                    }
+                }
+
+                foreach ($sources as $source) {
+                    $srcset = $source->getAttribute('srcset');
+
+                    if (preg_match('/\.(jpe?g|png)(\?.*)?$/i', $srcset)) {
+                        $webpSrcset = preg_replace('/\.(jpe?g|png)(\?.*)?$/i', '.webp$2', $srcset);
+
+                        try {
+                            $webpSource = $dom->createElement('source');
+                        } catch (\Exception) {
+                            continue;
+                        }
+
+                        $webpSource->setAttribute('srcset', $webpSrcset);
+                        $webpSource->setAttribute('type', 'image/webp');
+
+                        foreach ($source->attributes as $attr) {
+                            if ($attr->name !== 'srcset' && $attr->name !== 'type') {
+                                $webpSource->setAttribute($attr->name, $attr->value);
+                            }
+                        }
+
+                        $pic->insertBefore($webpSource, $source);
+                    }
+                }
+
+                // <img> im <picture> ebenfalls als <source> ergänzen
+                foreach ($pic->childNodes as $node) {
+                    if ($node instanceof DOMElement && $node->tagName === 'img') {
+                        $imgSrc = $node->getAttribute('src');
+                        $imgSrcset = $node->getAttribute('srcset');
+
+                        if (
+                            preg_match('/\.(jpe?g|png)(\?.*)?$/i', $imgSrc) ||
+                            preg_match('/\.(jpe?g|png)(\?.*)?$/i', $imgSrcset)
+                        ) {
+                            try {
+                                $webpSource = $dom->createElement('source');
+                            } catch (\Exception) {
+                                continue;
+                            }
+
+                            // srcset bevorzugen, sonst src
+                            if (!empty($imgSrcset)) {
+                                $webpSrcset = str_ireplace(['.png', '.jpg', '.jpeg'], '.webp', $imgSrcset);
+                                $webpSource->setAttribute('srcset', $webpSrcset);
+                            } elseif (!empty($imgSrc)) {
+                                $webpSrc = preg_replace('/\.(jpe?g|png)(\?.*)?$/i', '.webp$2', $imgSrc);
+                                $webpSource->setAttribute('srcset', $webpSrc);
+                            }
+
+                            $webpSource->setAttribute('type', 'image/webp');
+
+                            if ($node->hasAttribute('sizes')) {
+                                $webpSource->setAttribute('sizes', $node->getAttribute('sizes'));
+                            }
+
+                            if ($node->hasAttribute('media')) {
+                                $webpSource->setAttribute('media', $node->getAttribute('media'));
+                            }
+
+                            $pic->insertBefore($webpSource, $node);
+                        }
+                    }
+                }
+            }
+
+            $result = $dom->saveHTML();
+            $result = preg_replace('/^<\?xml.*?\?>/', '', $result);
+            $picture = trim($result);
         }
-
-        // rewrite image
-        preg_match_all(
-            '#(<source[^>]*>)#i',
-            $picture,
-            $sourceSets
-        );
-
-        if (!is_array($sourceSets)) {
-            return;
-        }
-
-        // last sourceSet
-        $lastSourceSet = array_pop($sourceSets[0]);
-
-        $picture = str_ireplace([
-            '.png',
-            '.jpeg',
-            '.jpg'
-        ], '.webp', $picture);
-
-        $picture = str_ireplace([
-            'image/png',
-            'image/jpeg',
-            'image/jpg'
-        ], 'image/webp', $picture);
-
-        // add fallback png / jpg
-        $picture = preg_replace('#<img#i', $lastSourceSet . '<img', $picture);
     }
 
     /**
@@ -597,7 +648,7 @@ class EventCoordinator
         if (!Handler::init()->useWebP()) {
             return;
         }
-
+        return;
         if (str_contains($src, '.jpg') || str_contains($src, '.jpeg') || str_contains($src, '.png')) {
             $src = str_replace([
                 '.jpg',
