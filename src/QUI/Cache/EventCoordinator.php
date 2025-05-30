@@ -639,26 +639,6 @@ class EventCoordinator
     }
 
     /**
-     * @param $smarty
-     * @param $src
-     * @param $params
-     */
-    public static function smartyImageOnlySource($smarty, &$src, &$params): void
-    {
-        if (!Handler::init()->useWebP()) {
-            return;
-        }
-        return;
-        if (str_contains($src, '.jpg') || str_contains($src, '.jpeg') || str_contains($src, '.png')) {
-            $src = str_replace([
-                '.jpg',
-                '.jpeg',
-                '.png'
-            ], '.webp', $src);
-        }
-    }
-
-    /**
      * Don't use webp for mails
      *
      * @return void
