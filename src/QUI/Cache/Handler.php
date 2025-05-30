@@ -974,7 +974,7 @@ class Handler
     }
 
     /**
-     * Helper to parse the content for webo files not in <picture> or <img>
+     * Helper to parse the content for webp files not in <picture> or <img>
      *
      * @param $content
      * @return array|string|string[]|null
@@ -982,21 +982,37 @@ class Handler
     protected function parseImagesToWebP($content): array | string | null
     {
         return preg_replace_callback(
-            '#(src|data\-image|data\-src)="([^"]*)"#',
-            function ($data) {
-                $src = $data[2];
+            '#<img\b([^>]*)>#i',
+            function ($imgMatch) use ($content) {
+                $imgTag = $imgMatch[0];
 
-                if (!str_contains($src, 'media/cache')) {
-                    return $data[0];
+                // Prüfen, ob das <img> direkt innerhalb eines <picture> steht (vereinfachte Annäherung)
+                $pos = strpos($content, $imgTag);
+                $before = substr($content, 0, $pos);
+                $openPic = strripos($before, '<picture');
+                $closePic = strripos($before, '</picture>');
+
+                // Wenn das letzte <picture> vor dem <img> nach dem letzten </picture> liegt, ist es innerhalb eines <picture>
+                if ($openPic !== false && ($closePic === false || $openPic > $closePic)) {
+                    return $imgTag; // NICHT ersetzen
                 }
 
-                $ext = pathinfo($src, PATHINFO_EXTENSION);
-
-                if ($ext === 'png' || $ext === 'jpg' || $ext === 'jpeg') {
-                    return str_replace(['.png', '.jpg', 'jpeg'], '.webp', $data[0]);
-                }
-
-                return $data[0];
+                // src/srcset/data-image/data-src ersetzen
+                return preg_replace_callback(
+                    '#(src|data-image|data-src)="([^"]*)"#i',
+                    function ($data) {
+                        $src = $data[2];
+                        if (!str_contains($src, 'media/cache')) {
+                            return $data[0];
+                        }
+                        $ext = pathinfo($src, PATHINFO_EXTENSION);
+                        if ($ext === 'png' || $ext === 'jpg' || $ext === 'jpeg') {
+                            return str_replace(['.png', '.jpg', '.jpeg'], '.webp', $data[0]);
+                        }
+                        return $data[0];
+                    },
+                    $imgTag
+                );
             },
             $content
         );
