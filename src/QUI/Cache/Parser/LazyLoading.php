@@ -23,9 +23,9 @@ class LazyLoading extends QUI\Utils\Singleton
      * Add lazy loading part to html
      *
      * @param $content
-     * @return string|array|null
+     * @return string
      */
-    public function parse($content): string|array|null
+    public function parse($content): string
     {
         // parse images
         return preg_replace_callback(

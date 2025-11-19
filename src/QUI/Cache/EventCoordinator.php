@@ -21,7 +21,6 @@ use function file_exists;
 use function header_remove;
 use function ltrim;
 use function pathinfo;
-use function preg_match_all;
 use function preg_replace;
 use function str_replace;
 use function strlen;
@@ -79,10 +78,7 @@ class EventCoordinator
 
         if (isset($filenameParts[1])) {
             $sizeParts = explode('x', $filenameParts[1]);
-
-            if (isset($sizeParts[0])) {
-                $width = $sizeParts[0];
-            }
+            $width = $sizeParts[0];
 
             if (isset($sizeParts[1])) {
                 $height = $sizeParts[1];
@@ -299,7 +295,6 @@ class EventCoordinator
         // logged-in users get no cache
         if (QUI::getUsers()->isAuth(QUI::getUserBySession())) {
             $output = QUI\Cache\Parser\LazyLoading::getInstance()->parse($output);
-
             return;
         }
 

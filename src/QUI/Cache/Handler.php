@@ -347,11 +347,11 @@ class Handler
     }
 
     /**
-     * @param $content
-     * @return string|string[]
+     * @param string  $content
+     * @return string
      * @throws QUI\Exception
      */
-    public function generateCSSCache($content): array | string
+    public function generateCSSCache(string $content): string
     {
         $Package = QUI::getPackage('quiqqer/cache');
         $cssEnabled = $Package->getConfig()->get('css', 'status');
@@ -660,9 +660,9 @@ class Handler
 
     /**
      * @param $content
-     * @return string|string[]
+     * @return string
      */
-    public function generateJavaScriptCache($content): array | string
+    public function generateJavaScriptCache($content): string
     {
         $binDir = $this->getCacheDir() . 'bin/';
         $urlBinDir = $this->getURLCacheDir() . 'bin/';
@@ -978,10 +978,10 @@ class Handler
     /**
      * Helper to parse the content for webp files not in <picture> or <img>
      *
-     * @param $content
-     * @return array|string|string[]|null
+     * @param string $content
+     * @return string
      */
-    protected function parseImagesToWebP($content): array | string | null
+    protected function parseImagesToWebP(string $content): string
     {
         return preg_replace_callback(
             '#<img\b([^>]*)>#i',
