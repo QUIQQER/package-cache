@@ -7,9 +7,7 @@
 namespace QUI\Cache;
 
 use MatthiasMullie\Minify\CSS;
-use Minify_CSS;
 use QUI;
-
 use voku\helper\HtmlMin;
 
 use function copy;
@@ -27,10 +25,6 @@ use function pathinfo;
 use function rename;
 use function serialize;
 use function shell_exec;
-use function stream_context_create;
-use function stream_get_contents;
-use function stream_get_meta_data;
-use function stripos;
 use function unlink;
 
 use const DIRECTORY_SEPARATOR;

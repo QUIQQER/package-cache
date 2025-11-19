@@ -7,8 +7,6 @@
 namespace QUI\Cache;
 
 use MatthiasMullie\Minify\CSS;
-use Minify;
-use Minify_Source;
 use QUI;
 use QUI\Cache\Cookie\LoggedInCookie;
 
