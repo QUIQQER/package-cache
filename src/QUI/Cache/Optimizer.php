@@ -6,8 +6,9 @@
 
 namespace QUI\Cache;
 
-use Minify_CSS;
+use MatthiasMullie\Minify\CSS;
 use QUI;
+use voku\helper\HtmlMin;
 
 use function copy;
 use function dirname;
@@ -24,10 +25,6 @@ use function pathinfo;
 use function rename;
 use function serialize;
 use function shell_exec;
-use function stream_context_create;
-use function stream_get_contents;
-use function stream_get_meta_data;
-use function stripos;
 use function unlink;
 
 use const DIRECTORY_SEPARATOR;
@@ -248,13 +245,29 @@ class Optimizer
             }
         }
 
-        $CSSMinify = new Minify_CSS();
-        $cssContent = file_get_contents($cssFilePath);
+        //$cssContent = file_get_contents($cssFilePath);
 
-        return $CSSMinify->minify($cssContent, [
-            'docRoot' => CMS_DIR,
-            'currentDir' => dirname($cssFilePath) . '/'
-        ]);
+        // Minify-Teil: Erstelle Minifier mit QUELL-Datei (für Kontext)
+        $minifier = new CSS($cssFilePath);
+
+        // Simuliere currentDir + docRoot: Temp-Datei im package ordner (relativ zu dirname($cssFilePath))
+        // ich weis ist doof (Hen)
+        $simulatedDir = dirname($cssFilePath);  // Dein "currentDir"
+        $tempFile = $simulatedDir . '/.temp_' . uniqid('minify_', true) . '.css';
+
+        $minifier->minify($tempFile);
+        $minifiedContent = file_get_contents($tempFile);
+        unlink($tempFile);
+
+        return $minifiedContent;
+    }
+
+    public static function optimizeHtml(string $html): string
+    {
+        $minifier = new HtmlMin();
+        $minifier->doRemoveOmittedQuotes(false);
+
+        return $minifier->minify($html);
     }
 
     /**

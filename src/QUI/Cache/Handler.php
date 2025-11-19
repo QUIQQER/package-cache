@@ -7,8 +7,6 @@
 namespace QUI\Cache;
 
 use MatthiasMullie\Minify\CSS;
-use Minify;
-use Minify_Source;
 use QUI;
 use QUI\Cache\Cookie\LoggedInCookie;
 
@@ -250,14 +248,16 @@ class Handler
         $cacheId = md5($uri);
         $dir = $this->getCacheDir();
         $binDir = $this->getCacheDir() . 'bin/';
-        $urlBinDir = $this->getURLCacheDir() . 'bin/';
+        //$urlBinDir = $this->getURLCacheDir() . 'bin/';
 
         QUI\Utils\System\File::mkdir($dir);
         QUI\Utils\System\File::mkdir($binDir);
 
+        /*
         $Minify = new Minify();
         $Minify->setCache($binDir);
         $Minify->setDocRoot(CMS_DIR);
+        */
 
         /**
          * HTML
@@ -303,6 +303,8 @@ class Handler
          * HTML optimize
          */
         if ($htmlCacheSetting) {
+            $result = Optimizer::optimizeHtml($content);
+            /*
             $sources = [
                 new Minify_Source([
                     'id' => $cacheId,
@@ -319,7 +321,7 @@ class Handler
                 'id' => $cacheId,
                 'minifyAll' => true
             ]);
-
+*/
             // Workaround --> quiqqer/package-cache#46
             if (empty($result)) {
                 unlink($cacheHtmlFile);
@@ -345,11 +347,11 @@ class Handler
     }
 
     /**
-     * @param $content
-     * @return string|string[]
+     * @param string  $content
+     * @return string
      * @throws QUI\Exception
      */
-    public function generateCSSCache($content): array | string
+    public function generateCSSCache(string $content): string
     {
         $Package = QUI::getPackage('quiqqer/cache');
         $cssEnabled = $Package->getConfig()->get('css', 'status');
@@ -658,9 +660,9 @@ class Handler
 
     /**
      * @param $content
-     * @return string|string[]
+     * @return string
      */
-    public function generateJavaScriptCache($content): array | string
+    public function generateJavaScriptCache($content): string
     {
         $binDir = $this->getCacheDir() . 'bin/';
         $urlBinDir = $this->getURLCacheDir() . 'bin/';
@@ -976,10 +978,10 @@ class Handler
     /**
      * Helper to parse the content for webp files not in <picture> or <img>
      *
-     * @param $content
-     * @return array|string|string[]|null
+     * @param string $content
+     * @return string
      */
-    protected function parseImagesToWebP($content): array | string | null
+    protected function parseImagesToWebP(string $content): string
     {
         return preg_replace_callback(
             '#<img\b([^>]*)>#i',
