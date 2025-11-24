@@ -59,7 +59,7 @@ class Optimize extends QUI\System\Console\Tool
         }
 
         if (empty($project)) {
-            $project = QUI::getProjectManager()->getStandard()->getName();
+            $project = QUI::getProjectManager()->getStandard()?->getName();
         }
 
         $Project = QUI::getProjectManager()->getProject($project);
@@ -110,7 +110,7 @@ class Optimize extends QUI\System\Console\Tool
             $this->writeLn('Optimize JPG files ...', 'green');
 
             $list = shell_exec('find "' . $cacheDir . '" -iname \*.jp*g -type f -mtime -' . $mtime);
-            $list = explode("\n", trim($list));
+            $list = explode("\n", trim((string)$list));
             $count = count($list);
 
             $this->resetColor();
@@ -147,7 +147,7 @@ class Optimize extends QUI\System\Console\Tool
             $list = shell_exec(
                 'find "' . $cacheDir . '" -name \'*\' -exec file {} \; | grep -o -P \'^.+: \w+ image\''
             );
-            $list = explode("\n", trim($list));
+            $list = explode("\n", trim((string)$list));
             $count = count($list);
 
             $this->resetColor();
