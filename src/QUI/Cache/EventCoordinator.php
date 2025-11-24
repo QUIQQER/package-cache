@@ -38,9 +38,9 @@ use const PATHINFO_FILENAME;
 class EventCoordinator
 {
     /**
-     * @param $url
+     * @param string $url
      */
-    public static function onRequestImageNotFound($url): void
+    public static function onRequestImageNotFound(string $url): void
     {
         $ext = pathinfo($url, PATHINFO_EXTENSION);
 
@@ -99,7 +99,6 @@ class EventCoordinator
             ]);
         } catch (QUI\Exception $Exception) {
             QUI\System\Log::addDebug($Exception->getMessage());
-
             return;
         }
 
@@ -115,6 +114,11 @@ class EventCoordinator
         } else {
             /* @deprecated */
             $pathInfo = pathinfo($originalFile);
+
+            if (empty($pathInfo['extension'])) {
+                return;
+            }
+
             $originalExtension = $pathInfo['extension'];
         }
 
@@ -127,7 +131,7 @@ class EventCoordinator
 
         if (file_exists($cacheFile)) {
             $webPFile = Optimizer::convertToWebP($cacheFile);
-            self::outputWebP($webPFile);
+            self::outputWebP((string)$webPFile);
 
             return;
         }
@@ -135,7 +139,7 @@ class EventCoordinator
         // if original cache doesn't exist, and we need no sizes
         if ($width === false && $height === false && file_exists($originalCache)) {
             $webPFile = Optimizer::convertToWebP($originalCache);
-            self::outputWebP($webPFile);
+            self::outputWebP((string)$webPFile);
 
             return;
         }
@@ -155,7 +159,7 @@ class EventCoordinator
             }
 
             $webPFile = Optimizer::convertToWebP($sizeCacheFile);
-            self::outputWebP($webPFile);
+            self::outputWebP((string)$webPFile);
             return;
         } catch (QUI\Exception $Exception) {
             QUI\System\Log::addDebug($Exception->getMessage());
@@ -163,9 +167,9 @@ class EventCoordinator
     }
 
     /**
-     * @param $webPFile
+     * @param string $webPFile
      */
-    public static function outputWebP($webPFile): void
+    public static function outputWebP(string $webPFile): void
     {
         if (file_exists($webPFile)) {
             try {
@@ -188,20 +192,22 @@ class EventCoordinator
             define('NO_INTERNAL_CACHE', true); // use only website cache, not the quiqqer internal cache
         }
 
+        $config = null;
 
         try {
-            $cacheEnabled = QUI::getPackage('quiqqer/cache')->getConfig()->get('settings', 'cache');
+            $config = QUI::getPackage('quiqqer/cache')->getConfig();
+            $cacheEnabled = (bool)$config?->get('settings', 'cache');
         } catch (QUI\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
             $cacheEnabled = false;
         }
 
         try {
-            $ignoreWebpCheck = (bool)QUI::getPackage('quiqqer/cache')->getConfig()->get('settings', 'ignoreWebPCheck');
+            $ignoreWebpCheck = (bool)$config?->get('settings', 'ignoreWebPCheck');
 
             if (
                 isset($_SERVER['HTTP_ACCEPT'])
-                && QUI::getPackage('quiqqer/cache')->getConfig()->get('settings', 'webp')
+                && $config?->get('settings', 'webp')
             ) {
                 // if webp supported, use it
                 if (
@@ -215,7 +221,7 @@ class EventCoordinator
                     $cacheEnabled = false;
 
                     // no cache generating for this version
-                    QUI::getRewrite()->getSite()->setAttribute('nocache', true);
+                    QUI::getRewrite()->getSite()?->setAttribute('nocache', true);
 
                     if (!defined('QUIQQER_CACHE_DISABLE_WEBP')) {
                         define('QUIQQER_CACHE_DISABLE_WEBP', true);
@@ -299,7 +305,7 @@ class EventCoordinator
         }
 
         try {
-            if (QUI::getRewrite()->getSite()->getAttribute('nocache')) {
+            if (QUI::getRewrite()->getSite()?->getAttribute('nocache')) {
                 return;
             }
         } catch (QUI\Exception $Exception) {
@@ -314,12 +320,12 @@ class EventCoordinator
         }
 
         try {
-            if (QUI::getRewrite()->getSite()->getAttribute('nocache')) {
+            if (QUI::getRewrite()->getSite()?->getAttribute('nocache')) {
                 return;
             }
 
             $Package = QUI::getPackage('quiqqer/cache');
-            $cacheSetting = $Package->getConfig()->get('settings', 'cache');
+            $cacheSetting = $Package->getConfig()?->get('settings', 'cache');
         } catch (QUI\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
 
@@ -334,7 +340,7 @@ class EventCoordinator
         try {
             $Project = QUI::getRewrite()->getProject();
 
-            if ((int)$Project->getConfig('website.nocache')) {
+            if ((int)$Project?->getConfig('website.nocache')) {
                 return;
             }
         } catch (QUI\Exception) {
@@ -376,7 +382,7 @@ class EventCoordinator
     {
         try {
             $Package = QUI::getPackage('quiqqer/cache');
-            $cacheSetting = $Package->getConfig()->get('settings', 'cache');
+            $cacheSetting = $Package->getConfig()?->get('settings', 'cache');
         } catch (QUI\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
 
@@ -423,7 +429,7 @@ class EventCoordinator
 
         try {
             $Package = QUI::getPackage('quiqqer/cache');
-            $optimizeOnResize = $Package->getConfig()->get('settings', 'optimize_on_resize');
+            $optimizeOnResize = $Package->getConfig()?->get('settings', 'optimize_on_resize');
             $useWebP = Handler::init()->useWebP();
         } catch (QUI\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
@@ -512,7 +518,7 @@ class EventCoordinator
             return;
         }
 
-        Optimizer::convertToWebP($cacheFile);
+        Optimizer::convertToWebP((string)$cacheFile);
 
         // check if same file exists
         try {
@@ -530,9 +536,9 @@ class EventCoordinator
     }
 
     /**
-     * @param $picture
+     * @param string $picture
      */
-    public static function onMediaCreateImageHtml(&$picture): void
+    public static function onMediaCreateImageHtml(string &$picture): void
     {
         if (Handler::init()->useWebP() === false) {
             return;
@@ -565,7 +571,7 @@ class EventCoordinator
                             continue;
                         }
 
-                        $webpSource->setAttribute('srcset', $webpSrcset);
+                        $webpSource->setAttribute('srcset', (string)$webpSrcset);
                         $webpSource->setAttribute('type', 'image/webp');
 
                         foreach ($source->attributes as $attr) {
@@ -600,7 +606,7 @@ class EventCoordinator
                                 $webpSource->setAttribute('srcset', $webpSrcset);
                             } elseif (!empty($imgSrc)) {
                                 $webpSrc = preg_replace('/\.(jpe?g|png)(\?.*)?$/i', '.webp$2', $imgSrc);
-                                $webpSource->setAttribute('srcset', $webpSrc);
+                                $webpSource->setAttribute('srcset', (string)$webpSrc);
                             }
 
                             $webpSource->setAttribute('type', 'image/webp');
@@ -620,8 +626,8 @@ class EventCoordinator
             }
 
             $result = $dom->saveHTML();
-            $result = preg_replace('/^<\?xml.*?\?>/', '', $result);
-            $picture = trim($result);
+            $result = preg_replace('/^<\?xml.*?\?>/', '', (string)$result);
+            $picture = trim((string)$result);
         }
     }
 
@@ -648,10 +654,9 @@ class EventCoordinator
     }
 
     /**
-     * @param $menuId
      * @return void
      */
-    public static function onQuiqqerMenuIndependentClear($menuId): void
+    public static function onQuiqqerMenuIndependentClear(): void
     {
         self::clearCache();
     }
