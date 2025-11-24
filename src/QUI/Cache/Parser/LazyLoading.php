@@ -22,13 +22,13 @@ class LazyLoading extends QUI\Utils\Singleton
     /**
      * Add lazy loading part to html
      *
-     * @param $content
+     * @param string $content
      * @return string
      */
-    public function parse($content): string
+    public function parse(string $content): string
     {
         // parse images
-        return preg_replace_callback(
+        return (string)preg_replace_callback(
             '#<img([^>]*)>#i',
             [&$this, "images"],
             $content
@@ -36,10 +36,10 @@ class LazyLoading extends QUI\Utils\Singleton
     }
 
     /**
-     * @param $output
+     * @param array<string> $output
      * @return string
      */
-    public function images($output): string
+    public function images(array $output): string
     {
         $img = $output[0];
         $imgData = $output[1];
@@ -72,10 +72,10 @@ class LazyLoading extends QUI\Utils\Singleton
     }
 
     /**
-     * @param $attributes
+     * @param array<string, string> $attributes
      * @return string
      */
-    protected function render($attributes): string
+    protected function render(array $attributes): string
     {
         // image string
         $img = '<img ';

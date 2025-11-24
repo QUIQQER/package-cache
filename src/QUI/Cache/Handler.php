@@ -659,10 +659,10 @@ class Handler
     }
 
     /**
-     * @param $content
+     * @param string $content
      * @return string
      */
-    public function generateJavaScriptCache($content): string
+    public function generateJavaScriptCache(string $content): string
     {
         $binDir = $this->getCacheDir() . 'bin/';
         $urlBinDir = $this->getURLCacheDir() . 'bin/';

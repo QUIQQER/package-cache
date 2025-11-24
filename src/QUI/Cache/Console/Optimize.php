@@ -75,7 +75,7 @@ class Optimize extends QUI\System\Console\Tool
             $this->writeLn('Optimize PNG files', 'green');
 
             $list = shell_exec('find "' . $cacheDir . '" -iname \*.png -type f -mtime -' . $mtime);
-            $list = explode("\n", trim($list));
+            $list = explode("\n", trim((string)$list));
             $count = count($list);
 
             $this->resetColor();
