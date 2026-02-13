@@ -85,8 +85,8 @@ class Optimizer
     /**
      * Optimize and bundle a require js request
      *
-     * @param array $needles
-     * @param array $requireConf
+     * @param array<string, string> $needles
+     * @param array<string, mixed> $requireConf
      * @return string
      *
      * @throws QUI\Exception
@@ -109,7 +109,7 @@ class Optimizer
         $buildFile = $amdDir . $cacheHash . '-build.js';
 
         if (file_exists($buildFile)) {
-            return file_get_contents($buildFile);
+            return (string)file_get_contents($buildFile);
         }
 
 
@@ -203,10 +203,12 @@ class Optimizer
         self::optimizeJavaScriptViaQJO($buildFile);
 
         if (file_exists($buildFile)) {
-            return file_get_contents($buildFile);
+            return (string)file_get_contents($buildFile);
         }
 
-        QUI\System\Log::addWarning($result);
+        if (is_string($result)) {
+            QUI\System\Log::addWarning($result);
+        }
 
         throw new QUI\Exception('Could not create build');
     }
@@ -224,6 +226,11 @@ class Optimizer
 
         if (!file_exists($cssFilePath)) {
             $parse = parse_url($cssFilePath);
+
+            if (!is_array($parse) || !isset($parse['path'])) {
+                return '';
+            }
+
             $cssFilePath = $parse['path'];
 
             if (!file_exists($cssFilePath)) {
@@ -233,6 +240,11 @@ class Optimizer
 
                     if (!file_exists($cssFilePath)) {
                         $parse = parse_url($cssFilePath);
+
+                        if (!is_array($parse) || !isset($parse['path'])) {
+                            return '';
+                        }
+
                         $cssFilePath = $parse['path'];
 
                         if (!file_exists($cssFilePath)) {
@@ -259,7 +271,7 @@ class Optimizer
         $minifiedContent = file_get_contents($tempFile);
         unlink($tempFile);
 
-        return $minifiedContent;
+        return (string)$minifiedContent;
     }
 
     public static function optimizeHtml(string $html): string
@@ -283,7 +295,7 @@ class Optimizer
         // is activated?
         try {
             $Config = QUI::getPackage('quiqqer/cache')->getConfig();
-            $qjo = $Config->get('quiqqer_js_optimizer', 'status');
+            $qjo = $Config?->get('quiqqer_js_optimizer', 'status');
         } catch (QUI\Exception) {
             return;
         }
@@ -345,7 +357,11 @@ class Optimizer
         try {
             $quality = (int)QUI::getPackage('quiqqer/cache')
                 ->getConfig()
-                ->getValue('settings', 'jpg_quality');
+                ?->getValue('settings', 'jpg_quality');
+
+            if (empty($quality)) {
+                $quality = 80;
+            }
         } catch (QUI\Exception) {
         }
 
@@ -353,38 +369,6 @@ class Optimizer
     }
 
     // endregion
-
-
-    /**
-     * Return config build params
-     *
-     * @return array
-     */
-    protected static function getbuildParams(): array
-    {
-        $fileExclusionRegExp = '/\.git|^tests$|^build$|^coverage$|^doc$|^jsdoc$|^examples$|';
-        $fileExclusionRegExp .= '^r\.js|\.md|^package\.json|^composer\.json|^bower\.json|';
-        $fileExclusionRegExp .= '^init\.js|^initDev\.js|^\.jshintrc|^\.flowconfig|';
-        $fileExclusionRegExp .= '^build\.js|^build-jsdoc\.js|^build\-config\.js/';
-
-        return [
-            'appDir' => ".",
-            'baseUrl' => ".",
-            'dir' => "./bin",
-            'useStrict' => true,
-            'mainConfigFile' => "build-config.js",
-            'keepBuildDir' => false,
-            'optimizeCss' => 'standard',
-            'wrapShim' => false,
-            "findNestedDependencies" => true,
-            "normalizeDirDefines" => true,
-            'fileExclusionRegExp' => $fileExclusionRegExp,
-            'modules' => [],
-            'paths' => [
-                'qui' => 'quiqqer/qui/qui'
-            ]
-        ];
-    }
 
     // region Jpegoptim installation state methods
 
@@ -568,7 +552,11 @@ class Optimizer
         try {
             $quality = (int)QUI::getPackage('quiqqer/cache')
                 ->getConfig()
-                ->getValue('settings', 'webp_quality');
+                ?->getValue('settings', 'webp_quality');
+
+            if (empty($quality)) {
+                $quality = 80;
+            }
         } catch (QUI\Exception) {
         }
 
@@ -577,6 +565,10 @@ class Optimizer
         }
 
         if ($parts['extension'] === 'svg') {
+            return false;
+        }
+
+        if (empty($parts['dirname'])) {
             return false;
         }
 
@@ -605,7 +597,7 @@ class Optimizer
         // this only works if convert is available on the server.
         if (
             $cmykConvert
-            && str_contains($output, 'libjpeg error: Unsupported color conversion request')
+            && str_contains((string)$output, 'libjpeg error: Unsupported color conversion request')
             && !file_exists($webPFile)
         ) {
             if (QUI\Utils\System::isSystemFunctionCallable('convert')) {
@@ -620,7 +612,7 @@ class Optimizer
                     unlink($copy);
                 }
 
-                if (file_exists($copyWebPFile)) {
+                if ($copyWebPFile && file_exists($copyWebPFile)) {
                     rename($copyWebPFile, $webPFile);
                 }
             } else {

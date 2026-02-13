@@ -16,7 +16,7 @@ function package_quiqqer_cache_ajax_backend_clearCache(): void
     );
 }
 
-QUI::$Ajax->register(
+QUI::getAjax()->register(
     'package_quiqqer_cache_ajax_backend_clearCache',
     [],
     'Permission::checkAdminUser'

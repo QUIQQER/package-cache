@@ -18,11 +18,10 @@ use function array_unique;
 class Cron
 {
     /**
-     * @param $params
-     * @param $CronManager
+     * @param array<string, string> $params
      * @throws QUI\Exception
      */
-    public static function optimizeProjectImages($params, $CronManager): void
+    public static function optimizeProjectImages(array $params): void
     {
         if (!isset($params['project'])) {
             throw new QUI\Exception('Need a project parameter');

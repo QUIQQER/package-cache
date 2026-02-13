@@ -27,7 +27,7 @@ function package_quiqqer_cache_ajax_requirejs(string $packages, string $requireC
     }
 }
 
-QUI::$Ajax->register(
+QUI::getAjax()->register(
     'package_quiqqer_cache_ajax_requirejs',
     ['packages', 'requireConfig']
 );

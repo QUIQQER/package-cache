@@ -14,7 +14,8 @@ if ($debug) {
 
 try {
     $Config = QUI::getPackage('quiqqer/cache')->getConfig();
-    $qjo = $Config->get('quiqqer_js_optimizer', 'status');
+    $qjo = $Config?->get('quiqqer_js_optimizer', 'status');
+
     if ($debug) {
         QUI\System\Log::addError('QJO: Config loaded', [
             'status' => $qjo
@@ -64,8 +65,8 @@ if (empty($code)) {
     exit(1);
 }
 
-$key = $Config->get('quiqqer_js_optimizer', 'license');
-$optimizerUrl = $Config->get('quiqqer_js_optimizer', 'server_url');
+$key = $Config?->get('quiqqer_js_optimizer', 'license');
+$optimizerUrl = $Config?->get('quiqqer_js_optimizer', 'server_url');
 
 if (empty($optimizerUrl)) {
     $optimizerUrl = 'https://js-optimizer.quiqqer.com';

@@ -101,7 +101,7 @@ class Handler
 
         try {
             $Package = QUI::getPackage('quiqqer/cache');
-            $this->webP = $Package->getConfig()->get('settings', 'webp');
+            $this->webP = $Package->getConfig()?->get('settings', 'webp');
             $this->webP = !!$this->webP;
         } catch (QUI\Exception $Exception) {
             QUI\System\Log::addDebug($Exception->getMessage());
@@ -154,7 +154,7 @@ class Handler
             }
 
             // replace user data
-            return preg_replace_callback(
+            return (string)preg_replace_callback(
                 '/<script id="quiqqer-user-defined">(.*)<\/script>/Uis',
                 function () {
                     $Nobody = QUI::getUsers()->getNobody();
@@ -200,10 +200,10 @@ class Handler
 
 
         $Package = QUI::getPackage('quiqqer/cache');
-        $cacheSetting = $Package->getConfig()->get('settings', 'cache');
-        $jsCacheSetting = $Package->getConfig()->get('settings', 'jscache');
-        $htmlCacheSetting = $Package->getConfig()->get('settings', 'htmlcache');
-        $lazyLoadingSetting = $Package->getConfig()->get('settings', 'lazyloading');
+        $cacheSetting = $Package->getConfig()?->get('settings', 'cache');
+        $jsCacheSetting = $Package->getConfig()?->get('settings', 'jscache');
+        $htmlCacheSetting = $Package->getConfig()?->get('settings', 'htmlcache');
+        $lazyLoadingSetting = $Package->getConfig()?->get('settings', 'lazyloading');
 
         if (!$cacheSetting) {
             return;
@@ -216,9 +216,9 @@ class Handler
         // check if host exist, if not, we generate no cache
         $vhosts = QUI::vhosts();
         $urlParams = parse_url($uri);
-        $urlHost = $urlParams['host'];
+        $urlHost = $urlParams['host'] ?? '';
 
-        if (!isset($vhosts[$urlHost])) {
+        if (empty($urlHost) || !isset($vhosts[$urlHost])) {
             QUI\System\Log::addInfo('Missing vhost for cache generation', [
                 'urlParams' => $urlParams,
                 'uri' => $uri,
@@ -347,15 +347,15 @@ class Handler
     }
 
     /**
-     * @param string  $content
+     * @param string $content
      * @return string
      * @throws QUI\Exception
      */
     public function generateCSSCache(string $content): string
     {
         $Package = QUI::getPackage('quiqqer/cache');
-        $cssEnabled = $Package->getConfig()->get('css', 'status');
-        $cssInline = $Package->getConfig()->get('css', 'css_inline');
+        $cssEnabled = $Package->getConfig()?->get('css', 'status');
+        $cssInline = $Package->getConfig()?->get('css', 'css_inline');
 
         if (!$cssEnabled || defined('QUIQQER_CACHE_NO_CSS_CACHE')) {
             return $content;
@@ -367,15 +367,15 @@ class Handler
         $templateFiles = [];
         $cssFiles = [];
 
-        $template = QUI::getRewrite()->getProject()->getAttribute('template');
-        $customCss = USR_DIR . QUI::getRewrite()->getProject()->getName() . '/bin/custom.css';
-        $templatePath = OPT_DIR . $template;
+        $template = QUI::getRewrite()->getProject()?->getAttribute('template');
+        $customCss = USR_DIR . QUI::getRewrite()->getProject()?->getName() . '/bin/custom.css';
 
         // if no template exists
-        if (empty($template)) {
+        if (!is_string($template) || empty($template)) {
             return $content;
         }
 
+        $templatePath = OPT_DIR . $template;
         $Template = QUI::getPackage($template);
         $templateParent = $Template->getTemplateParent();
 
@@ -429,7 +429,7 @@ class Handler
 
             if (!file_exists($file)) {
                 $parse = parse_url($file);
-                $file = $parse['path'];
+                $file = $parse['path'] ?? '';
             }
 
             if (!file_exists($file)) {
@@ -659,10 +659,10 @@ class Handler
     }
 
     /**
-     * @param $content
+     * @param string $content
      * @return string
      */
-    public function generateJavaScriptCache($content): string
+    public function generateJavaScriptCache(string $content): string
     {
         $binDir = $this->getCacheDir() . 'bin/';
         $urlBinDir = $this->getURLCacheDir() . 'bin/';
@@ -796,7 +796,11 @@ class Handler
 
             if (!str_contains($entry[0], 'src=')) {
                 $content = str_replace($entry, '', $content);
-                $jsContent .= $entry[1];
+
+                if (isset($entry[1])) {
+                    $jsContent .= $entry[1];
+                }
+
                 continue;
             }
 
@@ -814,7 +818,7 @@ class Handler
 
             if (!file_exists($file)) {
                 $parse = parse_url($file);
-                $file = $parse['path'];
+                $file = $parse['path'] ?? '';
             }
 
             if (!file_exists($file)) {
@@ -910,10 +914,10 @@ class Handler
     /**
      * Search the amd css files
      *
-     * @param $content
-     * @return array
+     * @param string $content
+     * @return array<string, bool>
      */
-    protected function getAmdCssFiles($content): array
+    protected function getAmdCssFiles(string $content): array
     {
         preg_match_all(
             '/data-qui="([^"]*)"/Uis',
@@ -954,7 +958,7 @@ class Handler
                 continue;
             }
 
-            $moduleContent = file_get_contents($absPath);
+            $moduleContent = (string)file_get_contents($absPath);
 
             if (!str_contains($moduleContent, 'css!')) {
                 continue;
@@ -983,13 +987,13 @@ class Handler
      */
     protected function parseImagesToWebP(string $content): string
     {
-        return preg_replace_callback(
+        return (string)preg_replace_callback(
             '#<img\b([^>]*)>#i',
-            function ($imgMatch) use ($content) {
+            function (array $imgMatch) use ($content): string {
                 $imgTag = $imgMatch[0];
 
                 // Prüfen, ob das <img> direkt innerhalb eines <picture> steht (vereinfachte Annäherung)
-                $pos = strpos($content, $imgTag);
+                $pos = (int)strpos($content, $imgTag);
                 $before = substr($content, 0, $pos);
                 $openPic = strripos($before, '<picture');
                 $closePic = strripos($before, '</picture>');
@@ -1000,7 +1004,7 @@ class Handler
                 }
 
                 // src/srcset/data-image/data-src ersetzen
-                return preg_replace_callback(
+                return (string)preg_replace_callback(
                     '#(src|data-image|data-src)="([^"]*)"#i',
                     function ($data) {
                         $src = $data[2];

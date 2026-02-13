@@ -20,15 +20,15 @@ use function preg_replace_callback;
 class LazyLoading extends QUI\Utils\Singleton
 {
     /**
-     * Add lazy loading part to html
+     * Add lazy loading part to HTML
      *
-     * @param $content
+     * @param string $content
      * @return string
      */
-    public function parse($content): string
+    public function parse(string $content): string
     {
         // parse images
-        return preg_replace_callback(
+        return (string)preg_replace_callback(
             '#<img([^>]*)>#i',
             [&$this, "images"],
             $content
@@ -36,13 +36,13 @@ class LazyLoading extends QUI\Utils\Singleton
     }
 
     /**
-     * @param $output
+     * @param array<string> $output
      * @return string
      */
-    public function images($output): string
+    public function images(array $output): string
     {
         $img = $output[0];
-        $imgData = $output[1];
+        //$imgData = $output[1];
         $attributes = StringUtils::getHTMLAttributes($img);
 
         if (!isset($attributes['src'])) {
@@ -60,22 +60,24 @@ class LazyLoading extends QUI\Utils\Singleton
             return $img;
         }
 
-        $attributes['loading'] = 'lazy';
+        if (empty($attributes['loading'])) {
+            $attributes['loading'] = 'lazy';
 
-        if (!isset($attributes['class'])) {
-            $attributes['class'] = 'lazyload';
-        } elseif (!str_contains($attributes['class'], 'lazyload')) {
-            $attributes['class'] = $attributes['class'] . ' lazyload';
+            if (!isset($attributes['class'])) {
+                $attributes['class'] = 'lazyload';
+            } elseif (!str_contains($attributes['class'], 'lazyload')) {
+                $attributes['class'] = $attributes['class'] . ' lazyload';
+            }
         }
 
         return $this->render($attributes);
     }
 
     /**
-     * @param $attributes
+     * @param array<string, string> $attributes
      * @return string
      */
-    protected function render($attributes): string
+    protected function render(array $attributes): string
     {
         // image string
         $img = '<img ';

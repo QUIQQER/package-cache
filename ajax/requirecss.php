@@ -32,7 +32,7 @@ function package_quiqqer_cache_ajax_requirecss($cssfile, string $requireConfig):
     }
 }
 
-QUI::$Ajax->register(
+QUI::getAjax()->register(
     'package_quiqqer_cache_ajax_requirecss',
     ['cssfile', 'requireConfig']
 );
