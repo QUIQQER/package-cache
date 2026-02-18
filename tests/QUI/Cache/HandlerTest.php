@@ -211,7 +211,13 @@ class HandlerTest extends TestCase
 
     public function testGetAmdCssFilesParsesCssPluginEntriesFromModule(): void
     {
-        $modulePath = '/var/www/toolbox/packages/quiqqer/cache/tests/tmp-amd-module.js';
+        $modulePath = OPT_DIR . 'quiqqer/cache/tests/tmp-amd-module.js';
+        $moduleDir = dirname($modulePath);
+
+        if (!is_dir($moduleDir)) {
+            @mkdir($moduleDir, 0777, true);
+        }
+
         file_put_contents($modulePath, "define(['css!package/quiqqer/cache/bin/example.css']);");
 
         $handler = $this->createHandlerProxy();
