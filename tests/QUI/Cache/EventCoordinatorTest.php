@@ -66,6 +66,10 @@ class EventCoordinatorTest extends TestCase
 
     public function testOnMediaCreateImageHtmlTransformsPictureMarkup(): void
     {
+        if (defined('QUIQQER_CACHE_DISABLE_WEBP')) {
+            $this->markTestSkipped('QUIQQER_CACHE_DISABLE_WEBP is globally defined in this runtime.');
+        }
+
         putenv('QUIQQER_CACHE_DISABLE_WEBP');
         $picture = '<picture><source srcset="/img/test.jpg"><img src="/img/test.jpg" /></picture>';
 
