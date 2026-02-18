@@ -4,6 +4,7 @@ namespace QUITests\Cache;
 
 use PHPUnit\Framework\TestCase;
 use QUI\Cache\EventCoordinator;
+use QUI\Cache\Handler;
 use QUI\Package\Package;
 use QUI\Projects\Media;
 use QUI\Projects\Media\Image as QuiMediaImage;
@@ -68,6 +69,10 @@ class EventCoordinatorTest extends TestCase
     {
         if (defined('QUIQQER_CACHE_DISABLE_WEBP')) {
             $this->markTestSkipped('QUIQQER_CACHE_DISABLE_WEBP is globally defined in this runtime.');
+        }
+
+        if (Handler::init()->useWebP() === false) {
+            $this->markTestSkipped('WebP is disabled in this runtime/config.');
         }
 
         putenv('QUIQQER_CACHE_DISABLE_WEBP');
