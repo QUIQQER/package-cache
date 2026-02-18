@@ -487,12 +487,10 @@ class EventCoordinator
         QUI\Projects\Media\Image $Image,
         Image $Cache
     ): ?string {
-        if (method_exists($Cache, 'basePath')) {
-            $basePath = (string)$Cache->basePath();
+        $originPath = $Cache->origin()->filePath();
 
-            if ($basePath !== '' && file_exists($basePath)) {
-                return $basePath;
-            }
+        if (!empty($originPath) && file_exists($originPath)) {
+            return $originPath;
         }
 
         $Media = $Image->getMedia();
