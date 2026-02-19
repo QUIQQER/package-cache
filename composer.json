@@ -17,7 +17,7 @@
     },
     "require": {
         "php": "^8.1",
-        "quiqqer/core": "^2",
+        "quiqqer/core": "^2.7",
         "quiqqer/mobile-detection": "^1",
         "voku/html-min": "^4.5",
         "matthiasmullie/minify": "^1.3",

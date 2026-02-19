@@ -18,13 +18,20 @@ use function define;
 use function defined;
 use function explode;
 use function file_exists;
+use function filemtime;
+use function glob;
 use function header_remove;
+use function is_array;
+use function is_dir;
+use function is_file;
 use function ltrim;
 use function pathinfo;
 use function preg_replace;
 use function str_replace;
+use function strtolower;
 use function strlen;
 use function substr;
+use function usort;
 
 use const FILEINFO_EXTENSION;
 use const PATHINFO_FILENAME;
@@ -437,8 +444,14 @@ class EventCoordinator
             return;
         }
 
+        $cacheFile = self::getCreatedSizeCacheFile($Image, $Cache);
+
+        if (empty($cacheFile)) {
+            return;
+        }
+
         if ($useWebP) {
-            Optimizer::convertToWebP($Cache->basePath());
+            Optimizer::convertToWebP($cacheFile);
         }
 
         if (empty($optimizeOnResize)) {
@@ -446,13 +459,16 @@ class EventCoordinator
         }
 
         try {
-            switch ($Cache->extension) {
+            $extension = strtolower((string)pathinfo($cacheFile, FILEINFO_EXTENSION));
+
+            switch ($extension) {
                 case 'jpg':
-                    Optimizer::optimizeJPG($Cache->basePath());
+                case 'jpeg':
+                    Optimizer::optimizeJPG($cacheFile);
                     break;
 
                 case 'png':
-                    Optimizer::optimizePNG($Cache->basePath());
+                    Optimizer::optimizePNG($cacheFile);
                     break;
             }
 
@@ -462,6 +478,68 @@ class EventCoordinator
         }
 
         $Cache->save(null, 70);
+    }
+
+    /**
+     * Resolve the written cache file path for resize events across intervention/image versions.
+     */
+    protected static function getCreatedSizeCacheFile(
+        QUI\Projects\Media\Image $Image,
+        Image $Cache
+    ): ?string {
+        $originPath = $Cache->origin()->filePath();
+
+        if (!empty($originPath) && file_exists($originPath)) {
+            return $originPath;
+        }
+
+        $Media = $Image->getMedia();
+        $cacheDir = CMS_DIR . $Media->getCacheDir();
+        $file = $Image->getAttribute('file');
+        $parts = pathinfo($file);
+
+        if (empty($parts['filename']) || empty($parts['extension'])) {
+            return null;
+        }
+
+        $dir = $cacheDir;
+
+        if (!empty($parts['dirname']) && $parts['dirname'] !== '.') {
+            $dir .= $parts['dirname'] . DIRECTORY_SEPARATOR;
+        }
+
+        if (!is_dir($dir)) {
+            return null;
+        }
+
+        $pattern = $dir . $parts['filename'] . '__*.' . $parts['extension'];
+        $files = glob($pattern);
+        $originalSizedFile = $dir . $parts['filename'] . '.' . $parts['extension'];
+
+        if (file_exists($originalSizedFile)) {
+            if (!is_array($files)) {
+                $files = [];
+            }
+
+            $files[] = $originalSizedFile;
+        }
+
+        if (!is_array($files) || empty($files)) {
+            return null;
+        }
+
+        $files = array_filter($files, static fn($path) => is_file($path));
+
+        if (empty($files)) {
+            return null;
+        }
+
+        usort(
+            $files,
+            static fn($a, $b) => filemtime($b) <=> filemtime($a)
+        );
+
+        return $files[0];
     }
 
     public static function onMediaReplace(QUI\Projects\Media $Media, QUI\Projects\Media\Item $Item): void
