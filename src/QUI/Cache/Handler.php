@@ -1026,7 +1026,7 @@ class Handler
 
     public static function setLoggedInCookieIfEnabled(): void
     {
-        if (!Config::isLoggedInCookieEnabled()) {
+        if (!Config::isLoggedInCookieEnabled() || !self::canSendCookies()) {
             return;
         }
 
@@ -1045,6 +1045,10 @@ class Handler
 
     public static function removeLoggedInCookie(): void
     {
+        if (!self::canSendCookies()) {
+            return;
+        }
+
         $LoggedInCookie = new LoggedInCookie(Config::getLoggedInCookieName());
 
         setcookie(
@@ -1056,5 +1060,14 @@ class Handler
             true,
             true
         );
+    }
+
+    private static function canSendCookies(): bool
+    {
+        if (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') {
+            return false;
+        }
+
+        return !headers_sent();
     }
 }
