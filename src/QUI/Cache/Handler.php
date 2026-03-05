@@ -1034,7 +1034,7 @@ class Handler
 
         setcookie(
             $LoggedInCookie->getName(),
-            '',
+            '1',
             time() + $LoggedInCookie->getLifetimeInSeconds(),
             '',
             '',
